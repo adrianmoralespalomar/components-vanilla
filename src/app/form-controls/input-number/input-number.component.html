@@ -1,0 +1,87 @@
+<div
+  class="input-number-container"
+  [class.input-number-invalid]="showError"
+  [class.input-number-disabled]="isDisabled"
+  [class.input-number-readonly]="isReadonly"
+  [class.input-number-with-icon]="hasIcon"
+  [class.input-number-icon-left]="hasIcon && iconPosition() === 'left'"
+  [class.input-number-icon-right]="hasIcon && iconPosition() === 'right'"
+  [class]="currentSizeClass">
+  @if (label()) {
+    <label class="input-number-label" [attr.for]="inputId">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="input-number-required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <div class="input-number-wrapper">
+    @if (prefix()) {
+      <span class="input-number-prefix">
+        {{ prefix() }}
+      </span>
+    }
+
+    @if (icon() && iconPosition() === 'left') {
+      <span class="input-number-icon input-number-icon-left" aria-hidden="true">
+        {{ icon() }}
+      </span>
+    }
+
+    <input
+      class="input-number-input"
+      [id]="inputId"
+      type="text"
+      inputmode="decimal"
+      [value]="inputValue()"
+      [placeholder]="placeholder()"
+      [disabled]="isDisabled"
+      [readonly]="isReadonly"
+      [attr.min]="min()"
+      [attr.max]="max()"
+      [attr.step]="step()"
+      [attr.aria-invalid]="showError"
+      [attr.aria-required]="isRequired"
+      [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
+      [class.input-number-align-left]="textAlign() === 'left'"
+      [class.input-number-align-center]="textAlign() === 'center'"
+      [class.input-number-align-right]="textAlign() === 'right'"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()" />
+
+    @if (icon() && iconPosition() === 'right') {
+      <span class="input-number-icon input-number-icon-right" aria-hidden="true">
+        {{ icon() }}
+      </span>
+    }
+
+    @if (suffix()) {
+      <span class="input-number-suffix">
+        {{ suffix() }}
+      </span>
+    }
+
+    @if (showButtons()) {
+      <div class="input-number-buttons">
+        <button type="button" class="input-number-button input-number-button-increment" tabindex="-1" [disabled]="isDisabled || isReadonly" aria-label="Incrementar" (mousedown)="$event.preventDefault()" (click)="increment()">▲</button>
+
+        <button type="button" class="input-number-button input-number-button-decrement" tabindex="-1" [disabled]="isDisabled || isReadonly" aria-label="Decrementar" (mousedown)="$event.preventDefault()" (click)="decrement()">▼</button>
+      </div>
+    }
+  </div>
+
+  <div class="input-number-extra">
+    @if (showError) {
+      <small class="input-number-error" [id]="inputId + '-error'">
+        {{ currentErrorMessage }}
+      </small>
+    } @else if (helpText()) {
+      <small class="input-number-help" [id]="inputId + '-help'">
+        {{ helpText() }}
+      </small>
+    }
+  </div>
+</div>

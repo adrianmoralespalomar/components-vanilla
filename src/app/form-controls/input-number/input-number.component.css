@@ -1,0 +1,207 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.input-number-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: inherit;
+}
+
+.input-number-label {
+  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-number-required {
+  margin-left: 0.15rem;
+  color: #dc2626;
+}
+
+.input-number-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input-number-wrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.input-number-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #111827;
+  font: inherit;
+}
+
+.input-number-align-left {
+  text-align: left;
+}
+
+.input-number-align-center {
+  text-align: center;
+}
+
+.input-number-align-right {
+  text-align: right;
+}
+
+.input-number-input::placeholder {
+  color: #9ca3af;
+}
+
+.input-number-prefix,
+.input-number-suffix {
+  flex: 0 0 auto;
+  color: #6b7280;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.input-number-prefix {
+  margin-left: 0.75rem;
+  margin-right: 0.5rem;
+}
+
+.input-number-suffix {
+  margin-left: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+.input-number-icon {
+  flex: 0 0 auto;
+  color: #6b7280;
+  user-select: none;
+}
+
+.input-number-icon-left {
+  margin-left: 0.75rem;
+  margin-right: 0.5rem;
+}
+
+.input-number-icon-right {
+  margin-left: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+.input-number-invalid .input-number-wrapper {
+  border-color: #dc2626;
+}
+
+.input-number-invalid .input-number-wrapper:focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.input-number-disabled .input-number-wrapper {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.input-number-disabled .input-number-input {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.input-number-readonly .input-number-wrapper {
+  background: #f9fafb;
+}
+
+.input-number-extra {
+  min-height: 1.25rem;
+  padding-top: 0.25rem;
+}
+
+.input-number-error {
+  color: #dc2626;
+  font-size: 0.75rem;
+}
+
+.input-number-help {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sizes                                                                      */
+/* -------------------------------------------------------------------------- */
+
+.input-number-small .input-number-wrapper {
+  min-height: 2rem;
+}
+
+.input-number-small .input-number-input {
+  font-size: 0.8125rem;
+}
+
+.input-number-medium .input-number-wrapper {
+  min-height: 2.5rem;
+}
+
+.input-number-medium .input-number-input {
+  font-size: 0.875rem;
+}
+
+.input-number-large .input-number-wrapper {
+  min-height: 3rem;
+}
+
+.input-number-large .input-number-input {
+  font-size: 1rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Buttons                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.input-number-buttons {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  width: 2rem;
+  border-left: 1px solid #d1d5db;
+}
+
+.input-number-button {
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.65rem;
+}
+
+.input-number-button:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.input-number-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.input-number-button-increment {
+  border-bottom: 1px solid #d1d5db;
+}

@@ -1,0 +1,75 @@
+<div class="input-container" [class.input-container--small]="size() === 'small'" [class.input-container--large]="size() === 'large'">
+  @if (label()) {
+    <label class="input-label" [attr.for]="inputId">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="required-star" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <div
+    class="input-wrapper"
+    [class.input-wrapper--error]="showError"
+    [class.input-wrapper--disabled]="isDisabled"
+    [class.input-wrapper--readonly]="readonly()"
+    [class.input-wrapper--icon-left]="hasLeftIcon"
+    [class.input-wrapper--icon-right]="hasRightIcon">
+    @if (hasLeftIcon) {
+      <span class="input-icon input-icon--left" aria-hidden="true">
+        {{ icon() }}
+      </span>
+    }
+
+    <input
+      class="input-element"
+      [id]="inputId"
+      [type]="inputType"
+      [value]="currentValue"
+      [placeholder]="placeholder()"
+      [autocomplete]="autocomplete()"
+      [disabled]="isDisabled"
+      [readonly]="readonly()"
+      [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
+      [attr.aria-invalid]="showError"
+      [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
+      (input)="onInput($event)"
+      (blur)="onBlur()" />
+
+    @if (isPassword) {
+      <button
+        type="button"
+        class="password-toggle"
+        [disabled]="isDisabled"
+        [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        (click)="togglePasswordVisibility()">
+        {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+      </button>
+    }
+
+    @if (hasRightIcon && !isPassword) {
+      <span class="input-icon input-icon--right" aria-hidden="true">
+        {{ icon() }}
+      </span>
+    }
+  </div>
+
+  @if (showError || (showCharCount() && currentMaxLength !== null) || helpText()) {
+    <div class="input-extra-data">
+      @if (showError) {
+        <div class="error-message" [id]="inputId + '-error'" role="alert">
+          {{ currentErrorMessage }}
+        </div>
+      } @else if (helpText()) {
+        <div class="help-message" [id]="inputId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+
+      @if (showCharCount() && currentMaxLength !== null) {
+        <div class="char-counter">{{ currentLength }} / {{ currentMaxLength }}</div>
+      }
+    </div>
+  }
+</div>
