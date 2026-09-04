@@ -6,10 +6,11 @@ import { RouterModule, RouterOutlet } from '@angular/router';
   template: `
     <div style="display:flex; gap:1rem;margin:1rem 0">
       <button mat-raised-button color="accent" [routerLink]="'form-controls'">Form Controls</button>
+      <button mat-raised-button color="accent" [routerLink]="'table'">Table</button>
     </div>
     <router-outlet />
   `,
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet, RouterModule]
 })
 export class App {
   protected readonly title = signal('components-vanilla');

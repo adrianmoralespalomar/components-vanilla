@@ -14,7 +14,7 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
 
         --textarea-background: #ffffff;
         --textarea-text-color: #1f2937;
-        ::ng-deep .input-container {
+        ::ng-deep .textarea-container {
           width: 50%;
         }
       }
@@ -23,7 +23,7 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
   template: `
     <app-textarea id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" />
     <app-textarea label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
-    <app-textarea label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [formControl]="formControlRequeridoYMax50Caract" />
+    <app-textarea label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [formControl]="formControlRequeridoYMax50Caract" [showCharCount]="true" [maxlength]="50" />
     <form [formGroup]="form">
       <app-textarea label="Nombre" formControlName="formControlRequeridoYMax50Caract" />
       <app-textarea label="Valor debe ser 'Adrian'" formControlName="formControlErrorCustom" />

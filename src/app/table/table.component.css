@@ -1,0 +1,42 @@
+div.table-container {
+  --border-color: #9e9e9e;
+  --border: 1px solid var(--border-color);
+  --gap: 0.25rem;
+  overflow-x: auto;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    thead,
+    tbody {
+      display: table-header-group;
+      border: var(--border);
+      tr th,
+      tr td {
+        align-content: start; /*To Set span at top*/
+        border-bottom: var(--border);
+        padding: 0.5rem;
+        white-space: nowrap;
+        span {
+          display: flex;
+          gap: var(--gap);
+          align-items: center;
+        }
+      }
+      tr th section.header-column-container {
+        display: flex;
+        gap: var(--gap);
+        flex-direction: column;
+        justify-content: space-around;
+        div.header-column-label {
+          display: flex;
+          gap: var(--gap);
+          flex-direction: row;
+        }
+      }
+    }
+    thead tr th {
+      background-color: #ebf2f5;
+    }
+  }
+}

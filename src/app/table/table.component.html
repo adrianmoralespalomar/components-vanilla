@@ -1,0 +1,71 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        @for (col of columns; track col.key) {
+          <th>
+            <section class="header-column-container">
+              <div class="header-column-label">
+                <span (click)="changeSort(col)" [class.sortable]="col.sortable !== false">
+                  {{ col.label }}
+                </span>
+
+                @if (getSortIcon(col.key); as icon) {
+                  <span class="sort-icon">
+                    {{ icon }}
+                  </span>
+                }
+              </div>
+
+              @if (col.filterable) {
+                @if (col.type === 'select') {
+                  <select [formControl]="filters[col.key]">
+                    <option value="">--</option>
+
+                    @for (option of col.options ?? []; track option) {
+                      <option [value]="option">
+                        {{ option }}
+                      </option>
+                    }
+                  </select>
+                } @else {
+                  <input [type]="col.type === 'number' ? 'number' : 'text'" [formControl]="filters[col.key]" />
+                }
+              }
+            </section>
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of displayedData; track $index) {
+        <tr>
+          @for (col of columns; track col.key) {
+            <td>
+              @if (col.key === selectableKey) {
+                <input type="checkbox" [checked]="isSelected(row)" (change)="toggleRowSelection(row, $event)" />
+              } @else {
+                {{ row[col.key] }}
+              }
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td [attr.colspan]="columns.length">No hay datos disponibles.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (meta(); as pagination) {
+  <div class="pagination">
+    <button type="button" (click)="changePage(pagination.page - 1)" [disabled]="pagination.page === 1">Anterior</button>
+
+    <span>Página {{ pagination.page }}</span>
+
+    <button type="button" (click)="changePage(pagination.page + 1)" [disabled]="pagination.page * pagination.pageSize >= pagination.total">Siguiente</button>
+  </div>
+}
