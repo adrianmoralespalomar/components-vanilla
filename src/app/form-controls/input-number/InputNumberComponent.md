@@ -1,10 +1,10 @@
 # InputNumberComponent
 
-Componente numérico reutilizable desarrollado exclusivamente con Angular, HTML y CSS.
+Componente numérico reutilizable desarrollado exclusivamente con **Angular, HTML y CSS**.
 
-Está diseñado para trabajar tanto de forma independiente como integrado con Angular Reactive Forms.
+Está diseñado para trabajar tanto de forma independiente como integrado con **Angular Reactive Forms**.
 
-No depende de PrimeNG ni de ninguna otra librería de componentes.
+No depende de PrimeNG ni de ninguna otra librería externa de componentes.
 
 ---
 
@@ -22,8 +22,12 @@ No depende de PrimeNG ni de ninguna otra librería de componentes.
 - Soporte para diferentes locales.
 - Separadores de miles.
 - Separador decimal dependiente del locale.
+- Formateo dinámico durante la edición.
+- Conservación de la posición lógica del cursor al aplicar separadores.
 - Configuración de decimales mínimos y máximos.
+- Restricción de decimales durante la edición.
 - Redondeo o truncado visual.
+- Límite seguro basado en `Number.MAX_SAFE_INTEGER`.
 - Prefijo.
 - Sufijo.
 - Alineación izquierda, centrada o derecha.
@@ -31,7 +35,7 @@ No depende de PrimeNG ni de ninguna otra librería de componentes.
 - `step`.
 - Botones de incremento/decremento opcionales.
 - Posibilidad de permitir o impedir valores negativos.
-- Formateo automático al perder el foco.
+- Formateo final al perder el foco.
 - Estado `disabled`.
 - Estado `readonly`.
 - Estado `invalid` externo.
@@ -40,6 +44,7 @@ No depende de PrimeNG ni de ninguna otra librería de componentes.
 - Indicador automático de campo requerido.
 - Iconos.
 - Diferentes tamaños.
+- Compatible con Angular Standalone Components.
 
 ---
 
@@ -60,9 +65,23 @@ export class ExampleComponent {}
 
 No es necesario importar ningún módulo adicional de una librería externa.
 
+Si se utiliza con Angular Reactive Forms, será necesario importar `ReactiveFormsModule`:
+
+```ts
+import { ReactiveFormsModule } from '@angular/forms';
+
+@Component({
+  imports: [
+    ReactiveFormsModule,
+    InputNumberComponent
+  ]
+})
+export class ExampleComponent {}
+```
+
 ---
 
-# Uso
+# Formas de uso
 
 El componente dispone de tres formas principales de utilización.
 
@@ -153,7 +172,7 @@ this.http.post('/api/precio', {
 });
 ```
 
-No es necesario convertir el valor de vuelta desde un string formateado.
+No es necesario convertir el valor desde un string formateado.
 
 ---
 
@@ -181,6 +200,12 @@ form = new FormGroup({
 # Formato numérico
 
 El formato se controla mediante `locale`.
+
+El componente utiliza `Intl.NumberFormat` para determinar automáticamente:
+
+- Separador de miles.
+- Separador decimal.
+- Formato numérico correspondiente al locale.
 
 ## Español
 
@@ -233,7 +258,47 @@ Muestra:
 1.234.567,89
 ```
 
-El formato se basa en `Intl.NumberFormat`.
+---
+
+# Edición y formato dinámico
+
+El valor mantiene el formato correspondiente al `locale` incluso mientras el usuario está editando.
+
+Por ejemplo, utilizando:
+
+```html
+<app-input-number
+  [value]="3444.57"
+  [locale]="'es-ES'"
+/>
+```
+
+El valor se muestra como:
+
+```text
+3.444,57
+```
+
+Al recibir el foco, el formato se mantiene:
+
+```text
+3.444,57
+```
+
+Los separadores de miles se actualizan dinámicamente cuando el usuario modifica la parte entera.
+
+Por ejemplo:
+
+```text
+3.444,57
+33.444,57
+333.444,57
+3.333.444,57
+```
+
+El componente mantiene la posición lógica del cursor aunque se añadan o eliminen separadores de miles.
+
+Esto permite editar directamente el número formateado sin cambiar a un formato interno diferente durante el foco.
 
 ---
 
@@ -279,7 +344,12 @@ Muestra:
 
 # Decimales
 
-Se pueden configurar los decimales mínimos y máximos.
+Se pueden configurar los decimales mínimos y máximos mediante:
+
+- `minFractionDigits`
+- `maxFractionDigits`
+
+Por ejemplo:
 
 ```html
 <app-input-number
@@ -308,10 +378,44 @@ Muestra:
 Resultados:
 
 ```text
-1234      → 1.234,00
-1234.5    → 1.234,50
+1234     → 1.234,00
+1234.5   → 1.234,50
 1234.5678 → 1.234,5678
 ```
+
+---
+
+# Límite de decimales durante la edición
+
+`maxFractionDigits` también establece el número máximo de decimales que el usuario puede introducir.
+
+Por ejemplo:
+
+```html
+<app-input-number
+  [maxFractionDigits]="2"
+/>
+```
+
+Permite:
+
+```text
+12
+12,3
+12,34
+```
+
+Pero no permite:
+
+```text
+12,345
+```
+
+El tercer decimal no se acepta.
+
+El componente no permite introducir un valor con más decimales para posteriormente redondearlo o truncarlo.
+
+Esto evita modificaciones implícitas del valor introducido por el usuario.
 
 ---
 
@@ -370,15 +474,92 @@ Muestra:
 
 ### Importante
 
-El redondeo/truncado afecta al **formato mostrado**, no al valor interno.
+El redondeo o truncado se utiliza para la **representación visual del valor**.
 
-En ambos casos el valor continúa siendo:
+Por ejemplo, si un valor externo es:
 
 ```ts
 12.789
 ```
 
-Esto evita modificar accidentalmente la precisión real del dato.
+y se configura:
+
+```ts
+maxFractionDigits = 2
+roundingMode = 'round'
+```
+
+se mostrará:
+
+```text
+12,79
+```
+
+pero el valor interno continúa siendo:
+
+```ts
+12.789
+```
+
+Durante la edición, sin embargo, `maxFractionDigits` limita directamente los decimales que el usuario puede introducir.
+
+---
+
+# Límite seguro de Number
+
+El valor interno del componente utiliza el tipo JavaScript:
+
+```ts
+number
+```
+
+JavaScript no puede representar con precisión arbitraria todos los números.
+
+Por este motivo, el componente respeta el límite:
+
+```ts
+Number.MAX_SAFE_INTEGER
+```
+
+cuyo valor es:
+
+```text
+9007199254740991
+```
+
+En `es-ES`:
+
+```text
+9.007.199.254.740.991
+```
+
+La parte entera introducida por el usuario no puede superar este límite.
+
+Por ejemplo:
+
+```text
+9.007.199.254.740.991
+```
+
+es válido.
+
+Pero intentar introducir:
+
+```text
+9.007.199.254.740.992
+```
+
+es rechazado.
+
+Cuando se intenta superar este límite:
+
+- Se mantiene el último valor válido.
+- No se actualiza el `FormControl`.
+- No se modifica el valor de `[(value)]`.
+- No se marca el `FormControl` como inválido.
+- Se muestra un `console.warn`.
+
+La restricción no representa un error de negocio ni una validación de Angular Forms, sino una limitación técnica necesaria para trabajar con valores `number`.
 
 ---
 
@@ -453,6 +634,8 @@ Muestra:
 ≈ 1.234,56 €
 ```
 
+Ni el prefijo ni el sufijo forman parte del valor interno.
+
 ---
 
 # Alineación
@@ -506,7 +689,7 @@ La alineación únicamente afecta a la presentación visual.
 
 # Valores mínimos y máximos
 
-Se pueden indicar límites visuales y funcionales:
+Se pueden indicar límites mediante `min` y `max`:
 
 ```html
 <app-input-number
@@ -528,6 +711,8 @@ control = new FormControl<number | null>(null, {
 
 En componentes conectados a Angular Forms se recomienda utilizar los validadores del `FormControl` como fuente principal de validación.
 
+Los valores `min` y `max` también se utilizan para limitar los botones de incremento y decremento.
+
 ---
 
 # Valores negativos
@@ -545,6 +730,8 @@ Para impedir valores negativos:
   [allowNegative]="false"
 />
 ```
+
+El signo negativo nunca forma parte de un prefijo o sufijo; forma parte del valor numérico.
 
 ---
 
@@ -590,7 +777,12 @@ Permite:
 ...
 ```
 
-Los botones respetan `min`, `max`, `disabled` y `readonly`.
+Los botones respetan:
+
+- `min`
+- `max`
+- `disabled`
+- `readonly`
 
 ---
 
@@ -630,9 +822,13 @@ Los mensajes predeterminados incluyen:
 
 ```text
 Campo obligatorio
+
 El valor mínimo es 0
+
 El valor máximo es 10000
+
 Formato inválido
+
 Valor inválido
 ```
 
@@ -656,6 +852,7 @@ También permite trabajar con errores personalizados que proporcionen un mensaje
 
 ```ts
 const validator = (control: AbstractControl) => {
+
   if (control.value !== 100) {
     return {
       importeInvalido: {
@@ -681,7 +878,7 @@ El componente utilizará automáticamente el `message`.
 />
 ```
 
-El usuario podrá visualizar el valor pero no modificarlo.
+El usuario podrá visualizar y seleccionar el valor, pero no modificarlo.
 
 ---
 
@@ -698,8 +895,11 @@ Cuando se utiliza Angular Forms también se respeta:
 
 ```ts
 control.disable();
+
 control.enable();
 ```
+
+El estado `disabled` del `FormControl` tiene prioridad cuando el componente está integrado con Angular Forms.
 
 ---
 
@@ -711,6 +911,8 @@ control.enable();
   helpText="Introduce el importe sin impuestos"
 />
 ```
+
+El texto aparece debajo del campo cuando no se está mostrando un mensaje de error.
 
 ---
 
@@ -742,6 +944,8 @@ o:
   [iconPosition]="'right'"
 />
 ```
+
+Actualmente `icon` representa el contenido visual del icono. La implementación puede sustituirse posteriormente por un sistema de iconos propio sin modificar el funcionamiento del componente.
 
 ---
 
@@ -791,50 +995,64 @@ Ejemplo:
 | `label` | `string` | `''` | Etiqueta |
 | `placeholder` | `string` | `''` | Placeholder |
 | `locale` | `string` | `'es-ES'` | Locale utilizado para el formato |
-| `useGrouping` | `boolean` | `true` | Separadores de miles |
-| `minFractionDigits` | `number` | `0` | Mínimo de decimales |
-| `maxFractionDigits` | `number` | `2` | Máximo de decimales |
+| `useGrouping` | `boolean` | `true` | Utiliza separadores de miles |
+| `minFractionDigits` | `number` | `0` | Mínimo de decimales mostrados |
+| `maxFractionDigits` | `number` | `2` | Máximo de decimales permitidos |
 | `roundingMode` | `'round' \| 'truncate'` | `'round'` | Redondeo o truncado visual |
-| `formatOnBlur` | `boolean` | `true` | Formatea al perder el foco |
-| `allowNegative` | `boolean` | `true` | Permite negativos |
+| `formatOnBlur` | `boolean` | `true` | Aplica el formato final al perder el foco |
+| `allowNegative` | `boolean` | `true` | Permite valores negativos |
 | `min` | `number \| null` | `null` | Valor mínimo |
 | `max` | `number \| null` | `null` | Valor máximo |
-| `step` | `number \| null` | `null` | Incremento de botones |
+| `step` | `number \| null` | `null` | Incremento utilizado por los botones |
 | `prefix` | `string` | `''` | Texto antes del valor |
 | `suffix` | `string` | `''` | Texto después del valor |
 | `textAlign` | `'left' \| 'center' \| 'right'` | `'left'` | Alineación del valor |
-| `showButtons` | `boolean` | `false` | Muestra botones +/- |
+| `showButtons` | `boolean` | `false` | Muestra botones de incremento/decremento |
 | `readonly` | `boolean` | `false` | Solo lectura |
 | `disabled` | `boolean` | `false` | Deshabilitado |
 | `required` | `boolean \| null` | `null` | Required manual o automático |
 | `invalid` | `boolean` | `false` | Estado inválido externo |
-| `errorMessage` | `string \| null` | `null` | Error personalizado |
+| `errorMessage` | `string \| null` | `null` | Mensaje de error personalizado |
 | `helpText` | `string \| null` | `null` | Texto de ayuda |
 | `icon` | `string \| null` | `null` | Icono |
 | `iconPosition` | `'left' \| 'right'` | `'left'` | Posición del icono |
 | `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Tamaño |
-| `id` | `string \| null` | `null` | ID personalizado |
+| `id` | `string \| null` | `null` | ID HTML personalizado |
 
 ---
 
-# Ejemplo completo
+# Integración con Angular Forms
+
+El componente implementa `ControlValueAccessor`, por lo que Angular Forms gestiona automáticamente:
+
+- Valor.
+- Cambios.
+- `touched`.
+- `dirty`.
+- `disabled`.
+- Validaciones.
+- Errores.
+- `formControl`.
+- `formControlName`.
+
+No es necesario implementar lógica adicional en el componente padre.
+
+Ejemplo:
 
 ```ts
 form = new FormGroup({
-  precio: new FormControl<number | null>(1234.5, {
-    validators: [
-      Validators.required,
-      Validators.min(0),
-      Validators.max(100000)
-    ]
-  }),
 
-  descuento: new FormControl<number | null>(15.5, {
-    validators: [
-      Validators.min(0),
-      Validators.max(100)
-    ]
-  })
+  precio: new FormControl<number | null>(1234.5, [
+    Validators.required,
+    Validators.min(0),
+    Validators.max(100000)
+  ]),
+
+  descuento: new FormControl<number | null>(15.5, [
+    Validators.min(0),
+    Validators.max(100)
+  ])
+
 });
 ```
 
@@ -863,17 +1081,7 @@ form = new FormGroup({
 </form>
 ```
 
-Visualmente:
-
-```text
-Precio
-€                              1.234,50
-
-Descuento
-                              15,50 %
-```
-
-Mientras que Angular mantiene:
+Angular mantiene:
 
 ```ts
 form.value
@@ -888,7 +1096,137 @@ como:
 }
 ```
 
-No se almacenan ni se envían los separadores, prefijos, sufijos ni el formato visual.
+No se almacenan los separadores, prefijos, sufijos ni el formato visual.
+
+---
+
+# Ejemplo completo
+
+### TypeScript
+
+```ts
+import {
+  Component
+} from '@angular/core';
+
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
+import {
+  InputNumberComponent
+} from './input-number/input-number.component';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    InputNumberComponent
+  ],
+  templateUrl: './example.component.html'
+})
+export class ExampleComponent {
+
+  form = new FormGroup({
+
+    precio: new FormControl<number | null>(1234.5, {
+      validators: [
+        Validators.required,
+        Validators.min(0),
+        Validators.max(100000)
+      ]
+    }),
+
+    descuento: new FormControl<number | null>(15.5, {
+      validators: [
+        Validators.min(0),
+        Validators.max(100)
+      ]
+    }),
+
+    cantidad: new FormControl<number | null>(10, {
+      validators: [
+        Validators.required,
+        Validators.min(0)
+      ]
+    })
+
+  });
+
+}
+```
+
+### HTML
+
+```html
+<form [formGroup]="form">
+
+  <app-input-number
+    label="Precio"
+    formControlName="precio"
+    prefix="€ "
+    [locale]="'es-ES'"
+    [minFractionDigits]="2"
+    [maxFractionDigits]="2"
+    [textAlign]="'right'"
+  />
+
+  <app-input-number
+    label="Descuento"
+    formControlName="descuento"
+    suffix=" %"
+    [minFractionDigits]="2"
+    [maxFractionDigits]="2"
+    [textAlign]="'right'"
+  />
+
+  <app-input-number
+    label="Cantidad"
+    formControlName="cantidad"
+    [step]="1"
+    [showButtons]="true"
+  />
+
+</form>
+```
+
+Visualmente:
+
+```text
+Precio
+
+€                         1.234,50
+
+Descuento
+
+                           15,50 %
+
+Cantidad
+
+                              10
+                           ▲
+                           ▼
+```
+
+Mientras que Angular mantiene:
+
+```ts
+form.value
+```
+
+como:
+
+```ts
+{
+  precio: 1234.5,
+  descuento: 15.5,
+  cantidad: 10
+}
+```
 
 ---
 
@@ -903,7 +1241,7 @@ input-number/
 └── validation.utils.ts
 ```
 
-### `input-number.component.ts`
+## `input-number.component.ts`
 
 Responsable de:
 
@@ -913,26 +1251,47 @@ Responsable de:
 - Estado del componente.
 - Eventos de usuario.
 - Incrementos/decrementos.
+- Comunicación entre el valor interno y la representación visual.
 
-### `number.utils.ts`
+## `number.utils.ts`
 
 Responsable de:
 
 - Conversión texto → número.
 - Formateo número → texto.
 - Localización.
-- Separadores.
-- Decimales.
+- Detección de separadores.
+- Formateo dinámico durante la edición.
+- Gestión de decimales.
+- Gestión del cursor.
 - Redondeo.
 - Truncado.
+- Validación del límite seguro de `Number`.
 
-### `validation.utils.ts`
+## `validation.utils.ts`
 
 Responsable de:
 
 - Detección de `required`.
 - Mensajes de validación.
 - Errores personalizados.
+
+---
+
+# Dependencias
+
+El componente no utiliza:
+
+- PrimeNG.
+- Angular Material.
+- Bootstrap.
+- Librerías externas de componentes.
+
+Las únicas dependencias son las proporcionadas por Angular, principalmente:
+
+- Angular Core.
+- Angular Forms cuando se utiliza integración con formularios.
+- APIs nativas del navegador como `Intl.NumberFormat`.
 
 ---
 
@@ -954,4 +1313,22 @@ de:
 1.234.567,89 €
 ```
 
-Por tanto, el componente puede utilizarse directamente con APIs, formularios y modelos TypeScript sin necesidad de convertir strings formateados a números antes de enviar los datos al backend.
+El valor utilizado por Angular Forms y `[(value)]` siempre es:
+
+```ts
+number | null
+```
+
+mientras que el formato visual puede depender de:
+
+- `locale`
+- `useGrouping`
+- `minFractionDigits`
+- `maxFractionDigits`
+- `roundingMode`
+- `prefix`
+- `suffix`
+
+Esto permite utilizar el componente directamente con APIs, formularios y modelos TypeScript sin necesidad de convertir strings formateados a números antes de enviar los datos al backend.
+
+Además, las restricciones técnicas de JavaScript `Number`, como `Number.MAX_SAFE_INTEGER`, se gestionan durante la edición para evitar almacenar valores que no puedan representarse de forma segura.

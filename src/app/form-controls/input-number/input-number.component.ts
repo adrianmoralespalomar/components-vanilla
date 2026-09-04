@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
+import { formatNumberInput } from './utils/format-number-input';
 import { formatNumberValue } from './utils/format-number-value';
-import { parseNumberValue } from './utils/parse-number-value';
 
 @Component({
   selector: 'app-input-number',
@@ -191,7 +191,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   writeValue(value: number | null): void {
     const numericValue = this.toNumberOrNull(value);
 
-    this.inputValue.set(this.focused() ? this.formatEditingValue(numericValue) : this.formatValue(numericValue));
+    this.inputValue.set(this.formatValue(numericValue));
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -316,36 +316,43 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
 
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
+
     const text = input.value;
+    const cursorPosition = input.selectionStart ?? text.length;
 
-    this.inputValue.set(text);
+    const result = formatNumberInput(text, cursorPosition, {
+      locale: this.locale(),
+      useGrouping: this.useGrouping(),
+      maxFractionDigits: this.maxFractionDigits(),
+      allowNegative: this.allowNegative()
+    });
 
-    const numericValue = parseNumberValue(text, this.locale(), this.allowNegative());
+    if (result.exceedsSafeInteger) {
+      console.warn(`InputNumber: el valor introducido supera el límite seguro de Number (${Number.MAX_SAFE_INTEGER}).`);
 
-    console.log('TEXT:', text);
-    console.log('PARSED:', numericValue);
+      // Restaurar el último valor válido
+      input.value = this.inputValue();
+
+      return;
+    }
+
+    this.inputValue.set(result.text);
+
+    input.value = result.text;
+
+    requestAnimationFrame(() => {
+      input.setSelectionRange(result.cursorPosition, result.cursorPosition);
+    });
 
     if (this.isFormBound) {
-      console.log('ANTES:', this.control?.value);
-
-      this.onChange(numericValue);
-
-      console.log('DESPUÉS:', this.control?.value);
-
-      queueMicrotask(() => {
-        console.log('MICROTASK:', this.control?.value);
-      });
+      this.onChange(result.value);
     } else {
-      this.value.set(numericValue);
+      this.value.set(result.value);
     }
   }
 
   onFocus(): void {
     this.focused.set(true);
-
-    const currentValue = this.currentValue;
-
-    this.inputValue.set(this.formatEditingValue(currentValue));
   }
 
   onBlur(): void {
@@ -419,7 +426,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
       this.value.set(nextValue);
     }
 
-    this.inputValue.set(this.focused() ? this.formatEditingValue(nextValue) : this.formatValue(nextValue));
+    this.inputValue.set(this.formatValue(nextValue));
   }
 
   private formatValue(value: number | null): string {
@@ -429,25 +436,6 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
       minFractionDigits: this.minFractionDigits(),
       maxFractionDigits: this.maxFractionDigits(),
       roundingMode: this.roundingMode()
-    });
-  }
-
-  /**
-   * Durante la edición evitamos los separadores de miles.
-   *
-   * Ejemplo:
-   * 1234567.89
-   *
-   * en vez de:
-   * 1.234.567,89
-   */
-  private formatEditingValue(value: number | null): string {
-    return formatNumberValue(value, {
-      locale: this.locale(),
-      useGrouping: false,
-      minFractionDigits: 0,
-      maxFractionDigits: 20,
-      roundingMode: 'round'
     });
   }
 
