@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { FormControlsTestComponent } from './form-controls-test.component';
-import { InputNumberTestComponent } from './input-number/input-number-test.component';
+import { InputNumberTestComponent } from './input-number-test/input-number-test.component';
 import { InputTextTestComponent } from './input-text-test/input-text-test.component';
+import { RadioButtonTestComponent } from './radio-button-test/radio-button-test.component';
 
 export const formControlsTestRoutes: Routes = [
   {
@@ -15,6 +16,10 @@ export const formControlsTestRoutes: Routes = [
       {
         path: 'input-number-test',
         component: InputNumberTestComponent
+      },
+      {
+        path: 'radio-button-test',
+        component: RadioButtonTestComponent
       }
     ]
   }

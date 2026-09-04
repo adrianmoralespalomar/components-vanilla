@@ -1,0 +1,49 @@
+<div class="radio-button-container" [class.radio-button-invalid]="showError" [class.radio-button-disabled]="isDisabled" [class.radio-button-readonly]="isReadonly" [class]="currentSizeClass">
+  @if (label()) {
+    <div class="radio-button-label" [id]="inputId + '-label'">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="radio-button-required" aria-hidden="true">*</span>
+      }
+    </div>
+  }
+
+  <div
+    class="radio-button-group"
+    [class.radio-button-group-horizontal]="orientation() === 'horizontal'"
+    [class.radio-button-group-vertical]="orientation() === 'vertical'"
+    role="radiogroup"
+    [attr.aria-labelledby]="label() ? inputId + '-label' : null"
+    [attr.aria-invalid]="showError"
+    [attr.aria-required]="isRequired"
+    [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null">
+    @for (option of options(); track $index) {
+      <label class="radio-button-option" [class.radio-button-option-disabled]="isDisabled">
+        <input class="radio-button-input" type="radio" [id]="inputId + '-' + $index" [name]="groupName" [checked]="isSelected(option.value)" [disabled]="isDisabled" [attr.aria-label]="option.label || null" (click)="selectOption(option, $event)" (blur)="onBlur()" />
+
+        <span class="radio-button-control" aria-hidden="true"></span>
+
+        @if (option.label) {
+          <span class="radio-button-option-label">
+            {{ option.label }}
+          </span>
+        }
+      </label>
+    }
+  </div>
+
+  @if (showError || helpText()) {
+    <div class="radio-button-extra">
+      @if (showError) {
+        <div class="radio-button-error" [id]="inputId + '-error'" role="alert">
+          {{ errorMessage() }}
+        </div>
+      } @else if (helpText()) {
+        <div class="radio-button-help" [id]="inputId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+    </div>
+  }
+</div>

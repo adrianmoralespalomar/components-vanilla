@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
     <div style="display:flex; gap:1rem;margin:1rem 0">
       <button mat-raised-button color="accent" [routerLink]="'input-text-test'">Input Text Test</button>
       <button mat-raised-button color="accent" [routerLink]="'input-number-test'">Input Number Test</button>
+      <button mat-raised-button color="accent" [routerLink]="'radio-button-test'">Radio Button Test</button>
     </div>
     <router-outlet />
   `
