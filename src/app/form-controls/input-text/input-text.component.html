@@ -9,13 +9,7 @@
     </label>
   }
 
-  <div
-    class="input-wrapper"
-    [class.input-wrapper--error]="showError"
-    [class.input-wrapper--disabled]="isDisabled"
-    [class.input-wrapper--readonly]="readonly()"
-    [class.input-wrapper--icon-left]="hasLeftIcon"
-    [class.input-wrapper--icon-right]="hasRightIcon">
+  <div class="input-wrapper" [class.input-wrapper--error]="showError" [class.input-wrapper--disabled]="isDisabled" [class.input-wrapper--readonly]="readonly()" [class.input-wrapper--icon-left]="hasLeftIcon" [class.input-wrapper--icon-right]="hasRightIcon">
     @if (hasLeftIcon) {
       <span class="input-icon input-icon--left" aria-hidden="true">
         {{ icon() }}
@@ -34,16 +28,14 @@
       [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
       [attr.aria-invalid]="showError"
       [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
+      [class.input-text-align-left]="textAlign() === 'left'"
+      [class.input-text-align-center]="textAlign() === 'center'"
+      [class.input-text-align-right]="textAlign() === 'right'"
       (input)="onInput($event)"
       (blur)="onBlur()" />
 
     @if (isPassword) {
-      <button
-        type="button"
-        class="password-toggle"
-        [disabled]="isDisabled"
-        [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-        (click)="togglePasswordVisibility()">
+      <button type="button" class="password-toggle" [disabled]="isDisabled" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="togglePasswordVisibility()">
         {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
       </button>
     }

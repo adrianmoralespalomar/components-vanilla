@@ -96,6 +96,7 @@ export class InputTextComponent implements ControlValueAccessor {
    * Estado disabled para uso sin Angular Forms.
    */
   readonly disabled = input<boolean>(false);
+  readonly textAlign = input<'left' | 'center' | 'right'>('left');
 
   // ---------------------------------------------------------------------------
   // Internal state

@@ -5,8 +5,23 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
 @Component({
   selector: 'app-input-text-test',
   imports: [InputTextComponent, ReactiveFormsModule],
+  styles: [
+    `
+      #valordefecto {
+        --input-text-border-color: #08ff10;
+        --input-text-border-hover-color: #6b7280;
+        --input-text-border-focus-color: #8b5cf6;
+
+        --input-text-background: #ffffff;
+        --input-text-text-color: #1f2937;
+        ::ng-deep .input-container {
+          width: 50%;
+        }
+      }
+    `
+  ],
   template: `
-    <app-input-text label="Valor por defecto" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" />
+    <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" />
     <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
     <app-input-text [label]="'Contraseña'" [type]="'password'" />
     <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" />

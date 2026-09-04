@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { InputNumberTestComponent } from './input-number/input-number-test.component';
-import { InputTextTestComponent } from './input-text-test/input-text-test.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-form-controls-test',
-  imports: [InputTextTestComponent, InputNumberTestComponent],
+  imports: [RouterModule],
   template: `
-    <!-- <app-input-text-test /> -->
-    <app-input-number-test />
+    <div style="display:flex; gap:1rem;margin:1rem 0">
+      <button mat-raised-button color="accent" [routerLink]="'input-text-test'">Input Text Test</button>
+      <button mat-raised-button color="accent" [routerLink]="'input-number-test'">Input Number Test</button>
+    </div>
+    <router-outlet />
   `
 })
 export class FormControlsTestComponent {}

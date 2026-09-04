@@ -1,27 +1,27 @@
 :host {
   display: block;
 
-  --input-border-color: #d1d5db;
-  --input-border-hover-color: #9ca3af;
-  --input-border-focus-color: #3b82f6;
+  --input-text-border-color: #d1d5db;
+  --input-text-border-hover-color: #9ca3af;
+  --input-text-border-focus-color: #3b82f6;
 
-  --input-background: #ffffff;
-  --input-disabled-background: #f3f4f6;
+  --input-text-background: #ffffff;
+  --input-text-disabled-background: #f3f4f6;
 
-  --input-text-color: #374151;
-  --input-placeholder-color: #9ca3af;
+  --input-text-text-color: #374151;
+  --input-text-placeholder-color: #9ca3af;
 
-  --input-error-color: #ef4444;
+  --input-text-error-color: #ef4444;
 
-  --input-label-color: #374151;
-  --input-help-color: #6b7280;
+  --input-text-label-color: #374151;
+  --input-text-help-color: #6b7280;
 
-  --input-radius: 6px;
+  --input-text-radius: 6px;
 
-  --input-height: 40px;
-  --input-padding-x: 12px;
+  --input-text-height: 40px;
+  --input-text-padding-x: 12px;
 
-  --input-font-size: 14px;
+  --input-text-font-size: 14px;
 }
 
 .input-container {
@@ -32,15 +32,15 @@
   display: block;
   margin-bottom: 6px;
 
-  color: var(--input-label-color);
+  color: var(--input-text-label-color);
 
-  font-size: var(--input-font-size);
+  font-size: var(--input-text-font-size);
   font-weight: 500;
 }
 
 .required-star {
   margin-left: 2px;
-  color: var(--input-error-color);
+  color: var(--input-text-error-color);
 }
 
 .input-wrapper {
@@ -50,12 +50,12 @@
   align-items: center;
 
   width: 100%;
-  height: var(--input-height);
+  height: var(--input-text-height);
 
-  border: 1px solid var(--input-border-color);
-  border-radius: var(--input-radius);
+  border: 1px solid var(--input-text-border-color);
+  border-radius: var(--input-text-radius);
 
-  background: var(--input-background);
+  background: var(--input-text-background);
 
   transition:
     border-color 0.15s ease,
@@ -63,54 +63,54 @@
 }
 
 .input-wrapper:hover:not(.input-wrapper--disabled):not(.input-wrapper--readonly) {
-  border-color: var(--input-border-hover-color);
+  border-color: var(--input-text-border-hover-color);
 }
 
 .input-wrapper:focus-within:not(.input-wrapper--disabled) {
-  border-color: var(--input-border-focus-color);
+  border-color: var(--input-text-border-focus-color);
 
-  box-shadow: 0 0 0 1px var(--input-border-focus-color);
+  box-shadow: 0 0 0 1px var(--input-text-border-focus-color);
 }
 
 .input-wrapper--error {
-  border-color: var(--input-error-color);
+  border-color: var(--input-text-error-color);
 }
 
 .input-wrapper--error:focus-within {
-  border-color: var(--input-error-color);
+  border-color: var(--input-text-error-color);
 
-  box-shadow: 0 0 0 1px var(--input-error-color);
+  box-shadow: 0 0 0 1px var(--input-text-error-color);
 }
 
 .input-wrapper--disabled {
-  background: var(--input-disabled-background);
+  background: var(--input-text-disabled-background);
 
   cursor: not-allowed;
 }
 
 .input-wrapper--readonly {
-  background: var(--input-disabled-background);
+  background: var(--input-text-disabled-background);
 }
 
 .input-element {
   width: 100%;
   height: 100%;
 
-  padding: 0 var(--input-padding-x);
+  padding: 0 var(--input-text-padding-x);
 
   border: 0;
   outline: 0;
 
   background: transparent;
 
-  color: var(--input-text-color);
+  color: var(--input-text-text-color);
 
-  font-size: var(--input-font-size);
+  font-size: var(--input-text-font-size);
   font-family: inherit;
 }
 
 .input-element::placeholder {
-  color: var(--input-placeholder-color);
+  color: var(--input-text-placeholder-color);
 }
 
 .input-element:disabled {
@@ -119,6 +119,18 @@
 
 .input-element:read-only {
   cursor: default;
+}
+
+.input-text-align-left {
+  text-align: left;
+}
+
+.input-text-align-center {
+  text-align: center;
+}
+
+.input-text-align-right {
+  text-align: right;
 }
 
 .input-wrapper--icon-left .input-element {
@@ -180,27 +192,27 @@
 }
 
 .error-message {
-  color: var(--input-error-color);
+  color: var(--input-text-error-color);
 }
 
 .help-message {
-  color: var(--input-help-color);
+  color: var(--input-text-help-color);
 }
 
 .char-counter {
   margin-left: auto;
 
-  color: var(--input-help-color);
+  color: var(--input-text-help-color);
 
   white-space: nowrap;
 }
 
 .input-container--small {
-  --input-height: 32px;
-  --input-font-size: 13px;
+  --input-text-height: 32px;
+  --input-text-font-size: 13px;
 }
 
 .input-container--large {
-  --input-height: 48px;
-  --input-font-size: 15px;
+  --input-text-height: 48px;
+  --input-text-font-size: 15px;
 }
