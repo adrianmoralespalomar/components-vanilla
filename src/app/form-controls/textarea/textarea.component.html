@@ -1,0 +1,57 @@
+<div class="textarea-container" [class.textarea-invalid]="showError" [class.textarea-disabled]="isDisabled" [class.textarea-readonly]="readonly()" [class]="currentSizeClass">
+  @if (label()) {
+    <label class="textarea-label" [class.textarea-label-disabled]="isDisabled" [attr.for]="textareaId">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="textarea-required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <textarea
+    class="textarea-input"
+    [id]="textareaId"
+    [name]="name()"
+    [value]="currentValue"
+    [placeholder]="placeholder()"
+    [rows]="rows()"
+    [attr.cols]="cols()"
+    [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
+    [required]="isRequired"
+    [readonly]="readonly()"
+    [disabled]="isDisabled"
+    [style.resize]="resize()"
+    [attr.aria-invalid]="isInvalid"
+    [attr.aria-required]="isRequired"
+    [attr.aria-describedby]="showError ? textareaId + '-error' : helpText() ? textareaId + '-help' : null"
+    [class.textarea-align-left]="textAlign() === 'left'"
+    [class.textarea-align-center]="textAlign() === 'center'"
+    [class.textarea-align-right]="textAlign() === 'right'"
+    (input)="onInput($event)"
+    (blur)="onBlur()"></textarea>
+
+  @if (showError || helpText() || showCharCount()) {
+    <div class="textarea-extra">
+      @if (showError) {
+        <div class="textarea-error" [id]="textareaId + '-error'" role="alert">
+          {{ currentErrorMessage }}
+        </div>
+      } @else if (helpText()) {
+        <div class="textarea-help" [id]="textareaId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+
+      @if (showCharCount()) {
+        <div class="textarea-character-count">
+          {{ currentLength }}
+
+          @if (currentMaxLength !== null) {
+            / {{ currentMaxLength }}
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
