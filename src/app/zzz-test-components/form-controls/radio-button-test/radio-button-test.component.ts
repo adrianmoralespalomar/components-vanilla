@@ -45,7 +45,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
     <form [formGroup]="form">
       <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
-        <app-radio-button label="Pais" [options]="countryOptions" formControlName="formControlRequerido" />
+        <app-radio-button label="Dentro de form Pais" [options]="countryOptions" formControlName="formControlRequerido" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>
     </form>

@@ -189,7 +189,7 @@ export class InputTextComponent implements ControlValueAccessor {
   }
 
   get inputId(): string {
-    return this.id() ?? this.generatedId;
+    return this.id() ? `${this.id()}-input-text` : this.generatedId;
   }
 
   get currentValue(): string {

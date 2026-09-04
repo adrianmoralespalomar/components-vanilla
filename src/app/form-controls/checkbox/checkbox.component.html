@@ -1,0 +1,61 @@
+<div class="checkbox-container" [class.checkbox-invalid]="showError" [class.checkbox-disabled]="isDisabled" [class.checkbox-readonly]="isReadonly" [class.checkbox-label-left]="labelPosition() === 'left'" [class.checkbox-label-right]="labelPosition() === 'right'" [class]="currentSizeClass">
+  <label class="checkbox-label" [class.checkbox-label-disabled]="isDisabled" [attr.for]="inputId">
+    @if (labelPosition() === 'left' && label()) {
+      <span class="checkbox-text">
+        {{ label() }}
+
+        @if (isRequired) {
+          <span class="checkbox-required" aria-hidden="true">*</span>
+        }
+      </span>
+    }
+
+    <span class="checkbox-control-wrapper">
+      <input
+        class="checkbox-input"
+        type="checkbox"
+        [id]="inputId"
+        [name]="name()"
+        [checked]="value()"
+        [disabled]="isDisabled"
+        [attr.aria-invalid]="showError"
+        [attr.aria-required]="isRequired"
+        [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
+        (click)="onClick($event)"
+        (change)="onChangeValue($event)"
+        (blur)="onBlur()" />
+
+      <span class="checkbox-control" aria-hidden="true">
+        @if (indeterminate()) {
+          <span class="checkbox-indeterminate"></span>
+        } @else if (value()) {
+          <span class="checkbox-check"></span>
+        }
+      </span>
+    </span>
+
+    @if (labelPosition() === 'right' && label()) {
+      <span class="checkbox-text">
+        {{ label() }}
+
+        @if (isRequired) {
+          <span class="checkbox-required" aria-hidden="true">*</span>
+        }
+      </span>
+    }
+  </label>
+
+  @if (showError || helpText()) {
+    <div class="checkbox-extra">
+      @if (showError) {
+        <div class="checkbox-error" [id]="inputId + '-error'" role="alert">
+          {{ errorMessage() }}
+        </div>
+      } @else if (helpText()) {
+        <div class="checkbox-help" [id]="inputId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+    </div>
+  }
+</div>

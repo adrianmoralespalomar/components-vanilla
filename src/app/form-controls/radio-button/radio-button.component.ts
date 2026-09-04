@@ -49,7 +49,7 @@ export class RadioButtonComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   get inputId(): string {
-    return this.id() ?? this.generatedId;
+    return this.id() ? `${this.id()}-radio-button` : this.generatedId;
   }
 
   get groupName(): string {

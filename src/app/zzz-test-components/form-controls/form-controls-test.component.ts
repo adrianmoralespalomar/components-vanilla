@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
       <button mat-raised-button color="accent" [routerLink]="'input-text-test'">Input Text Test</button>
       <button mat-raised-button color="accent" [routerLink]="'input-number-test'">Input Number Test</button>
       <button mat-raised-button color="accent" [routerLink]="'radio-button-test'">Radio Button Test</button>
+      <button mat-raised-button color="accent" [routerLink]="'checkbox-test'">Checkbox Test</button>
     </div>
     <router-outlet />
   `

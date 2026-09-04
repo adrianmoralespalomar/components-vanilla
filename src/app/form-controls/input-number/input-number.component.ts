@@ -219,7 +219,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   }
 
   get inputId(): string {
-    return this.id() ?? this.generatedId;
+    return this.id() ? `${this.id()}-input-number` : this.generatedId;
   }
 
   get currentValue(): number | null {
