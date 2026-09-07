@@ -19,10 +19,6 @@ import { formatNumberValue } from './utils/format-number-value';
   ]
 })
 export class InputNumberComponent implements ControlValueAccessor, OnInit {
-  // ---------------------------------------------------------------------------
-  // Inputs
-  // ---------------------------------------------------------------------------
-
   readonly label = input<string>('');
   readonly placeholder = input<string>('');
 

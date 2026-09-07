@@ -13,17 +13,17 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
     `
   ],
   template: `
-    <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+    <div class="container-formcontrol-test">
       <app-checkbox id="valorpordefecto" label="Valor por defecto con color distinto" [(value)]="valueByDefault" />
       <span>Valor control : {{ valueByDefault }}</span>
     </div>
-    <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+    <div class="container-formcontrol-test">
       <app-checkbox label="FormControl Requerido q tras 2s se marcara" [formControl]="formControlRequerido" />
       <span>Valor control : {{ formControlRequerido.value }}</span>
     </div>
 
     <form [formGroup]="form">
-      <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+      <div class="container-formcontrol-test">
         <app-checkbox label="Dentro de Form" formControlName="formControlRequerido" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>

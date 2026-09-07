@@ -1,5 +1,5 @@
 :host {
-  display: block;
+  display: inline-block;
   width: 100%;
 
   --checkbox-border-color: #d1d5db;

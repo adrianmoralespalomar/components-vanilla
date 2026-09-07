@@ -1,6 +1,6 @@
 :host {
-  display: block;
-
+  display: inline-block;
+  width: 100%;
   --input-text-border-color: #d1d5db;
   --input-text-border-hover-color: #9ca3af;
   --input-text-border-focus-color: #3b82f6;

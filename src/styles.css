@@ -7,3 +7,12 @@ body {
   padding: 1rem;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+.container-formcontrol-test {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border: 2px solid black;
+  padding: 1rem;
+  margin: 1rem;
+}

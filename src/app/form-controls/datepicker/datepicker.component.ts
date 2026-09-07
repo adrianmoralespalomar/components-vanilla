@@ -75,7 +75,18 @@ export class DatepickerComponent implements ControlValueAccessor {
    *
    * [(value)]="selectedDate"
    */
-  readonly value = model<Date | null>(null);
+  readonly value = model<Date | string | null>(null);
+
+  /**
+   * Decide en qué formato se emite el valor cuando el usuario selecciona una fecha.
+   */
+  readonly emitType = input<'date' | 'string'>('date');
+
+  /**
+   * Formato de visualización y parseo.
+   * Ejemplos válidos: 'DD/MM/YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY'
+   */
+  readonly format = input<string>('DD/MM/YYYY');
 
   // ---------------------------------------------------------------------------
   // Internal state
@@ -114,7 +125,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ControlValueAccessor
   // ---------------------------------------------------------------------------
 
-  private onChange: (value: Date | null) => void = () => {};
+  private onChange: (value: Date | string | null) => void = () => {};
 
   private onTouched: () => void = () => {};
 
@@ -158,7 +169,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.formStateVersion.update(value => value + 1);
   }
 
-  registerOnChange(fn: (value: Date | null) => void): void {
+  registerOnChange(fn: (value: Date | string | null) => void): void {
     this.onChange = fn;
   }
 
@@ -257,7 +268,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   get currentValue(): Date | null {
-    return this.isFormBound ? this.formValue() : this.value();
+    return this.isFormBound ? this.formValue() : this.normalizeValue(this.value());
   }
 
   get hasValue(): boolean {
@@ -283,6 +294,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ---------------------------------------------------------------------------
 
   toggle(): void {
+    console.log('pepe');
     if (this.isDisabled || this.readonly()) {
       return;
     }
@@ -414,12 +426,23 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.close();
   }
 
-  private setValue(value: Date | null): void {
+  private setValue(date: Date | null): void {
+    let outputValue: Date | string | null = date;
+
+    // Si hay fecha y nos piden devolver un string
+    if (date && this.emitType() === 'string') {
+      // Opción A: Devolverlo con la máscara visual actual (ej: "DD/MM/YYYY")
+      outputValue = this.formatDate(date);
+
+      // Opción B: Si prefieres que el string de salida sea siempre ISO estandar:
+      // outputValue = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
     if (this.isFormBound) {
-      this.formValue.set(value);
-      this.onChange(value);
+      this.formValue.set(date); // Mantenemos el Date internamente
+      this.onChange(outputValue);
     } else {
-      this.value.set(value);
+      this.value.set(outputValue);
     }
   }
 
@@ -550,8 +573,38 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   // ---------------------------------------------------------------------------
-  // Keyboard
+  // Keyboard & Input Events (Reemplaza la sección actual)
   // ---------------------------------------------------------------------------
+
+  onBlur(event: FocusEvent): void {
+    const input = event.target as HTMLInputElement;
+    const rawValue = input.value.trim();
+
+    if (!rawValue) {
+      this.setValue(null);
+    } else {
+      const parsedDate = this.parseDateString(rawValue);
+
+      if (parsedDate) {
+        this.setValue(parsedDate);
+        this.currentDate.set(new Date(parsedDate));
+      } else {
+        // Si el formato o la fecha son inválidos, reseteamos el valor interno
+        this.setValue(null);
+      }
+    }
+
+    // FUERZA al input visual del DOM a restaurar la fecha válida formateada o vaciarse
+    input.value = this.displayValue;
+
+    // Notificar a Angular Forms
+    this.onTouched();
+    if (this.isFormBound) {
+      this.control?.markAsTouched();
+      this.control?.updateValueAndValidity();
+      this.formStateVersion.update(value => value + 1);
+    }
+  }
 
   onKeyDown(event: KeyboardEvent): void {
     if (this.isDisabled || this.readonly()) {
@@ -559,18 +612,18 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
 
     switch (event.key) {
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
-
-        this.toggle();
-        break;
-
       case 'Escape':
         if (this.isOpen()) {
           event.preventDefault();
-
           this.close();
+        }
+        break;
+
+      // Flecha abajo para abrir el calendario cómodamente con el teclado
+      case 'ArrowDown':
+        if (!this.isOpen()) {
+          event.preventDefault();
+          this.open();
         }
         break;
 
@@ -580,6 +633,56 @@ export class DatepickerComponent implements ControlValueAccessor {
         }
         break;
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  // NUEVO HELPER: Parsea strings como "15/04/2026" o "15-04-2026"
+  private parseDateString(value: string): Date | null {
+    const fmt = this.format().toUpperCase();
+
+    // Detecta el separador usado en el formato (ej. '/' o '-')
+    const separatorMatch = fmt.match(/[^A-Z0-9]/);
+    if (!separatorMatch) return null;
+    const separator = separatorMatch[0];
+
+    const fmtParts = fmt.split(separator);
+    const valueParts = value.split(separator);
+
+    if (fmtParts.length !== 3 || valueParts.length !== 3) {
+      return null;
+    }
+
+    let day = 0;
+    let month = 0;
+    let year = 0;
+
+    for (let i = 0; i < 3; i++) {
+      const formatToken = fmtParts[i];
+      const rawVal = valueParts[i];
+      const numVal = parseInt(rawVal, 10);
+
+      if (isNaN(numVal)) return null;
+
+      if (formatToken === 'YYYY') {
+        if (rawVal.length !== 4) return null; // Garantiza año de 4 dígitos
+        year = numVal;
+      } else if (formatToken === 'MM') {
+        month = numVal - 1; // JS usa meses 0-11
+      } else if (formatToken === 'DD') {
+        day = numVal;
+      }
+    }
+
+    // Validar límites reales del calendario
+    const date = new Date(year, month, day);
+    if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+      return date;
+    }
+
+    return null;
   }
 
   // ---------------------------------------------------------------------------
@@ -619,11 +722,9 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   private formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
-
     const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear());
 
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
+    return this.format().toUpperCase().replace('YYYY', year).replace('MM', month).replace('DD', day);
   }
 }

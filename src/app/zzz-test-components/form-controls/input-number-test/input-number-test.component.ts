@@ -18,24 +18,35 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
     `
   ],
   template: `
-    <app-input-number label="Valor por defecto" [value]="2132.45" [textAlign]="'center'" />
-    <app-input-number id="valordefectoprefijo" label="Valor por defecto con prefijo y color distinto de borde" [value]="1234.56" prefix="€ " />
-    <app-input-number label="Valor deshabilitado" [value]="1234.56" [disabled]="true" />
-    <app-input-number label="Valor readonly" [value]="1234.56" [readonly]="true" />
-    <div style="display:flex; gap:1rem;">
+    <div class="container-formcontrol-test">
+      <app-input-number label="Valor por defecto" [value]="2132.45" [textAlign]="'center'" />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-number id="valordefectoprefijo" label="Valor por defecto con prefijo y color distinto de borde" [value]="1234.56" prefix="€ " />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-number label="Valor deshabilitado" [value]="1234.56" [disabled]="true" />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-number label="Valor readonly" [value]="1234.56" [readonly]="true" />
+    </div>
+    <div class="container-formcontrol-test">
       <app-input-number label="FormControl maximo 2 decimales" [formControl]="formControlRequerido" [minFractionDigits]="2" [maxFractionDigits]="2" />
       <span>Valor control : {{ formControlRequerido.value }}</span>
     </div>
     <form [formGroup]="form">
-      <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+      <div class="container-formcontrol-test">
         <app-input-number label="FormControlName requerido formato ingles" formControlName="formControlRequerido" [locale]="'en-US'" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>
-      <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+      <div class="container-formcontrol-test">
         <app-input-number label="FormControlName redondeado con 345.477777" formControlName="formControlRedondeado" [roundingMode]="'round'" [maxFractionDigits]="2" />
         <span>Valor control : {{ form.get('formControlRedondeado')?.value }}</span>
       </div>
-      <app-input-number label="FormControlName con controles maximo 10'" formControlName="formControlConControles" [min]="0" [max]="10" [step]="1" [showButtons]="true" />
+      <div class="container-formcontrol-test">
+        <app-input-number label="FormControlName con controles maximo 10'" formControlName="formControlConControles" [min]="0" [max]="10" [step]="1" [showButtons]="true" />
+        <span>Valor control : {{ form.get('formControlConControles')?.value }}</span>
+      </div>
     </form>
   `
 })

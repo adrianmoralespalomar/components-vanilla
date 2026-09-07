@@ -8,26 +8,30 @@ import { DatepickerComponent } from '@/form-controls/datepicker/datepicker.compo
   selector: 'app-datepicker-test',
   imports: [DatepickerComponent, ReactiveFormsModule],
   template: `
-    <div style="display:flex; gap:1rem;">
-      <app-datepicker label="Valor por defecto" [(value)]="defaultDate" placeholder="Selecciona una fecha" [clearable]="true" />
-
+    <div class="container-formcontrol-test ">
+      <app-datepicker label="Valor por defecto DATE salida Date" [(value)]="defaultDate" placeholder="Selecciona una fecha" [clearable]="true" />
       <span>Valor control : {{ defaultDate }}</span>
     </div>
+    <div class="container-formcontrol-test ">
+      <app-datepicker label="Valor por defecto DATE formato YYYY-MM-DD salida STRING" [(value)]="defaultDate2" [format]="'YYYY-MM-DD'" [emitType]="'string'" placeholder="Selecciona una fecha" [clearable]="true" />
+      <span>Valor control : {{ defaultDate2 }}</span>
+    </div>
+    <div class="container-formcontrol-test ">
+      <app-datepicker label="Valor por defecto STRING formato MM/DD/YYYY salida STRING" [(value)]="defaultDate3" [format]="'MM/DD/YYYY'" [emitType]="'string'" placeholder="Selecciona una fecha" [clearable]="true" />
+      <span>Valor control : {{ defaultDate3 }}</span>
+    </div>
+    <div class="container-formcontrol-test ">
+      <app-datepicker label="Valor por defecto NULL formato  DD/MM/YYYY salida DATE" [(value)]="defaultDate4" [format]="'DD/MM/YYYY'" [emitType]="'date'" placeholder="Selecciona una fecha" [clearable]="true" />
+      <span>Valor control : {{ defaultDate4 }}</span>
+    </div>
 
-    <div style="display:flex; gap:1rem;">
-      <app-datepicker label="FormControl requerido" [formControl]="formControlRequerido" [clearable]="true" />
-
-      <span>Valor control : {{ formControlRequerido.value }}</span>
+    <div class="container-formcontrol-test">
+      <app-datepicker label="FormControl requerido que tras 2s cambia de valor" [formControl]="formControlRequerido" [clearable]="true" />
+      <span>Valor control : {{ formControlRequerido.value?.toLocaleString('en-EN') }}</span>
     </div>
 
     <form [formGroup]="form">
-      <div
-        style="
-          display:flex;
-          gap:1rem;
-          align-items:center;
-          border:2px solid black;
-        ">
+      <div class="container-formcontrol-test ">
         <app-datepicker label="FormControlName requerido" formControlName="formControlRequerido" [clearable]="true" />
 
         <span>
@@ -40,6 +44,9 @@ import { DatepickerComponent } from '@/form-controls/datepicker/datepicker.compo
 })
 export class DatepickerTestComponent {
   defaultDate = new Date(2026, 8, 7);
+  defaultDate2 = new Date(2026, 8, 7);
+  defaultDate3 = '09/01/2026';
+  defaultDate4 = null;
 
   formControlRequerido = new FormControl<Date | null>(null, {
     validators: [Validators.required]
@@ -50,4 +57,10 @@ export class DatepickerTestComponent {
       validators: [Validators.required]
     })
   });
+
+  constructor() {
+    setTimeout(() => {
+      this.formControlRequerido.setValue(new Date(1997, 4, 3));
+    }, 2000);
+  }
 }

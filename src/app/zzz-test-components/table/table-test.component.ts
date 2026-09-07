@@ -1,14 +1,15 @@
+import { ButtonComponent } from '@/button/button.component';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-table-test',
-  imports: [RouterModule],
+  imports: [RouterModule, ButtonComponent],
   template: `
     <div style="display:flex; gap:1rem;margin:1rem 0">
-      <button mat-raised-button color="accent" [routerLink]="'table-noapi-test'">Table no API</button>
-      <button mat-raised-button color="accent" [routerLink]="'table-api-test'">Table with API</button>
-      <button mat-raised-button color="accent" [routerLink]="'table-selectable-test'">Table Selectable</button>
+      <app-button [label]="'Table no API'" [type]="'info'" [routerLink]="'table-noapi-test'" />
+      <app-button [label]="'Table with API'" [type]="'warning'" [routerLink]="'table-api-test'" />
+      <app-button [label]="'Table Selectable'" [type]="'danger'" [routerLink]="'table-selectable-test'" />
     </div>
     <router-outlet />
   `

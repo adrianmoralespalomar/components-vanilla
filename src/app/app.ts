@@ -1,16 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
+import { ButtonComponent } from './button/button.component';
 
 @Component({
   selector: 'app-root',
   template: `
     <div style="display:flex; gap:1rem;margin:1rem 0">
-      <button mat-raised-button color="accent" [routerLink]="'form-controls'">Form Controls</button>
-      <button mat-raised-button color="accent" [routerLink]="'table'">Table</button>
+      <app-button [label]="'Button'" [routerLink]="'button'" />
+      <app-button [label]="'Form Controls'" [type]="'secondary'" [routerLink]="'form-controls'" />
+      <app-button [label]="'Table'" [type]="'tertiary'" [routerLink]="'table'" />
     </div>
     <router-outlet />
   `,
-  imports: [RouterOutlet, RouterModule]
+  imports: [RouterOutlet, RouterModule, ButtonComponent]
 })
 export class App {
   protected readonly title = signal('components-vanilla');

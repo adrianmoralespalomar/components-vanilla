@@ -7,24 +7,24 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
   imports: [SelectComponent, ReactiveFormsModule],
   styles: [``],
   template: `
-    <div style="display:flex; gap:1rem;">
+    <div class="container-formcontrol-test">
       <app-select label="Valor por defecto " [options]="countries" [(value)]="defaultCountry" placeholder="Selecciona un país" [clearable]="true" />
       <span>Valor control : {{ defaultCountry }}</span>
     </div>
-    <div style="display:flex; gap:1rem;">
+    <div class="container-formcontrol-test">
       <app-select label="Valores por defecto seleccionados" [options]="countries" [multiple]="true" [(value)]="defaultSelectedCountries" [clearable]="true" />
       <span>Valor control : {{ defaultSelectedCountries }}</span>
     </div>
-    <div style="display:flex; gap:1rem;">
+    <div class="container-formcontrol-test">
       <app-select label="FormControl requerido" [options]="countries" [multiple]="true" [formControl]="formControlRequerido" [clearable]="true" />
       <span>Valor control : {{ formControlRequerido?.value }}</span>
     </div>
     <form [formGroup]="form">
-      <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+      <div class="container-formcontrol-test">
         <app-select label="FormControlName requerido" [options]="countries" formControlName="formControlRequerido" [clearable]="true" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>
-      <div style="display:flex; gap:1rem;align-items: center; border:2px solid black">
+      <div class="container-formcontrol-test">
         <app-select label="FormControlName requerido multiple al menos 2 opciones" [options]="countries" formControlName="formControlRequeridos" [clearable]="true" [multiple]="true" />
         <span>Valor control : {{ form.get('formControlRequeridos')?.value }}</span>
       </div>

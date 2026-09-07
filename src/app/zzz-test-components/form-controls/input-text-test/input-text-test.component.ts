@@ -21,13 +21,28 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
     `
   ],
   template: `
-    <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" />
-    <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
-    <app-input-text [label]="'Contraseña'" [type]="'password'" />
-    <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" />
+    <div class="container-formcontrol-test">
+      <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-text [label]="'Contraseña'" [type]="'password'" />
+    </div>
+    <div class="container-formcontrol-test">
+      <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" />
+      <span>Valor control : {{ formControlRequeridoYMax50Caract.value }}</span>
+    </div>
     <form [formGroup]="form">
-      <app-input-text label="Nombre" formControlName="formControlRequeridoYMax50Caract" />
-      <app-input-text label="Valor debe ser 'Adrian'" formControlName="formControlErrorCustom" />
+      <div class="container-formcontrol-test">
+        <app-input-text label="Nombre" formControlName="formControlRequeridoYMax50Caract" />
+        <span>Valor control : {{ form.get('formControlRequeridoYMax50Caract')?.value }}</span>
+      </div>
+      <div class="container-formcontrol-test">
+        <app-input-text label="Valor debe ser 'Adrian'" formControlName="formControlErrorCustom" />
+        <span>Valor control : {{ form.get('formControlErrorCustom')?.value }}</span>
+      </div>
     </form>
   `
 })

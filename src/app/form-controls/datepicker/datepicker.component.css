@@ -1,5 +1,5 @@
 :host {
-  display: block;
+  display: inline-block;
   width: 100%;
 
   --datepicker-border-color: #d1d5db;
@@ -499,4 +499,79 @@
 
 .datepicker-large .datepicker-trigger {
   min-height: 2.875rem;
+}
+
+.datepicker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 1. Este contenedor es el que simula el borde redondeado del input */
+.datepicker-input-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* Controla qué tan redondeadas son las esquinas */
+  padding: 0 12px;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Resaltado cuando el usuario hace foco en el texto o abre el popup */
+.datepicker-input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* 2. El input real pasa a ser invisible estructuralmente */
+.datepicker-input {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 15px;
+  color: #1f2937;
+  width: 100%;
+}
+
+/* 3. Botones integrados a la derecha */
+.datepicker-clear,
+.datepicker-calendar-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 4px;
+  margin-left: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb; /* Color azul como el de tu imagen */
+}
+
+.datepicker-clear {
+  color: #9ca3af;
+  font-size: 18px;
+}
+
+.datepicker-clear:hover {
+  color: #4b5563;
+}
+
+.datepicker-calendar-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 4. Posicionar el calendario flotante debajo del wrapper */
+.datepicker-calendar {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
 }
