@@ -1,11 +1,4 @@
-<div
-  class="aesy-input-number-container"
-  [class.aesy-input-number-invalid]="showError"
-  [class.aesy-input-number-disabled]="isDisabled"
-  [class.aesy-input-number-readonly]="isReadonly"
-  [class.aesy-input-number-with-icon]="hasIcon"
-  [class.aesy-input-number-icon-left]="hasIcon && iconPosition() === 'left'"
-  [class.aesy-input-number-icon-right]="hasIcon && iconPosition() === 'right'">
+<section class="aesy-input-number-container">
   @if (label()) {
     <label class="aesy-input-number-label" [attr.for]="inputId">
       {{ label() }}
@@ -16,7 +9,13 @@
     </label>
   }
 
-  <div class="aesy-input-number-wrapper">
+  <div
+    class="aesy-input-number-wrapper"
+    [class.aesy-input-number-invalid]="showError"
+    [class.aesy-input-number-disabled]="isDisabled"
+    [class.aesy-input-number-readonly]="isReadonly"
+    [class.aesy-input-number-icon-left]="hasIcon && iconPosition() === 'left'"
+    [class.aesy-input-number-icon-right]="hasIcon && iconPosition() === 'right'">
     @if (prefix()) {
       <span class="aesy-input-number-prefix">
         {{ prefix() }}
@@ -44,9 +43,9 @@
       [attr.aria-invalid]="showError"
       [attr.aria-required]="isRequired"
       [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
-      [class.aesy-input-number-align-left]="textAlign() === 'left'"
-      [class.aesy-input-number-align-center]="textAlign() === 'center'"
-      [class.aesy-input-number-align-right]="textAlign() === 'right'"
+      [class.aesy-form-control-text-align-left]="textAlign() === 'left'"
+      [class.aesy-form-control-text-align-center]="textAlign() === 'center'"
+      [class.aesy-form-control-text-align-right]="textAlign() === 'right'"
       (input)="onInput($event)"
       (focus)="onFocus()"
       (blur)="onBlur()" />
@@ -72,15 +71,17 @@
     }
   </div>
 
-  <div class="aesy-input-number-extra">
-    @if (showError) {
-      <small class="aesy-input-number-error" [id]="inputId + '-error'">
-        {{ currentErrorMessage }}
-      </small>
-    } @else if (helpText()) {
-      <small class="aesy-input-number-help" [id]="inputId + '-help'">
-        {{ helpText() }}
-      </small>
-    }
-  </div>
-</div>
+  @if (showError || helpText()) {
+    <div class="aesy-input-number-extra">
+      @if (showError) {
+        <small class="aesy-input-number-error" [id]="inputId + '-error'">
+          {{ currentErrorMessage }}
+        </small>
+      } @else if (helpText()) {
+        <small class="aesy-input-number-help" [id]="inputId + '-help'">
+          {{ helpText() }}
+        </small>
+      }
+    </div>
+  }
+</section>

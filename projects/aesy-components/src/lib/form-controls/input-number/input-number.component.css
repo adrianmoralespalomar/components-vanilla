@@ -32,14 +32,14 @@
   --aesy-input-number-font-size: 0.875rem;
 }
 
-.aesy-input-number-container {
+section.aesy-input-number-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   font-family: inherit;
 }
 
-.aesy-input-number-label {
+label.aesy-input-number-label {
   margin-bottom: 0.4rem;
   font-size: var(--aesy-input-number-font-size);
   font-weight: 500;
@@ -52,65 +52,74 @@
 }
 
 .aesy-input-number-wrapper {
-  position: relative;
-
-  display: flex;
   align-items: center;
-
-  width: 100%;
-  min-height: var(--aesy-input-number-height);
-
-  border: 1px solid var(--aesy-input-number-border-color);
-  border-radius: var(--aesy-input-number-radius);
-
   background: var(--aesy-input-number-background);
-
+  border-radius: var(--aesy-input-number-radius);
+  border: 1px solid var(--aesy-input-number-border-color);
+  display: flex;
+  min-height: var(--aesy-input-number-height);
+  position: relative;
+  width: 100%;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
-}
+  &.aesy-input-number-invalid {
+    border-color: var(--aesy-input-number-error-color);
+    &:focus-within {
+      border-color: var(--aesy-input-number-error-color);
+      box-shadow: 0 0 0 1px var(--aesy-input-number-error-color);
+    }
+  }
+  &.aesy-input-number-disabled {
+    background: var(--aesy-input-number-disabled-background);
+    border-color: var(--aesy-input-number-border-color);
+    cursor: default;
+    & .aesy-input-number-input {
+      color: var(--aesy-input-number-disabled-text-color);
+      cursor: default;
+    }
+  }
+  &.aesy-input-number-readonly {
+    background: var(--aesy-input-number-readonly-background);
+  }
+  &:hover:not(:focus-within) {
+    border-color: var(--aesy-input-number-border-hover-color);
+  }
+  &:focus-within {
+    border-color: var(--aesy-input-number-border-focus-color);
+    box-shadow: 0 0 0 1px var(--aesy-input-number-border-focus-color);
+  }
 
-.aesy-input-number-wrapper:hover:not(:focus-within) {
-  border-color: var(--aesy-input-number-border-hover-color);
-}
+  & .aesy-input-number-icon {
+    flex: 0 0 auto;
+    color: var(--aesy-input-number-icon-color);
+    user-select: none;
+    &.aesy-input-number-icon-left {
+      margin-left: 0.75rem;
+      margin-right: 0.5rem;
+    }
 
-.aesy-input-number-wrapper:focus-within {
-  border-color: var(--aesy-input-number-border-focus-color);
-  box-shadow: 0 0 0 1px var(--aesy-input-number-border-focus-color);
+    &.aesy-input-number-icon-right {
+      margin-left: 0.5rem;
+      margin-right: 0.75rem;
+    }
+  }
 }
 
 .aesy-input-number-input {
-  flex: 1;
-
-  width: 100%;
-  min-width: 0;
-  height: 100%;
-
-  padding: 0 var(--aesy-input-number-padding-x);
-
-  border: 0;
-  outline: none;
-
   background: transparent;
+  border: 0;
   color: var(--aesy-input-number-text-color);
-
+  flex: 1;
   font: inherit;
-}
-
-.aesy-input-number-input::placeholder {
-  color: var(--aesy-input-number-placeholder-color);
-}
-
-.aesy-input-number-align-left {
-  text-align: left;
-}
-
-.aesy-input-number-align-center {
-  text-align: center;
-}
-
-.aesy-input-number-align-right {
-  text-align: right;
+  height: 100%;
+  min-width: 0;
+  outline: none;
+  padding: 0 var(--aesy-input-number-padding-x);
+  width: 100%;
+  &::placeholder {
+    color: var(--aesy-input-number-placeholder-color);
+  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -138,108 +147,20 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/* Icons                                                                      */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-icon {
-  flex: 0 0 auto;
-
-  color: var(--aesy-input-number-icon-color);
-
-  user-select: none;
-}
-
-.aesy-input-number-icon-left {
-  margin-left: 0.75rem;
-  margin-right: 0.5rem;
-}
-
-.aesy-input-number-icon-right {
-  margin-left: 0.5rem;
-  margin-right: 0.75rem;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Invalid                                                                    */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-invalid .aesy-input-number-wrapper {
-  border-color: var(--aesy-input-number-error-color);
-}
-
-.aesy-input-number-invalid .aesy-input-number-wrapper:focus-within {
-  border-color: var(--aesy-input-number-error-color);
-  box-shadow: 0 0 0 1px var(--aesy-input-number-error-color);
-}
-
-/* -------------------------------------------------------------------------- */
-/* Disabled                                                                   */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-disabled .aesy-input-number-wrapper {
-  background: var(--aesy-input-number-disabled-background);
-  border-color: var(--aesy-input-number-border-color);
-  cursor: not-allowed;
-}
-
-.aesy-input-number-disabled .aesy-input-number-input {
-  color: var(--aesy-input-number-disabled-text-color);
-  cursor: not-allowed;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Readonly                                                                   */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-readonly .aesy-input-number-wrapper {
-  background: var(--aesy-input-number-readonly-background);
-}
-
-/* -------------------------------------------------------------------------- */
 /* Error / Help                                                               */
 /* -------------------------------------------------------------------------- */
 
 .aesy-input-number-extra {
   min-height: 1.25rem;
   padding-top: 0.25rem;
-}
-
-.aesy-input-number-error {
-  color: var(--aesy-input-number-error-color);
-  font-size: 0.75rem;
-}
-
-.aesy-input-number-help {
-  color: var(--aesy-input-number-help-color);
-  font-size: 0.75rem;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Sizes                                                                      */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-small .aesy-input-number-wrapper {
-  min-height: 2rem;
-}
-
-.aesy-input-number-small .aesy-input-number-input {
-  font-size: 0.8125rem;
-}
-
-.aesy-input-number-medium .aesy-input-number-wrapper {
-  min-height: 2.5rem;
-}
-
-.aesy-input-number-medium .aesy-input-number-input {
-  font-size: 0.875rem;
-}
-
-.aesy-input-number-large .aesy-input-number-wrapper {
-  min-height: 3rem;
-}
-
-.aesy-input-number-large .aesy-input-number-input {
-  font-size: 1rem;
+  & .aesy-input-number-error {
+    color: var(--aesy-input-number-error-color);
+    font-size: 0.75rem;
+  }
+  & .aesy-input-number-help {
+    color: var(--aesy-input-number-help-color);
+    font-size: 0.75rem;
+  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -250,35 +171,26 @@
   display: flex;
   flex-direction: column;
   align-self: stretch;
-
   width: 2rem;
-
   border-left: 1px solid var(--aesy-input-number-border-color);
-}
-
-.aesy-input-number-button {
-  flex: 1;
-  padding: 0;
-  border: 0;
-
-  background: transparent;
-  color: var(--aesy-input-number-button-color);
-
-  cursor: pointer;
-
-  font-size: 0.65rem;
-}
-
-.aesy-input-number-button:hover:not(:disabled) {
-  background: var(--aesy-input-number-button-hover-background);
-  color: var(--aesy-input-number-button-hover-color);
-}
-
-.aesy-input-number-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.aesy-input-number-button-increment {
-  border-bottom: 1px solid var(--aesy-input-number-border-color);
+  & .aesy-input-number-button {
+    flex: 1;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--aesy-input-number-button-color);
+    cursor: pointer;
+    font-size: 0.65rem;
+    &:hover:not(:disabled) {
+      background: var(--aesy-input-number-button-hover-background);
+      color: var(--aesy-input-number-button-hover-color);
+    }
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    & .aesy-input-number-button-increment {
+      border-bottom: 1px solid var(--aesy-input-number-border-color);
+    }
+  }
 }

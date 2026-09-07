@@ -22,7 +22,7 @@ import { ButtonComponent, InputNumberComponent } from 'aesy-components';
       <app-input-number label="Valor por defecto" [value]="2132.45" [textAlign]="'center'" />
     </div>
     <div class="container-formcontrol-test">
-      <app-input-number id="valordefectoprefijo" label="Valor por defecto con prefijo y color distinto de borde" [value]="1234.56" prefix="€ " />
+      <app-input-number id="valordefectoprefijo" label="Valor por defecto con prefijo y color distinto de borde" [value]="1234.56" [prefix]="'€'" />
     </div>
     <div class="container-formcontrol-test">
       <app-input-number label="Valor deshabilitado" [value]="1234.56" [disabled]="true" />
