@@ -1,0 +1,109 @@
+<div class="select-container" [class.select-invalid]="showError" [class.select-disabled]="isDisabled" [class.select-readonly]="readonly()" [class]="currentSizeClass">
+  @if (label()) {
+    <label class="select-label" [class.select-label-disabled]="isDisabled" [attr.for]="selectId">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="select-required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <div class="select-wrapper">
+    <button
+      class="select-trigger"
+      type="button"
+      [id]="selectId"
+      [name]="name()"
+      [disabled]="isDisabled"
+      [attr.aria-invalid]="isInvalid"
+      [attr.aria-required]="isRequired"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-controls]="listboxId"
+      [attr.aria-haspopup]="'listbox'"
+      [attr.aria-describedby]="showError ? selectId + '-error' : helpText() ? selectId + '-help' : null"
+      (click)="toggle()"
+      (keydown)="onKeyDown($event)">
+      <span class="select-value" [class.select-placeholder]="!hasValue">
+        @if (multiple()) {
+          @if (hasValue) {
+            <span class="select-tags">
+              @for (option of selectedOptions; track $index) {
+                <span class="select-tag">
+                  <span class="select-tag-label">
+                    {{ option.label }}
+                  </span>
+
+                  <button class="select-tag-remove" type="button" tabindex="-1" aria-label="Eliminar {{ option.label }}" (click)="selectOption(option, $event)">×</button>
+                </span>
+              }
+            </span>
+          } @else {
+            {{ placeholder() }}
+          }
+        } @else {
+          {{ hasValue ? displayLabel : placeholder() }}
+        }
+      </span>
+
+      @if (canClear) {
+        <span class="select-clear" role="button" tabindex="-1" aria-label="Limpiar selección" (click)="clear($event)">×</span>
+      }
+
+      <span class="select-arrow" [class.select-arrow-open]="isOpen()" aria-hidden="true">
+        <span class="select-arrow-icon"></span>
+      </span>
+    </button>
+
+    @if (isOpen()) {
+      <div class="select-dropdown" [id]="listboxId" role="listbox" [attr.aria-multiselectable]="multiple()">
+        @if (availableOptions.length === 0) {
+          <div class="select-empty">No hay opciones disponibles</div>
+        } @else {
+          @for (option of availableOptions; track $index) {
+            <div
+              class="select-option"
+              [class.select-option-selected]="isSelected(option)"
+              [class.select-option-disabled]="option.disabled"
+              [class.select-option-highlighted]="currentHighlightedIndex === $index"
+              role="option"
+              [attr.aria-selected]="isSelected(option)"
+              [attr.aria-disabled]="option.disabled"
+              (mouseenter)="!option.disabled && highlightedIndex.set($index)"
+              (click)="selectOption(option)">
+              @if (multiple()) {
+                <span class="select-option-check" [class.select-option-check-selected]="isSelected(option)" aria-hidden="true">
+                  @if (isSelected(option)) {
+                    <span class="select-option-checkmark"></span>
+                  }
+                </span>
+              }
+
+              <span class="select-option-label">
+                {{ option.label }}
+              </span>
+
+              @if (!multiple() && isSelected(option)) {
+                <span class="select-option-selected-icon" aria-hidden="true">✓</span>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  @if (showError || helpText()) {
+    <div class="select-extra">
+      @if (showError) {
+        <div class="select-error" [id]="selectId + '-error'" role="alert">
+          {{ currentErrorMessage }}
+        </div>
+      } @else if (helpText()) {
+        <div class="select-help" [id]="selectId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+    </div>
+  }
+</div>

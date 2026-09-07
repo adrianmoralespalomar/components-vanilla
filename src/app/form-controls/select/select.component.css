@@ -1,0 +1,420 @@
+:host {
+  display: block;
+  width: 100%;
+
+  --select-border-color: #d1d5db;
+  --select-border-hover-color: #9ca3af;
+  --select-border-focus-color: #3b82f6;
+  --select-border-error-color: #dc2626;
+
+  --select-background: #ffffff;
+  --select-disabled-background: #f3f4f6;
+  --select-readonly-background: #f9fafb;
+
+  --select-text-color: #374151;
+  --select-placeholder-color: #9ca3af;
+  --select-disabled-text-color: #9ca3af;
+
+  --select-label-color: #374151;
+  --select-help-color: #6b7280;
+  --select-error-color: #dc2626;
+
+  --select-option-hover-background: #f3f4f6;
+  --select-option-selected-background: #eff6ff;
+  --select-option-highlighted-background: #f3f4f6;
+
+  --select-option-selected-color: #2563eb;
+
+  --select-border-radius: 4px;
+
+  --select-font-size: 0.875rem;
+  --select-line-height: 1.5;
+
+  --select-padding-horizontal: 0.75rem;
+  --select-padding-vertical: 0.625rem;
+
+  --select-arrow-color: #6b7280;
+
+  --select-tag-background: #eff6ff;
+  --select-tag-color: #1d4ed8;
+  --select-tag-remove-color: #2563eb;
+
+  --select-container-width: 100%;
+}
+
+.select-container {
+  display: flex;
+  flex-direction: column;
+  width: var(--select-container-width);
+  gap: 0.375rem;
+}
+
+.select-label {
+  color: var(--select-label-color);
+  font-size: var(--select-font-size);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.select-label-disabled {
+  color: var(--select-disabled-text-color);
+}
+
+.select-required {
+  margin-left: 0.125rem;
+  color: var(--select-error-color);
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 2.5rem;
+  box-sizing: border-box;
+
+  padding: var(--select-padding-vertical) var(--select-padding-horizontal);
+
+  border: 1px solid var(--select-border-color);
+  border-radius: var(--select-border-radius);
+
+  background: var(--select-background);
+  color: var(--select-text-color);
+
+  font-family: inherit;
+  font-size: var(--select-font-size);
+  line-height: var(--select-line-height);
+
+  text-align: left;
+  cursor: pointer;
+
+  outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.select-trigger:hover:not(:disabled) {
+  border-color: var(--select-border-hover-color);
+}
+
+.select-trigger:focus-visible {
+  border-color: var(--select-border-focus-color);
+  box-shadow: 0 0 0 1px var(--select-border-focus-color);
+}
+
+.select-disabled .select-trigger {
+  background: var(--select-disabled-background);
+  color: var(--select-disabled-text-color);
+  cursor: not-allowed;
+}
+
+.select-readonly .select-trigger {
+  background: var(--select-readonly-background);
+  cursor: default;
+}
+
+.select-invalid .select-trigger {
+  border-color: var(--select-border-error-color);
+}
+
+.select-invalid .select-trigger:focus-visible {
+  box-shadow: 0 0 0 1px var(--select-border-error-color);
+}
+
+.select-value {
+  flex: 1;
+  min-width: 0;
+}
+
+.select-placeholder {
+  color: var(--select-placeholder-color);
+}
+
+.select-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.select-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+
+  padding: 0.125rem 0.375rem;
+
+  border-radius: 3px;
+
+  background: var(--select-tag-background);
+  color: var(--select-tag-color);
+
+  font-size: 0.8125rem;
+}
+
+.select-tag-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 1rem;
+  height: 1rem;
+
+  margin-left: 0.25rem;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--select-tag-remove-color);
+
+  font-size: 1rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.select-tag-remove:hover {
+  opacity: 0.7;
+}
+
+.select-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 1.25rem;
+  height: 1.25rem;
+
+  margin-right: 0.25rem;
+
+  color: var(--select-arrow-color);
+
+  font-size: 1.125rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.select-clear:hover {
+  color: var(--select-text-color);
+}
+
+.select-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 1.25rem;
+  height: 1.25rem;
+
+  margin-left: 0.25rem;
+}
+
+.select-arrow-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+
+  border-right: 1.5px solid var(--select-arrow-color);
+  border-bottom: 1.5px solid var(--select-arrow-color);
+
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.select-arrow-open .select-arrow-icon {
+  transform: rotate(225deg);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dropdown */
+/* -------------------------------------------------------------------------- */
+
+.select-dropdown {
+  position: absolute;
+  z-index: 1000;
+
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+
+  max-height: 16rem;
+  overflow-y: auto;
+
+  border: 1px solid var(--select-border-color);
+  border-radius: var(--select-border-radius);
+
+  background: var(--select-background);
+
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.select-option {
+  display: flex;
+  align-items: center;
+
+  min-height: 2.25rem;
+
+  padding: 0.5rem 0.75rem;
+
+  color: var(--select-text-color);
+
+  font-size: var(--select-font-size);
+  line-height: var(--select-line-height);
+
+  cursor: pointer;
+}
+
+.select-option:hover:not(.select-option-disabled) {
+  background: var(--select-option-hover-background);
+}
+
+.select-option-highlighted:not(.select-option-disabled) {
+  background: var(--select-option-highlighted-background);
+}
+
+.select-option-selected {
+  color: var(--select-option-selected-color);
+  background: var(--select-option-selected-background);
+}
+
+.select-option-disabled {
+  color: var(--select-disabled-text-color);
+  cursor: not-allowed;
+}
+
+.select-option-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.select-option-selected-icon {
+  flex: 0 0 auto;
+
+  margin-left: 0.75rem;
+
+  color: var(--select-option-selected-color);
+
+  font-weight: 600;
+}
+
+.select-option-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 1rem;
+  height: 1rem;
+
+  margin-right: 0.625rem;
+
+  border: 1px solid var(--select-border-color);
+  border-radius: 3px;
+
+  background: var(--select-background);
+}
+
+.select-option-check-selected {
+  border-color: var(--select-option-selected-color);
+  background: var(--select-option-selected-color);
+}
+
+.select-option-checkmark {
+  width: 0.5rem;
+  height: 0.25rem;
+
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.select-empty {
+  padding: 0.75rem;
+
+  color: var(--select-placeholder-color);
+
+  font-size: var(--select-font-size);
+  text-align: center;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Extra / validation */
+/* -------------------------------------------------------------------------- */
+
+.select-extra {
+  display: flex;
+  gap: 1rem;
+}
+
+.select-error {
+  color: var(--select-error-color);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.select-help {
+  color: var(--select-help-color);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Small */
+/* -------------------------------------------------------------------------- */
+
+.select-small {
+  --select-font-size: 0.75rem;
+  --select-padding-horizontal: 0.625rem;
+  --select-padding-vertical: 0.5rem;
+}
+
+.select-small .select-trigger {
+  min-height: 2.125rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Medium */
+/* -------------------------------------------------------------------------- */
+
+.select-medium {
+  --select-font-size: 0.875rem;
+  --select-padding-horizontal: 0.75rem;
+  --select-padding-vertical: 0.625rem;
+}
+
+.select-medium .select-trigger {
+  min-height: 2.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Large */
+/* -------------------------------------------------------------------------- */
+
+.select-large {
+  --select-font-size: 1rem;
+  --select-padding-horizontal: 0.875rem;
+  --select-padding-vertical: 0.75rem;
+}
+
+.select-large .select-trigger {
+  min-height: 2.875rem;
+}
