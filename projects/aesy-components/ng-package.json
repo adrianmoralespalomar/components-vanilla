@@ -3,5 +3,12 @@
   "dest": "../../dist/aesy-components",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": [
+    {
+      "glob": "**/theme/**/*.css",
+      "input": "src/lib",
+      "output": "."
+    }
+  ]
 }

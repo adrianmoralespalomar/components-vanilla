@@ -1,3 +1,4 @@
+@import '../dist/aesy-components/theme/public-theme.css';
 html,
 body {
   height: 100%;
