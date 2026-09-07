@@ -9,8 +9,6 @@ let nextInputId = 0;
 
 type InputTextType = 'text' | 'password' | 'email';
 
-type InputTextSize = 'small' | 'medium' | 'large';
-
 type IconPosition = 'left' | 'right';
 
 @Component({
@@ -75,8 +73,6 @@ export class InputTextComponent implements ControlValueAccessor {
   readonly icon = input<string | null>(null);
 
   readonly iconPosition = input<IconPosition>('left');
-
-  readonly size = input<InputTextSize>('medium');
 
   /**
    * ID opcional proporcionado por el consumidor.
@@ -189,7 +185,7 @@ export class InputTextComponent implements ControlValueAccessor {
   }
 
   get inputId(): string {
-    return this.id() ? `${this.id()}-input-text` : this.generatedId;
+    return this.id() ? `${this.id()}-aesy-input-text` : this.generatedId;
   }
 
   get currentValue(): string {

@@ -1,10 +1,10 @@
-<div class="input-container" [class.input-container--small]="size() === 'small'" [class.input-container--large]="size() === 'large'">
+<section class="input-container">
   @if (label()) {
     <label class="input-label" [attr.for]="inputId">
       {{ label() }}
 
       @if (isRequired) {
-        <span class="required-star" aria-hidden="true">*</span>
+        <span class="aesy-form-control-required-asterisk" aria-hidden="true">*</span>
       }
     </label>
   }
@@ -28,9 +28,9 @@
       [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
       [attr.aria-invalid]="showError"
       [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
-      [class.input-text-align-left]="textAlign() === 'left'"
-      [class.input-text-align-center]="textAlign() === 'center'"
-      [class.input-text-align-right]="textAlign() === 'right'"
+      [class.aesy-input-text-align-left]="textAlign() === 'left'"
+      [class.aesy-input-text-align-center]="textAlign() === 'center'"
+      [class.aesy-input-text-align-right]="textAlign() === 'right'"
       (input)="onInput($event)"
       (blur)="onBlur()" />
 
@@ -64,4 +64,4 @@
       }
     </div>
   }
-</div>
+</section>

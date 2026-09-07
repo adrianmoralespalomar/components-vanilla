@@ -1,10 +1,11 @@
+import { ButtonComponent } from '@/button/button.component';
 import { InputTextComponent } from '@/form-controls/input-text/input-text.component';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-input-text-test',
-  imports: [InputTextComponent, ReactiveFormsModule],
+  imports: [InputTextComponent, ReactiveFormsModule, ButtonComponent],
   styles: [
     `
       #valordefecto {
@@ -23,25 +24,24 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
   template: `
     <div class="container-formcontrol-test">
       <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" />
-    </div>
-    <div class="container-formcontrol-test">
       <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
-    </div>
-    <div class="container-formcontrol-test">
       <app-input-text [label]="'Contraseña'" [type]="'password'" />
     </div>
     <div class="container-formcontrol-test">
       <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" />
       <span>Valor control : {{ formControlRequeridoYMax50Caract.value }}</span>
+      <app-button [label]="'Save'" [disabled]="formControlRequeridoYMax50Caract.invalid" />
     </div>
     <form [formGroup]="form">
       <div class="container-formcontrol-test">
         <app-input-text label="Nombre" formControlName="formControlRequeridoYMax50Caract" />
         <span>Valor control : {{ form.get('formControlRequeridoYMax50Caract')?.value }}</span>
+        <app-button [label]="'Save'" [disabled]="form.get('formControlRequeridoYMax50Caract')?.invalid" [type]="'success'" />
       </div>
       <div class="container-formcontrol-test">
         <app-input-text label="Valor debe ser 'Adrian'" formControlName="formControlErrorCustom" />
         <span>Valor control : {{ form.get('formControlErrorCustom')?.value }}</span>
+        <app-button [label]="'Save'" [disabled]="form.get('formControlErrorCustom')?.invalid" [type]="'secondary'" />
       </div>
     </form>
   `

@@ -9,6 +9,6 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 export class ButtonComponent {
   readonly label = input<string>('');
   readonly type = input<'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warning' | 'danger'>('primary');
-  readonly disabled = input<boolean>(false);
+  readonly disabled = input<boolean | undefined>(false);
   buttonClick = output<PointerEvent>();
 }

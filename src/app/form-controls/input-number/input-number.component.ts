@@ -291,7 +291,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   }
 
   get currentSizeClass(): string {
-    return `input-number-${this.size()}`;
+    return `aesy-input-number-${this.size()}`;
   }
 
   get hasPrefix(): boolean {
