@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
       <button mat-raised-button color="accent" [routerLink]="'checkbox-test'">Checkbox Test</button>
       <button mat-raised-button color="accent" [routerLink]="'textarea-test'">Textarea Test</button>
       <button mat-raised-button color="accent" [routerLink]="'select-test'">Select Test</button>
+      <button mat-raised-button color="accent" [routerLink]="'datepicker-test'">Datepicker Test</button>
     </div>
     <router-outlet />
   `

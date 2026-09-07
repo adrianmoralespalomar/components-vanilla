@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { CheckboxTestComponent } from './checkbox-test/checkbox-test.component';
+import { DatepickerTestComponent } from './datepicker-test/datepicker-test.component';
 import { FormControlsTestComponent } from './form-controls-test.component';
 import { InputNumberTestComponent } from './input-number-test/input-number-test.component';
 import { InputTextTestComponent } from './input-text-test/input-text-test.component';
@@ -35,6 +36,10 @@ export const formControlsTestRoutes: Routes = [
       {
         path: 'select-test',
         component: SelectTestComponent
+      },
+      {
+        path: 'datepicker-test',
+        component: DatepickerTestComponent
       }
     ]
   }

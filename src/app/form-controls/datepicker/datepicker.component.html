@@ -1,0 +1,135 @@
+<div class="datepicker-container" [class.datepicker-invalid]="showError" [class.datepicker-disabled]="isDisabled" [class.datepicker-readonly]="readonly()" [class]="currentSizeClass">
+  @if (label()) {
+    <label class="datepicker-label" [class.datepicker-label-disabled]="isDisabled" [attr.for]="datepickerId">
+      {{ label() }}
+
+      @if (isRequired) {
+        <span class="datepicker-required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <div class="datepicker-wrapper">
+    <button
+      class="datepicker-trigger"
+      type="button"
+      [id]="datepickerId"
+      [name]="name()"
+      [disabled]="isDisabled"
+      [attr.aria-invalid]="isInvalid"
+      [attr.aria-required]="isRequired"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-controls]="calendarId"
+      [attr.aria-haspopup]="'dialog'"
+      [attr.aria-describedby]="showError ? datepickerId + '-error' : helpText() ? datepickerId + '-help' : null"
+      (click)="toggle()"
+      (keydown)="onKeyDown($event)">
+      <span class="datepicker-value" [class.datepicker-placeholder]="!hasValue">
+        {{ hasValue ? displayValue : placeholder() }}
+      </span>
+
+      @if (canClear) {
+        <span class="datepicker-clear" role="button" tabindex="-1" aria-label="Limpiar fecha" (click)="clear($event)">×</span>
+      }
+
+      <span class="datepicker-calendar-icon" aria-hidden="true">
+        <span class="datepicker-calendar-icon-inner"></span>
+      </span>
+    </button>
+
+    @if (isOpen()) {
+      <div class="datepicker-calendar" [id]="calendarId" role="dialog" aria-label="Selector de fecha">
+        <!-- Header -->
+
+        <div class="datepicker-header">
+          <button class="datepicker-nav" type="button" aria-label="Anterior" (click)="previous()">
+            <span class="datepicker-chevron left"></span>
+          </button>
+
+          <button class="datepicker-title" type="button" (click)="changeView()">
+            @if (viewMode() === 'days') {
+              {{ monthNames[currentDate().getMonth()] }}
+              {{ currentDate().getFullYear() }}
+            }
+
+            @if (viewMode() === 'months') {
+              {{ currentDate().getFullYear() }}
+            }
+
+            @if (viewMode() === 'years') {
+              {{ currentDate().getFullYear() - (currentDate().getFullYear() % 12) }}
+              -
+              {{ currentDate().getFullYear() - (currentDate().getFullYear() % 12) + 11 }}
+            }
+          </button>
+
+          <button class="datepicker-nav" type="button" aria-label="Siguiente" (click)="next()">
+            <span class="datepicker-chevron right"></span>
+          </button>
+        </div>
+
+        <!-- Days -->
+
+        @if (viewMode() === 'days') {
+          <div class="datepicker-content">
+            <div class="datepicker-grid">
+              @for (dayName of dayNames; track dayName) {
+                <div class="datepicker-day-name">
+                  {{ dayName }}
+                </div>
+              }
+
+              @for (date of calendarDays; track date.getTime()) {
+                <button type="button" class="datepicker-day" [class.datepicker-day-other-month]="!isCurrentMonth(date)" [class.datepicker-day-today]="isToday(date)" [class.datepicker-day-selected]="isSelected(date)" (click)="selectDate(date)">
+                  {{ date.getDate() }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Months -->
+
+        @if (viewMode() === 'months') {
+          <div class="datepicker-content">
+            <div class="datepicker-month-grid">
+              @for (month of monthNames; track month; let index = $index) {
+                <button type="button" class="datepicker-picker-item" [class.datepicker-picker-item-selected]="isCurrentMonthSelected(index)" (click)="selectMonth(index)">
+                  {{ month.substring(0, 3) }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Years -->
+
+        @if (viewMode() === 'years') {
+          <div class="datepicker-content">
+            <div class="datepicker-year-grid">
+              @for (year of years; track year) {
+                <button type="button" class="datepicker-picker-item" [class.datepicker-picker-item-selected]="isCurrentYearSelected(year)" (click)="selectYear(year)">
+                  {{ year }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (showError || helpText()) {
+    <div class="datepicker-extra">
+      @if (showError) {
+        <div class="datepicker-error" [id]="datepickerId + '-error'" role="alert">
+          {{ currentErrorMessage }}
+        </div>
+      } @else if (helpText()) {
+        <div class="datepicker-help" [id]="datepickerId + '-help'">
+          {{ helpText() }}
+        </div>
+      }
+    </div>
+  }
+</div>
