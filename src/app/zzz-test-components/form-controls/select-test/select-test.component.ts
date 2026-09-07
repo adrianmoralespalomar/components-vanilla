@@ -1,6 +1,6 @@
-import { SelectComponent } from '@/form-controls/select/select.component';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SelectComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-select-test',

@@ -6,6 +6,32 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+    "aesy-components": {
+      "projectType": "library",
+      "root": "projects/aesy-components",
+      "sourceRoot": "projects/aesy-components/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/aesy-components/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/aesy-components/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/aesy-components/tsconfig.spec.json"
+          }
+        }
+      }
+    },
     "components-vanilla": {
       "projectType": "application",
       "schematics": {},
@@ -24,7 +50,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css", "src/app/form-controls/theme/variables.css"]
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {

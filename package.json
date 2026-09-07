@@ -3,10 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "debugapp": "concurrently \"ng build aesy-components --watch\" \"wait-on dist/aesy-components/package.json && ng serve\"",
+    "generate-lib": "ng build aesy-components"
   },
   "private": true,
   "packageManager": "npm@11.4.2",
@@ -24,10 +22,13 @@
     "@angular/build": "^22.1.7",
     "@angular/cli": "^22.1.7",
     "@angular/compiler-cli": "^22.1.0",
+    "concurrently": "^10.0.5",
     "jsdom": "^28.0.0",
+    "ng-packagr": "^22.1.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wait-on": "^9.1.0"
   },
   "prettier": {
     "tabWidth": 2,

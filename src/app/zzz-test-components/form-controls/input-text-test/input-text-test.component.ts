@@ -1,7 +1,6 @@
-import { ButtonComponent } from '@/button/button.component';
-import { InputTextComponent } from '@/form-controls/input-text/input-text.component';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ButtonComponent, InputTextComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-input-text-test',

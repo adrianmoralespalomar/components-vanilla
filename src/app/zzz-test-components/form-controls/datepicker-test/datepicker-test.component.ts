@@ -2,7 +2,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { Component } from '@angular/core';
 
-import { DatepickerComponent } from '@/form-controls/datepicker/datepicker.component';
+import { DatepickerComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-datepicker-test',

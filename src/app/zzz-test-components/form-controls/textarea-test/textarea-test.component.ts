@@ -1,6 +1,6 @@
-import { TextareaComponent } from '@/form-controls/textarea/textarea.component';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TextareaComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-textarea-test',

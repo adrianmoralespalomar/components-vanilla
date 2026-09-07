@@ -1,7 +1,6 @@
-import { ButtonComponent } from '@/button/button.component';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
+import { ButtonComponent } from 'aesy-components';
 @Component({
   selector: 'app-form-controls-test',
   imports: [RouterModule, ButtonComponent],

@@ -1,6 +1,6 @@
-import { RadioButtonComponent } from '@/form-controls/radio-button/radio-button.component';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RadioButtonComponent } from 'aesy-components';
 @Component({
   selector: 'app-radio-button-test',
   imports: [RadioButtonComponent, ReactiveFormsModule],

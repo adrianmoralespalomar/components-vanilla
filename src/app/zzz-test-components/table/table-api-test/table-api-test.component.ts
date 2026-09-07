@@ -1,9 +1,6 @@
-import { PaginationMeta } from '@/table/models/pagination-meta.interface';
-import { RequestData } from '@/table/models/request-data.interface';
-import { TableConfig } from '@/table/models/table-config.interface';
-import { TableComponent } from '@/table/table.component';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
+import { PaginationMeta, RequestData, TableComponent, TableConfig } from 'aesy-components';
 import { map, Observable } from 'rxjs';
 
 @Component({

@@ -1,7 +1,5 @@
-import { PaginationMeta } from '@/table/models/pagination-meta.interface';
-import { TableConfig } from '@/table/models/table-config.interface';
-import { TableComponent } from '@/table/table.component';
 import { Component } from '@angular/core';
+import { PaginationMeta, TableComponent, TableConfig } from 'aesy-components';
 
 @Component({
   template: `

@@ -1,7 +1,6 @@
-import { ButtonComponent } from '@/button/button.component';
-import { InputNumberComponent } from '@/form-controls/input-number/input-number.component';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ButtonComponent, InputNumberComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-input-number-test',

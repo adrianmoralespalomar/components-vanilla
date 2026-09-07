@@ -1,6 +1,6 @@
-import { CheckboxComponent } from '@/form-controls/checkbox/checkbox.component';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CheckboxComponent } from 'aesy-components';
 @Component({
   selector: 'app-checkbox-test',
   imports: [CheckboxComponent, ReactiveFormsModule],

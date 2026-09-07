@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { ButtonComponent } from './button/button.component';
-
+import { ButtonComponent } from 'aesy-components';
 @Component({
   selector: 'app-root',
   template: `

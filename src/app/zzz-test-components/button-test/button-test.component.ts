@@ -1,7 +1,7 @@
-import { ButtonComponent } from '@/button/button.component';
 import { JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ButtonComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-button-test',

@@ -5,7 +5,7 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/app/*"],
-      "@form-controls": ["./src/app/form-controls/*"]
+      "aesy-components": ["./dist/aesy-components"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -30,6 +30,12 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/aesy-components/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/aesy-components/tsconfig.spec.json"
     }
   ]
 }
