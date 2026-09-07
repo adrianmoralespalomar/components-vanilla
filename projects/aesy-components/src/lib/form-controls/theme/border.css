@@ -1,0 +1,9 @@
+:root {
+  --aesy-form-controls-border: var(--aesy-form-controls-border-width) var(--aesy-form-controls-border-style) var(--aesy-form-controls-border-color);
+  --aesy-form-controls-border-color: #d1d5db;
+  --aesy-form-controls-border-color-hover: #6b7280;
+  --aesy-form-controls-border-color-focus: #525762;
+  --aesy-form-controls-border-width: 1px;
+  --aesy-form-controls-border-style: solid;
+  --aesy-form-controls-radius: 0.375rem;
+}

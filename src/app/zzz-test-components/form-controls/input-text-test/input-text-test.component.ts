@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonComponent, InputTextComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-input-text-test',
   imports: [InputTextComponent, ReactiveFormsModule, ButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [
     `
       #valordefecto {
-        --input-text-border-color: #08ff10;
-        --input-text-border-hover-color: #6b7280;
-        --input-text-border-focus-color: #8b5cf6;
+        --aesy-form-controls-label-required-asterisk-color: blue;
+        --aesy-input-text-border-color: #08ff10;
+        --aesy-input-text-border-hover-color: #6b7280;
+        --aesy-input-text-border-focus-color: #8b5cf6;
+        --aesy-input-text-background: #ffffff;
+        --aesy-input-text-text-color: #1f2937;
 
-        --input-text-background: #ffffff;
-        --input-text-text-color: #1f2937;
         ::ng-deep .input-container {
           width: 50%;
         }
@@ -22,8 +24,8 @@ import { ButtonComponent, InputTextComponent } from 'aesy-components';
   ],
   template: `
     <div class="container-formcontrol-test">
-      <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" />
-      <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [disabled]="true" />
+      <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño y asterisco azul" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" [required]="true" />
+      <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [icon]="'😍'" [disabled]="true" />
       <app-input-text [label]="'Contraseña'" [type]="'password'" />
     </div>
     <div class="container-formcontrol-test">

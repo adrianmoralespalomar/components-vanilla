@@ -5,8 +5,7 @@
   [class.aesy-input-number-readonly]="isReadonly"
   [class.aesy-input-number-with-icon]="hasIcon"
   [class.aesy-input-number-icon-left]="hasIcon && iconPosition() === 'left'"
-  [class.aesy-input-number-icon-right]="hasIcon && iconPosition() === 'right'"
-  [class]="currentSizeClass">
+  [class.aesy-input-number-icon-right]="hasIcon && iconPosition() === 'right'">
   @if (label()) {
     <label class="aesy-input-number-label" [attr.for]="inputId">
       {{ label() }}

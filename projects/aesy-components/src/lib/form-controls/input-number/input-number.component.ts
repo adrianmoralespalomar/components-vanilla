@@ -113,8 +113,6 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   readonly icon = input<string | null>(null);
   readonly iconPosition = input<'left' | 'right'>('left');
 
-  readonly size = input<'small' | 'medium' | 'large'>('medium');
-
   readonly id = input<string | null>(null);
 
   /**
@@ -288,10 +286,6 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
     }
 
     return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
-  }
-
-  get currentSizeClass(): string {
-    return `aesy-input-number-${this.size()}`;
   }
 
   get hasPrefix(): boolean {

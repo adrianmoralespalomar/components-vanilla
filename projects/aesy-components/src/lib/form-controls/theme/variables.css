@@ -1,23 +1,4 @@
 :root {
-  --aesy-form-controls-border-color: #d1d5db;
-  --aesy-form-controls-border-color-hover: #6b7280;
-  --aesy-form-controls-border-color-focus: #525762;
-  --aesy-form-controls-radius: 0.375rem;
-
-  --aesy-form-controls-background: #ffffff;
-  --aesy-form-controls-background-disabled: #f3f4f6;
-
-  --aesy-form-controls-label-color: #374151;
-  --aesy-form-controls-label-size: 0.875rem;
-  --aesy-form-controls-label-weight: 500;
-  --aesy-form-controls-label-margin-bottom: 0.4rem;
-
-  --aesy-form-controls-text-color: #374151;
-  --aesy-form-controls-text-color-placeholder: #9ca3af;
-  --aesy-form-controls-text-color-error: #ef4444;
-  --aesy-form-controls-text-size: 0.875rem;
-  --aesy-form-controls-text-weight: 500;
-
   --aesy-form-controls-height: 2.5rem;
   --aesy-form-controls-padding-x: 0.75rem;
 }
