@@ -1,6 +1,6 @@
-<section class="aesy-input-text-container">
+<section class="aesy-input-text-container" [class.aesy-input-text-error]="showError" [class.aesy-input-text-disabled]="isDisabled" [class.aesy-input-text-readonly]="readonly()">
   @if (label()) {
-    <label class="input-label" [attr.for]="inputId">
+    <label class="aesy-input-label" [attr.for]="inputId">
       {{ label() }}
 
       @if (isRequired) {
@@ -9,15 +9,15 @@
     </label>
   }
 
-  <div class="input-wrapper" [class.input-wrapper--error]="showError" [class.input-wrapper--disabled]="isDisabled" [class.input-wrapper--readonly]="readonly()" [class.input-wrapper--icon-left]="hasLeftIcon" [class.input-wrapper--icon-right]="hasRightIcon">
+  <div class="aesy-input-text-wrapper" [class.aesy-input-text-wrapper-icon-left]="hasLeftIcon" [class.aesy-input-text-wrapper-icon-right]="hasRightIcon">
     @if (hasLeftIcon) {
-      <span class="input-icon input-icon--left" aria-hidden="true">
+      <span class="aesy-input-icon aesy-input-icon-left" aria-hidden="true">
         {{ icon() }}
       </span>
     }
 
     <input
-      class="input-element"
+      class="aesy-input-text-input"
       [id]="inputId"
       [type]="inputType"
       [value]="currentValue"
@@ -35,32 +35,32 @@
       (blur)="onBlur()" />
 
     @if (isPassword) {
-      <button type="button" class="password-toggle" [disabled]="isDisabled" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="togglePasswordVisibility()">
+      <button type="button" class="aesy-password-toggle" [disabled]="isDisabled" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="togglePasswordVisibility()">
         {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
       </button>
     }
 
     @if (hasRightIcon && !isPassword) {
-      <span class="input-icon input-icon--right" aria-hidden="true">
+      <span class="aesy-input-icon aesy-input-icon-right" aria-hidden="true">
         {{ icon() }}
       </span>
     }
   </div>
 
   @if (showError || (showCharCount() && currentMaxLength !== null) || helpText()) {
-    <div class="input-extra-data">
+    <div class="aesy-input-text-extra-data">
       @if (showError) {
-        <div class="error-message" [id]="inputId + '-error'" role="alert">
+        <span class="error-message" [id]="inputId + '-error'" role="alert">
           {{ currentErrorMessage }}
-        </div>
+        </span>
       } @else if (helpText()) {
-        <div class="help-message" [id]="inputId + '-help'">
+        <span class="help-message" [id]="inputId + '-help'">
           {{ helpText() }}
-        </div>
+        </span>
       }
 
       @if (showCharCount() && currentMaxLength !== null) {
-        <div class="char-counter">{{ currentLength }} / {{ currentMaxLength }}</div>
+        <span class="char-counter">{{ currentLength }} / {{ currentMaxLength }}</span>
       }
     </div>
   }

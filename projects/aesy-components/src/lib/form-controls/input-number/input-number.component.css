@@ -2,195 +2,156 @@
   display: inline-block;
   width: 100%;
 
-  --aesy-input-number-border-color: #d1d5db;
-  --aesy-input-number-border-hover-color: #9ca3af;
-  --aesy-input-number-border-focus-color: #3b82f6;
-
-  --aesy-input-number-background: #ffffff;
-  --aesy-input-number-disabled-background: #f3f4f6;
-  --aesy-input-number-readonly-background: #f9fafb;
-
-  --aesy-input-number-text-color: #111827;
-  --aesy-input-number-disabled-text-color: #9ca3af;
-  --aesy-input-number-placeholder-color: #9ca3af;
-
-  --aesy-input-number-error-color: #dc2626;
-  --aesy-input-number-label-color: #374151;
-  --aesy-input-number-help-color: #6b7280;
-
   --aesy-input-number-prefix-color: #6b7280;
   --aesy-input-number-suffix-color: #6b7280;
-  --aesy-input-number-icon-color: #6b7280;
 
-  --aesy-input-number-button-color: #6b7280;
-  --aesy-input-number-button-hover-background: #f3f4f6;
-  --aesy-input-number-button-hover-color: #111827;
-
-  --aesy-input-number-radius: 6px;
-  --aesy-input-number-height: 2.5rem;
-  --aesy-input-number-padding-x: 12px;
-  --aesy-input-number-font-size: 0.875rem;
+  --aesy-input-number-buttons-background: var(--aesy-form-controls-background);
+  --aesy-input-number-buttons-background-hover: #e9e9e9;
+  --aesy-input-number-buttons-color: var(--aesy-form-controls-icon-color);
 }
 
 section.aesy-input-number-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   font-family: inherit;
+  width: 100%;
 }
 
 label.aesy-input-number-label {
-  margin-bottom: 0.4rem;
-  font-size: var(--aesy-input-number-font-size);
-  font-weight: 500;
-  color: var(--aesy-input-number-label-color);
+  color: var(--aesy-form-controls-label-color);
+  display: block;
+  font-size: var(--aesy-form-controls-label-size);
+  font-weight: var(--aesy-form-controls-label-weight);
+  margin-bottom: var(--aesy-form-controls-label-margin-bottom);
 }
 
-.aesy-input-number-required {
-  margin-left: 0.15rem;
-  color: var(--aesy-input-number-error-color);
-}
-
-.aesy-input-number-wrapper {
+div.aesy-input-number-wrapper {
   align-items: center;
-  background: var(--aesy-input-number-background);
-  border-radius: var(--aesy-input-number-radius);
-  border: 1px solid var(--aesy-input-number-border-color);
+  background: var(--aesy-form-controls-background);
+  border-radius: var(--aesy-form-controls-radius);
+  border: var(--aesy-form-controls-border);
   display: flex;
-  min-height: var(--aesy-input-number-height);
+  height: var(--aesy-form-controls-height);
   position: relative;
   width: 100%;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-  &.aesy-input-number-invalid {
-    border-color: var(--aesy-input-number-error-color);
-    &:focus-within {
-      border-color: var(--aesy-input-number-error-color);
-      box-shadow: 0 0 0 1px var(--aesy-input-number-error-color);
-    }
-  }
-  &.aesy-input-number-disabled {
-    background: var(--aesy-input-number-disabled-background);
-    border-color: var(--aesy-input-number-border-color);
-    cursor: default;
-    & .aesy-input-number-input {
-      color: var(--aesy-input-number-disabled-text-color);
-      cursor: default;
-    }
-  }
-  &.aesy-input-number-readonly {
-    background: var(--aesy-input-number-readonly-background);
-  }
-  &:hover:not(:focus-within) {
-    border-color: var(--aesy-input-number-border-hover-color);
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  /*Effects*/
+  &:hover {
+    border-color: var(--aesy-form-controls-border-color-hover);
   }
   &:focus-within {
-    border-color: var(--aesy-input-number-border-focus-color);
-    box-shadow: 0 0 0 1px var(--aesy-input-number-border-focus-color);
+    border-color: var(--aesy-form-controls-border-color-focus);
+    box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-focus);
   }
-
-  & .aesy-input-number-icon {
-    flex: 0 0 auto;
-    color: var(--aesy-input-number-icon-color);
-    user-select: none;
-    &.aesy-input-number-icon-left {
-      margin-left: 0.75rem;
-      margin-right: 0.5rem;
+  /*Status: error/disabled/readonly*/
+  section.aesy-input-number-error & {
+    border-color: var(--aesy-form-controls-border-color-error);
+    &:focus-within {
+      border-color: var(--aesy-form-controls-border-color-error);
+      box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-error);
     }
-
-    &.aesy-input-number-icon-right {
-      margin-left: 0.5rem;
-      margin-right: 0.75rem;
-    }
+  }
+  section.aesy-input-number-disabled & {
+    background: var(--aesy-form-controls-background-disabled);
+    cursor: default;
+  }
+  section.aesy-input-number-readonly & {
+    background: var(--aesy-form-controls-background-readonly);
+    cursor: default;
   }
 }
 
-.aesy-input-number-input {
+input.aesy-input-number-input {
   background: transparent;
   border: 0;
-  color: var(--aesy-input-number-text-color);
-  flex: 1;
-  font: inherit;
+  color: var(--aesy-form-controls-text-color);
+  font-family: inherit;
+  font-size: var(--aesy-form-controls-text-size);
   height: 100%;
   min-width: 0;
-  outline: none;
-  padding: 0 var(--aesy-input-number-padding-x);
+  outline: 0;
+  padding: 0 var(--aesy-form-controls-padding-x);
   width: 100%;
   &::placeholder {
-    color: var(--aesy-input-number-placeholder-color);
+    color: var(--aesy-form-controls-text-color-placeholder);
+  }
+  &:disabled,
+  &:read-only {
+    cursor: default;
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Prefix / Suffix                                                            */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-prefix,
-.aesy-input-number-suffix {
+span.aesy-input-number-icon {
+  color: var(--aesy-form-controls-icon-color);
   flex: 0 0 auto;
-
-  color: var(--aesy-input-number-prefix-color);
-
-  white-space: nowrap;
   user-select: none;
-}
-
-.aesy-input-number-prefix {
-  margin-left: 0.75rem;
-  margin-right: 0.5rem;
-}
-
-.aesy-input-number-suffix {
-  margin-left: 0.5rem;
-  margin-right: 0.75rem;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Error / Help                                                               */
-/* -------------------------------------------------------------------------- */
-
-.aesy-input-number-extra {
-  min-height: 1.25rem;
-  padding-top: 0.25rem;
-  & .aesy-input-number-error {
-    color: var(--aesy-input-number-error-color);
-    font-size: 0.75rem;
+  &.aesy-input-number-icon-left {
+    margin-left: var(--aesy-form-controls-icon-margin);
   }
-  & .aesy-input-number-help {
-    color: var(--aesy-input-number-help-color);
-    font-size: 0.75rem;
+  &.aesy-input-number-icon-right {
+    margin-right: var(--aesy-form-controls-icon-margin);
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Buttons                                                                    */
-/* -------------------------------------------------------------------------- */
+span.aesy-input-number-prefix,
+span.aesy-input-number-suffix {
+  color: var(--aesy-input-number-prefix-color);
+  flex: 0 0 auto;
+  user-select: none;
+  white-space: nowrap;
+  &.aesy-input-number-prefix {
+    margin-left: var(--aesy-form-controls-icon-margin);
+  }
 
-.aesy-input-number-buttons {
+  &.aesy-input-number-suffix {
+    margin-right: var(--aesy-form-controls-icon-margin);
+  }
+}
+
+div.aesy-input-number-buttons {
+  align-self: stretch;
+  border-bottom-right-radius: inherit;
+  border-left: var(--aesy-form-controls-border);
+  border-top-right-radius: inherit;
   display: flex;
   flex-direction: column;
-  align-self: stretch;
+  overflow: hidden;
   width: 2rem;
-  border-left: 1px solid var(--aesy-input-number-border-color);
-  & .aesy-input-number-button {
-    flex: 1;
-    padding: 0;
-    border: 0;
+  & button.aesy-input-number-button {
     background: transparent;
-    color: var(--aesy-input-number-button-color);
+    border: 0;
+    color: var(--aesy-form-controls-icon-color);
     cursor: pointer;
+    flex: 1;
     font-size: 0.65rem;
+    padding: 0;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
     &:hover:not(:disabled) {
-      background: var(--aesy-input-number-button-hover-background);
-      color: var(--aesy-input-number-button-hover-color);
+      background: var(--aesy-input-number-buttons-background-hover);
+      color: var(--aesy-input-number-buttons-color);
     }
     &:disabled {
-      cursor: not-allowed;
+      cursor: default;
       opacity: 0.5;
     }
-    & .aesy-input-number-button-increment {
-      border-bottom: 1px solid var(--aesy-input-number-border-color);
+    &.aesy-input-number-button-increment {
+      border-bottom: var(--aesy-form-controls-border);
     }
+  }
+}
+
+div.aesy-input-number-extra-data {
+  color: var(--aesy-form-controls-extra-data-text-color);
+  display: flex;
+  font-size: var(--aesy-form-controls-extra-data-text-size);
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: var(--aesy-form-controls-extra-data-margin-top);
+  & span.error-message {
+    color: var(--aesy-form-controls-extra-data-error-text-color);
   }
 }

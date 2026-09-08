@@ -1,4 +1,5 @@
-@import '../form-controls/theme/variables.css';
-@import '../form-controls/theme/border.css';
 @import '../form-controls/theme/background.css';
+@import '../form-controls/theme/border.css';
+@import '../form-controls/theme/icon.css';
 @import '../form-controls/theme/text.css';
+@import '../form-controls/theme/variables.css';

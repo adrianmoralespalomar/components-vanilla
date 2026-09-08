@@ -4,10 +4,13 @@
 }
 
 section.aesy-input-text-container {
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
   width: 100%;
 }
 
-label.input-label {
+label.aesy-input-label {
   color: var(--aesy-form-controls-label-color);
   display: block;
   font-size: var(--aesy-form-controls-label-size);
@@ -15,7 +18,7 @@ label.input-label {
   margin-bottom: var(--aesy-form-controls-label-margin-bottom);
 }
 
-.input-wrapper {
+div.aesy-input-text-wrapper {
   align-items: center;
   background: var(--aesy-form-controls-background);
   border-radius: var(--aesy-form-controls-radius);
@@ -25,45 +28,42 @@ label.input-label {
   position: relative;
   width: 100%;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-  &:hover:not(.input-wrapper--disabled):not(.input-wrapper--readonly) {
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  /*Effects*/
+  &:hover {
     border-color: var(--aesy-form-controls-border-color-hover);
   }
-  &:focus-within:not(.input-wrapper--disabled) {
+  &:focus-within {
     border-color: var(--aesy-form-controls-border-color-focus);
     box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-focus);
   }
-  &.input-wrapper--error {
-    border-color: var(--aesy-form-controls-text-color-error);
+  /*Status: error/disabled/readonly*/
+  section.aesy-input-text-error & {
+    border-color: var(--aesy-form-controls-border-color-error);
     &:focus-within {
-      border-color: var(--aesy-form-controls-text-color-error);
-      box-shadow: 0 0 0 1px var(--aesy-form-controls-text-color-error);
+      border-color: var(--aesy-form-controls-border-color-error);
+      box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-error);
     }
   }
-  &.input-wrapper--disabled {
+  section.aesy-input-text-disabled & {
     background: var(--aesy-form-controls-background-disabled);
     cursor: default;
   }
-  &.input-wrapper--readonly {
+  section.aesy-input-text-readonly & {
     background: var(--aesy-form-controls-background-readonly);
     cursor: default;
   }
-  &.input-wrapper--icon-left .input-element {
-    padding-left: 38px;
-  }
-  &.input-wrapper--icon-right .input-element {
-    padding-right: 38px;
-  }
 }
 
-.input-element {
+input.aesy-input-text-input {
   background: transparent;
   border: 0;
   color: var(--aesy-form-controls-text-color);
   font-family: inherit;
   font-size: var(--aesy-form-controls-text-size);
   height: 100%;
+  min-width: 0;
   outline: 0;
   padding: 0 var(--aesy-form-controls-padding-x);
   width: 100%;
@@ -76,50 +76,44 @@ label.input-label {
   }
 }
 
-.input-icon {
-  align-items: center;
-  color: #6b7280;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  position: absolute;
-  &.input-icon--left {
-    left: 12px;
+span.aesy-input-icon {
+  color: var(--aesy-form-controls-icon-color);
+  flex: 0 0 auto;
+  user-select: none;
+  &.aesy-input-icon-left {
+    margin-left: var(--aesy-form-controls-icon-margin);
   }
-  &.input-icon--right {
-    right: 12px;
+  &.aesy-input-icon-right {
+    margin-right: var(--aesy-form-controls-icon-margin);
   }
 }
 
-.password-toggle {
+button.aesy-password-toggle {
+  background: transparent;
+  border: 0;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 12px;
   margin-right: 8px;
   padding: 4px 6px;
-  border: 0;
-  background: transparent;
-  color: #3b82f6;
-  font-size: 12px;
-  cursor: pointer;
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
 }
 
-.input-extra-data {
+div.aesy-input-text-extra-data {
+  color: var(--aesy-form-controls-extra-data-text-color);
   display: flex;
-  font-size: 12px;
-  gap: 12px;
+  font-size: var(--aesy-form-controls-extra-data-text-size);
+  gap: 0.75rem;
   justify-content: space-between;
-  margin-top: 5px;
-  & .error-message {
-    color: var(--aesy-form-controls-text-color-error);
+  margin-top: var(--aesy-form-controls-extra-data-margin-top);
+  & span.error-message {
+    color: var(--aesy-form-controls-extra-data-error-text-color);
   }
-  & .help-message {
-    color: var(--aesy-form-controls-help-color);
-  }
-  & .char-counter {
+  & span.char-counter {
     margin-left: auto;
-    color: var(--aesy-form-controls-help-color);
     white-space: nowrap;
   }
 }

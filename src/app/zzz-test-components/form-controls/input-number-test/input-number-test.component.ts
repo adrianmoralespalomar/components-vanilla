@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ButtonComponent, InputNumberComponent } from 'aesy-components';
+import { InputNumberComponent } from 'aesy-components';
 
 @Component({
   selector: 'app-input-number-test',
-  imports: [InputNumberComponent, ReactiveFormsModule, ButtonComponent],
+  imports: [InputNumberComponent, ReactiveFormsModule],
   styles: [
     `
       #valordefectoprefijo {
-        --input-number-border-color: #08ff10;
-        --input-number-border-hover-color: #6b7280;
-        --input-number-border-focus-color: #8b5cf6;
+        --aesy-form-controls-border-color: #08ff10;
+        --aesy-form-controls-border-color-hover: #6b7280;
+        --aesy-form-controls-border-color-focus: #8b5cf6;
 
-        --input-number-background: #ffffff;
-        --input-number-text-color: #1f2937;
+        --aesy-form-controls-background: pink;
+        --aesy-form-controls-text-color: blue;
       }
     `
   ],

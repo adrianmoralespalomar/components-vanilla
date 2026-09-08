@@ -10,11 +10,11 @@ import { ButtonComponent, InputTextComponent } from 'aesy-components';
     `
       #valordefecto {
         --aesy-form-controls-label-required-asterisk-color: blue;
-        --aesy-input-text-border-color: #08ff10;
-        --aesy-input-text-border-hover-color: #6b7280;
-        --aesy-input-text-border-focus-color: #8b5cf6;
-        --aesy-input-text-background: #ffffff;
-        --aesy-input-text-text-color: #1f2937;
+        --aesy-form-controls-border-color: blue;
+        --aesy-form-controls-border-color-hover: pink;
+        --aesy-form-controls-border-color-focus: red;
+        --aesy-form-controls-background: orange;
+        --aesy-form-controls-text-color: purple;
 
         ::ng-deep .input-container {
           width: 50%;
@@ -24,12 +24,12 @@ import { ButtonComponent, InputTextComponent } from 'aesy-components';
   ],
   template: `
     <div class="container-formcontrol-test">
-      <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño y asterisco azul" placeholder="Introduce tu nombre" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" [required]="true" />
+      <app-input-text id="valordefecto" label="Valor por defecto con borde distinto y mitad tamaño y asterisco azul" [value]="'Probando con un valor por defecto sin formulario'" [textAlign]="'right'" [showCharCount]="true" [maxlength]="50" [required]="true" [icon]="'$$'" [iconPosition]="'right'" />
       <app-input-text label="Valor por defecto deshabilitado" [value]="'Probando con un valor por defecto sin formulario deshabilitado'" [icon]="'😍'" [disabled]="true" />
       <app-input-text [label]="'Contraseña'" [type]="'password'" />
     </div>
     <div class="container-formcontrol-test">
-      <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" />
+      <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" [showCharCount]="true" [maxlength]="50" />
       <span>Valor control : {{ formControlRequeridoYMax50Caract.value }}</span>
       <app-button [label]="'Save'" [disabled]="formControlRequeridoYMax50Caract.invalid" />
     </div>
