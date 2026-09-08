@@ -45,6 +45,8 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Mensaje explícito que sobrescribe los mensajes automáticos. */
   readonly errorMessage = input<string | null>(null);
 
+  readonly firstDayOfWeek = input<'monday' | 'sunday'>('monday');
+
   /** Formato de visualización y parseo. Ejemplos: DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY */
   readonly format = input<string>('DD/MM/YYYY');
 
@@ -57,6 +59,11 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly invalid = input<boolean>(false);
 
   readonly label = input<string>('');
+  /** Para mostrar los dias/meses en el calendario en su idioma */
+  readonly locale = input<string>('es-ES');
+
+  readonly minDate = input<Date | string | null>(null);
+  readonly maxDate = input<Date | string | null>(null);
 
   readonly name = input<string | null>(null);
 
@@ -473,14 +480,13 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ---------------------------------------------------------------------------
 
   selectDate(date: Date): void {
-    if (this.isDisabled || this.readonly()) {
+    if (this.isDisabled || this.readonly() || this.isDateDisabled(date)) {
       return;
     }
 
     const newValue = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
     this.setValue(newValue);
-
     this.close();
   }
 
@@ -550,38 +556,57 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ---------------------------------------------------------------------------
 
   get monthNames(): string[] {
-    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const formatter = new Intl.DateTimeFormat(this.locale(), {
+      month: 'long'
+    });
+
+    return Array.from({ length: 12 }, (_, month) => {
+      const date = new Date(2000, month, 1);
+      const monthName = formatter.format(date);
+
+      return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    });
   }
 
   get dayNames(): string[] {
-    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const formatter = new Intl.DateTimeFormat(this.locale(), {
+      weekday: 'short'
+    });
+
+    const days = Array.from({ length: 7 }, (_, day) => {
+      const date = new Date(2023, 0, 1 + day);
+      return formatter.format(date);
+    });
+
+    if (this.firstDayOfWeek() === 'sunday') {
+      return days;
+    }
+
+    return [...days.slice(1), days[0]];
   }
 
   get calendarDays(): Date[] {
     const current = this.currentDate();
-
     const year = current.getFullYear();
     const month = current.getMonth();
 
     const firstDay = new Date(year, month, 1).getDay();
+    const weekStart = this.firstDayOfWeek() === 'monday' ? 1 : 0;
+    const firstDayOffset = (firstDay - weekStart + 7) % 7;
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
     const daysInPreviousMonth = new Date(year, month, 0).getDate();
 
     const days: Date[] = [];
 
-    // Previous month
-    for (let i = firstDay - 1; i >= 0; i--) {
+    for (let i = firstDayOffset - 1; i >= 0; i--) {
       days.push(new Date(year, month - 1, daysInPreviousMonth - i));
     }
 
-    // Current month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day));
     }
 
-    // Next month
     const remaining = days.length % 7 === 0 ? 0 : 7 - (days.length % 7);
 
     for (let day = 1; day <= remaining; day++) {
@@ -629,6 +654,23 @@ export class DatepickerComponent implements ControlValueAccessor {
     return this.currentDate().getFullYear() === year;
   }
 
+  isDateDisabled(date: Date): boolean {
+    const minDate = this.normalizeValue(this.minDate());
+    const maxDate = this.normalizeValue(this.maxDate());
+
+    const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    if (minDate && currentDate < minDate) {
+      return true;
+    }
+
+    if (maxDate && currentDate > maxDate) {
+      return true;
+    }
+
+    return false;
+  }
+
   // ---------------------------------------------------------------------------
   // Keyboard & Input Events
   // ---------------------------------------------------------------------------
@@ -643,9 +685,9 @@ export class DatepickerComponent implements ControlValueAccessor {
     } else {
       const parsedDate = this.parseDateString(rawValue);
 
-      if (parsedDate) {
+      //If no date or date is disabled (>maxDate or <minDate)
+      if (parsedDate && !this.isDateDisabled(parsedDate)) {
         this.setValue(parsedDate);
-
         this.currentDate.set(new Date(parsedDate));
       } else {
         this.setValue(null);

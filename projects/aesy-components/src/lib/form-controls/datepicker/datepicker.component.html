@@ -93,6 +93,8 @@
                 [class.aesy-datepicker-container-days-other-month]="!isCurrentMonth(date)"
                 [class.aesy-datepicker-container-days-today]="isToday(date)"
                 [class.aesy-datepicker-container-days-selected]="isSelected(date)"
+                [class.aesy-datepicker-container-days-disabled]="isDateDisabled(date)"
+                [disabled]="isDateDisabled(date)"
                 (click)="selectDate(date)">
                 {{ date.getDate() }}
               </button>

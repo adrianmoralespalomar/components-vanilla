@@ -17,7 +17,16 @@ import { DatepickerComponent } from 'aesy-components';
       <span>Valor control : {{ defaultDate2 }}</span>
     </div>
     <div class="container-formcontrol-test ">
-      <app-datepicker label="Valor por defecto STRING formato MM/DD/YYYY salida STRING" [(value)]="defaultDate3" [format]="'MM/DD/YYYY'" [emitType]="'string'" placeholder="Selecciona una fecha" [clearable]="true" />
+      <app-datepicker
+        label="Valor por defecto STRING formato MM/DD/YYYY salida STRING minDate 2026-09-15 maxDate 2026-09-28 DIAS/MESES IN ENGLISH"
+        [(value)]="defaultDate3"
+        [format]="'MM/DD/YYYY'"
+        [emitType]="'string'"
+        placeholder="Selecciona una fecha"
+        [clearable]="true"
+        [minDate]="'2026-09-15'"
+        [maxDate]="'2026-09-28'"
+        [locale]="'en-GB'" />
       <span>Valor control : {{ defaultDate3 }}</span>
     </div>
     <div class="container-formcontrol-test ">
