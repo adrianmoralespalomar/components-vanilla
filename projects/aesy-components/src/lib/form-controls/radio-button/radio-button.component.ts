@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, model } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { areValuesEqual } from '../shared/utils/are-values-equal';
+import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
+import { hasRequiredValidator } from '../shared/utils/has-required-validator';
 import { RadioButtonOption } from './models/radio-button-options.interface';
 
 let nextRadioButtonId = 0;
@@ -20,90 +23,55 @@ let nextRadioButtonId = 0;
   ]
 })
 export class RadioButtonComponent implements ControlValueAccessor {
-  readonly options = input<RadioButtonOption[]>([]);
-
-  readonly orientation = input<'horizontal' | 'vertical'>('vertical');
-
-  readonly label = input<string>('');
-  readonly required = input<boolean | null>(null);
-
-  readonly readonly = input<boolean>(false);
+  // #region INPUTS
   readonly disabled = input<boolean>(false);
-
-  readonly invalid = input<boolean>(false);
   readonly errorMessage = input<string | null>(null);
   readonly helpText = input<string | null>(null);
-
-  readonly name = input<string | null>(null);
+  /** ID opcional proporcionado por el consumidor.*/
   readonly id = input<string | null>(null);
-
-  readonly size = input<'small' | 'medium' | 'large'>('medium');
-
+  /** Permite mostrar un estado de error cuando el componente se utiliza sin Angular Forms.*/
+  readonly invalid = input<boolean>(false);
+  readonly label = input<string>('');
+  readonly name = input<string | null>(null);
+  readonly options = input<RadioButtonOption[]>([]);
+  readonly orientation = input<'horizontal' | 'vertical'>('vertical');
+  readonly readonly = input<boolean>(false);
+  /** null = detectar automáticamente desde FormControl.*/
+  readonly required = input<boolean | null>(null);
+  /** Valor para uso sin Angular Forms.Permite: [(value)]="nombre"*/
   readonly value = model<any>(null);
+  // #endregion INPUTS
 
+  // #region INTERNAL STATE
+  private ngControl: NgControl | null = null;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly formDisabled = signal<boolean>(false);
+  /** Fuerza la actualización visual cuando cambia el estado interno del FormControl.*/
+  private readonly formStateVersion = signal(0);
+  private readonly formValue = signal<string>('');
   private readonly generatedId = `radio-button-${++nextRadioButtonId}`;
+  private readonly injector = inject(Injector);
+  // #endregion INTERNAL STATE
 
-  private isFormDisabled = false;
-
+  // #region CONTROL VALUE ACCESSOR
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
 
-  get inputId(): string {
-    return this.id() ? `${this.id()}-radio-button` : this.generatedId;
-  }
+  ngOnInit(): void {
+    this.ngControl = this.injector.get(NgControl, null);
+    const control = this.control;
 
-  get groupName(): string {
-    return this.name() ?? `${this.inputId}-group`;
-  }
+    if (!control) return;
 
-  get isDisabled(): boolean {
-    return this.disabled() || this.isFormDisabled;
-  }
-
-  get isReadonly(): boolean {
-    return this.readonly() && !this.isDisabled;
-  }
-
-  get isRequired(): boolean {
-    return this.required() === true;
-  }
-
-  get showError(): boolean {
-    return this.invalid() && !!this.errorMessage();
-  }
-
-  get currentSizeClass(): string {
-    return `radio-button-${this.size()}`;
-  }
-
-  get hasOptions(): boolean {
-    return this.options().length > 0;
-  }
-
-  isSelected(optionValue: any): boolean {
-    return areValuesEqual(this.value(), optionValue);
-  }
-
-  selectOption(option: RadioButtonOption, event?: Event): void {
-    if (event) {
-      event.preventDefault();
-    }
-
-    if (this.isDisabled || this.isReadonly) {
-      return;
-    }
-
-    this.value.set(option.value);
-    this.onChange(option.value);
-    this.onTouched();
-  }
-
-  onBlur(): void {
-    this.onTouched();
+    control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.formStateVersion.update(value => value + 1);
+    });
   }
 
   writeValue(value: any): void {
-    this.value.set(value);
+    const newValue = value ?? '';
+    this.formValue.set(newValue);
+    this.formStateVersion.update(value => value + 1);
   }
 
   registerOnChange(fn: (value: any) => void): void {
@@ -115,6 +83,105 @@ export class RadioButtonComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isFormDisabled = isDisabled;
+    this.formDisabled.set(isDisabled);
+    this.formStateVersion.update(value => value + 1);
   }
+
+  // #endregion CONTROL VALUE ACCESSOR
+
+  // #region GETTERS
+  get control() {
+    return this.ngControl?.control ?? null;
+  }
+
+  get isFormBound(): boolean {
+    return !!this.control;
+  }
+
+  get groupName(): string {
+    return this.name() ?? `${this.inputId}-group`;
+  }
+
+  get inputId(): string {
+    return this.id() ? `${this.id()}-aesy-radio-button` : this.generatedId;
+  }
+
+  get currentValue(): string {
+    return this.isFormBound ? this.formValue() : this.value();
+  }
+
+  get isDisabled(): boolean {
+    return this.isFormBound ? this.formDisabled() : this.disabled();
+  }
+
+  get isTouched(): boolean {
+    this.formStateVersion();
+    return !!this.control?.touched;
+  }
+
+  get isDirty(): boolean {
+    this.formStateVersion();
+    return !!this.control?.dirty;
+  }
+
+  get isInvalid(): boolean {
+    this.formStateVersion();
+    if (this.isFormBound) return !!this.control?.invalid;
+    return this.invalid();
+  }
+
+  get showError(): boolean {
+    if (!this.isInvalid) return false;
+    if (!this.isFormBound) return true;
+    return this.isTouched || this.isDirty;
+  }
+
+  get isReadonly(): boolean {
+    return this.readonly() && !this.isDisabled;
+  }
+
+  get isRequired(): boolean {
+    this.formStateVersion();
+    const explicitRequired = this.required();
+    if (explicitRequired !== null) return explicitRequired;
+    return hasRequiredValidator(this.control);
+  }
+
+  get currentErrorMessage(): string {
+    this.formStateVersion();
+    return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
+  }
+
+  get hasOptions(): boolean {
+    return this.options().length > 0;
+  }
+
+  // #endregion GETTERS
+
+  // #region EVENTS
+  isSelected(optionValue: any): boolean {
+    return areValuesEqual(this.currentValue, optionValue);
+  }
+
+  selectOption(option: RadioButtonOption, event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.isDisabled || this.isReadonly) return;
+
+    const newValue = option.value;
+    if (this.isFormBound) {
+      this.formValue.set(newValue);
+      this.onChange(newValue);
+    } else {
+      this.value.set(newValue);
+    }
+    this.onTouched();
+  }
+
+  onBlur(): void {
+    this.onTouched();
+    this.control?.markAsTouched();
+    this.control?.updateValueAndValidity();
+    this.formStateVersion.update(value => value + 1);
+  }
+  // #endregion EVENTS
 }

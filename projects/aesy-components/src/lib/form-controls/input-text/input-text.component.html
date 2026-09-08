@@ -1,6 +1,6 @@
 <section class="aesy-input-text-container" [class.aesy-input-text-error]="showError" [class.aesy-input-text-disabled]="isDisabled" [class.aesy-input-text-readonly]="readonly()">
   @if (label()) {
-    <label class="aesy-input-label" [attr.for]="inputId">
+    <label class="aesy-input-text-label" [attr.for]="inputId">
       {{ label() }}
 
       @if (isRequired) {

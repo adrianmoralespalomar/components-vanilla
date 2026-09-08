@@ -25,102 +25,51 @@ type IconPosition = 'left' | 'right';
   ]
 })
 export class InputTextComponent implements ControlValueAccessor {
-  // ---------------------------------------------------------------------------
-  // Inputs
-  // ---------------------------------------------------------------------------
-
-  readonly label = input<string>('');
-
-  readonly placeholder = input<string>('');
-
-  readonly type = input<InputTextType>('text');
-
-  readonly autocomplete = input<string>('off');
-
-  readonly maxlength = input<number | null>(null);
-
-  readonly showCharCount = input<boolean>(false);
-
+  // #region INPUTS
   /**
-   * Si es false y existe maxlength, el navegador impedirá
-   * escribir más caracteres.
-   *
-   * Si es true, permitimos escribir el valor completo y
-   * dejamos que Angular Forms marque el control como inválido.
+   * Si es false y existe maxlength, el navegador impedirá escribir más caracteres.
+   * Si es true, permitimos escribir el valor completo y dejamos que Angular Forms marque el control como inválido.
    */
   readonly allowTypeInvalidValue = input<boolean>(false);
-
-  readonly readonly = input<boolean>(false);
-
-  /**
-   * null = detectar automáticamente desde FormControl.
-   */
-  readonly required = input<boolean | null>(null);
-
-  /**
-   * Permite mostrar un estado de error cuando el componente
-   * se utiliza sin Angular Forms.
-   */
-  readonly invalid = input<boolean>(false);
-
-  /**
-   * Mensaje explícito que sobrescribe los mensajes automáticos.
-   */
-  readonly errorMessage = input<string | null>(null);
-
-  readonly helpText = input<string | null>(null);
-
-  readonly icon = input<string | null>(null);
-
-  readonly iconPosition = input<IconPosition>('left');
-
-  /**
-   * ID opcional proporcionado por el consumidor.
-   */
-  readonly id = input<string | null>(null);
-
-  /**
-   * Valor para uso sin Angular Forms.
-   *
-   * Permite:
-   *
-   * [(value)]="nombre"
-   */
-  readonly value = model<string>('');
-
-  /**
-   * Estado disabled para uso sin Angular Forms.
-   */
+  readonly autocomplete = input<string>('off');
+  /** Estado disabled para uso sin Angular Forms.*/
   readonly disabled = input<boolean>(false);
+  /** Mensaje explícito que sobrescribe los mensajes automáticos.*/
+  readonly errorMessage = input<string | null>(null);
+  readonly helpText = input<string | null>(null);
+  readonly icon = input<string | null>(null);
+  readonly iconPosition = input<IconPosition>('left');
+  /** ID opcional proporcionado por el consumidor.*/
+  readonly id = input<string | null>(null);
+  /** Permite mostrar un estado de error cuando el componente se utiliza sin Angular Forms.*/
+  readonly invalid = input<boolean>(false);
+  readonly label = input<string>('');
+  readonly maxlength = input<number | null>(null);
+  readonly placeholder = input<string>('');
+  readonly readonly = input<boolean>(false);
+  /** null = detectar automáticamente desde FormControl.*/
+  readonly required = input<boolean | null>(null);
+  readonly showCharCount = input<boolean>(false);
   readonly textAlign = input<'left' | 'center' | 'right'>('left');
+  readonly type = input<InputTextType>('text');
+  /** Valor para uso sin Angular Forms.Permite: [(value)]="nombre"*/
+  readonly value = model<string>('');
+  // #endregion INPUTS
 
-  // ---------------------------------------------------------------------------
-  // Internal state
-  // ---------------------------------------------------------------------------
-
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly injector = inject(Injector);
-
+  // #region INTERNAL STATE
   private ngControl: NgControl | null = null;
-
-  private readonly formValue = signal<string>('');
-
+  private readonly destroyRef = inject(DestroyRef);
   private readonly formDisabled = signal<boolean>(false);
-
+  /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
+  private readonly formStateVersion = signal(0);
+  private readonly formValue = signal<string>('');
+  private readonly generatedId = `app-input-text-${nextInputId++}`;
+  private readonly injector = inject(Injector);
   protected readonly showPassword = signal<boolean>(false);
 
-  /**
-   * Fuerza la actualización visual cuando cambia el estado
-   * interno del FormControl.
-   */
-  private readonly formStateVersion = signal(0);
+  // #endregion INTERNAL STATE
 
-  private readonly generatedId = `app-input-text-${nextInputId++}`;
-
-  // ---------------------------------------------------------------------------
-  // ControlValueAccessor
-  // ---------------------------------------------------------------------------
-
+  // #region CONTROL VALUE ACCESSOR
   private onChange: (value: string) => void = () => {};
 
   private onTouched: () => void = () => {};
@@ -129,22 +78,8 @@ export class InputTextComponent implements ControlValueAccessor {
     this.ngControl = this.injector.get(NgControl, null);
     const control = this.control;
 
-    if (!control) {
-      return;
-    }
+    if (!control) return;
 
-    /*
-     * events incluye cambios de:
-     *
-     * - value
-     * - status
-     * - touched
-     * - pristine/dirty
-     * - etc.
-     *
-     * Esto hace que el componente reaccione también cuando
-     * el FormControl es modificado desde fuera.
-     */
     control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.formStateVersion.update(value => value + 1);
     });
@@ -152,9 +87,7 @@ export class InputTextComponent implements ControlValueAccessor {
 
   writeValue(value: string | null): void {
     const newValue = value ?? '';
-
     this.formValue.set(newValue);
-
     this.formStateVersion.update(value => value + 1);
   }
 
@@ -168,14 +101,11 @@ export class InputTextComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.formDisabled.set(isDisabled);
-
     this.formStateVersion.update(value => value + 1);
   }
+  // #endregion CONTROL VALUE ACCESSOR
 
-  // ---------------------------------------------------------------------------
-  // Getters
-  // ---------------------------------------------------------------------------
-
+  // #region GETTERS
   get control() {
     return this.ngControl?.control ?? null;
   }
@@ -198,47 +128,30 @@ export class InputTextComponent implements ControlValueAccessor {
 
   get isTouched(): boolean {
     this.formStateVersion();
-
     return !!this.control?.touched;
   }
 
   get isDirty(): boolean {
     this.formStateVersion();
-
     return !!this.control?.dirty;
   }
 
   get isInvalid(): boolean {
     this.formStateVersion();
-
-    if (this.isFormBound) {
-      return !!this.control?.invalid;
-    }
-
+    if (this.isFormBound) return !!this.control?.invalid;
     return this.invalid();
   }
 
   get showError(): boolean {
-    if (!this.isInvalid) {
-      return false;
-    }
-
-    if (!this.isFormBound) {
-      return true;
-    }
-
+    if (!this.isInvalid) return false;
+    if (!this.isFormBound) return true;
     return this.isTouched || this.isDirty;
   }
 
   get isRequired(): boolean {
     this.formStateVersion();
-
     const explicitRequired = this.required();
-
-    if (explicitRequired !== null) {
-      return explicitRequired;
-    }
-
+    if (explicitRequired !== null) return explicitRequired;
     return hasRequiredValidator(this.control);
   }
 
@@ -248,27 +161,18 @@ export class InputTextComponent implements ControlValueAccessor {
 
   get currentMaxLength(): number | null {
     const explicitMaxLength = this.maxlength();
-
-    if (explicitMaxLength !== null) {
-      return explicitMaxLength;
-    }
-
+    if (explicitMaxLength !== null) return explicitMaxLength;
     const maxlengthError = this.control?.errors?.['maxlength'];
-
     return maxlengthError?.requiredLength ?? null;
   }
 
   get currentErrorMessage(): string {
     this.formStateVersion();
-
     return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
   }
 
   get inputType(): InputTextType {
-    if (this.type() === 'password' && this.showPassword()) {
-      return 'text';
-    }
-
+    if (this.type() === 'password' && this.showPassword()) return 'text';
     return this.type();
   }
 
@@ -283,11 +187,9 @@ export class InputTextComponent implements ControlValueAccessor {
   get hasRightIcon(): boolean {
     return !!this.icon() && this.iconPosition() === 'right';
   }
+  // #endregion GETTERS
 
-  // ---------------------------------------------------------------------------
-  // Events
-  // ---------------------------------------------------------------------------
-
+  // #region EVENTS
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const newValue = input.value;
@@ -302,14 +204,13 @@ export class InputTextComponent implements ControlValueAccessor {
 
   onBlur(): void {
     this.onTouched();
-
     this.control?.markAsTouched();
     this.control?.updateValueAndValidity();
-
     this.formStateVersion.update(value => value + 1);
   }
 
   togglePasswordVisibility(): void {
     this.showPassword.update(value => !value);
   }
+  // #endregion EVENTS
 }

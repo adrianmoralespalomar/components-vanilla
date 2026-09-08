@@ -10,7 +10,7 @@ section.aesy-input-text-container {
   width: 100%;
 }
 
-label.aesy-input-label {
+label.aesy-input-text-label {
   color: var(--aesy-form-controls-label-color);
   display: block;
   font-size: var(--aesy-form-controls-label-size);
