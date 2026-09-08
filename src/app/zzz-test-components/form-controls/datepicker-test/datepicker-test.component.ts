@@ -9,11 +9,11 @@ import { DatepickerComponent } from 'aesy-components';
   imports: [DatepickerComponent, ReactiveFormsModule],
   template: `
     <div class="container-formcontrol-test ">
-      <app-datepicker label="Valor por defecto DATE salida Date" [(value)]="defaultDate" placeholder="Selecciona una fecha" [clearable]="true" />
+      <app-datepicker label="Valor por defecto DATE salida Date" [(value)]="defaultDate" placeholder="Selecciona una fecha" [clearable]="true" [calendarWidth]="'full'" />
       <span>Valor control : {{ defaultDate }}</span>
     </div>
     <div class="container-formcontrol-test ">
-      <app-datepicker label="Valor por defecto DATE formato YYYY-MM-DD salida STRING" [(value)]="defaultDate2" [format]="'YYYY-MM-DD'" [emitType]="'string'" placeholder="Selecciona una fecha" [clearable]="true" />
+      <app-datepicker label="Valor por defecto disabled DATE formato YYYY-MM-DD salida STRING" [(value)]="defaultDate2" [format]="'YYYY-MM-DD'" [emitType]="'string'" placeholder="Selecciona una fecha" [clearable]="true" [disabled]="true" />
       <span>Valor control : {{ defaultDate2 }}</span>
     </div>
     <div class="container-formcontrol-test ">

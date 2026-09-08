@@ -1,19 +1,24 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, Injector, forwardRef, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+
+import { ConnectedPosition, Overlay, OverlayRef } from '@angular/cdk/overlay';
+
+import { TemplatePortal } from '@angular/cdk/portal';
+
+import { Subscription } from 'rxjs';
 
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
 
 let nextDatepickerId = 0;
 
-type DatepickerSize = 'small' | 'medium' | 'large';
-
 @Component({
   selector: 'app-datepicker',
   standalone: true,
+  imports: [],
   templateUrl: './datepicker.component.html',
   styleUrls: ['./datepicker.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,113 +31,121 @@ type DatepickerSize = 'small' | 'medium' | 'large';
   ]
 })
 export class DatepickerComponent implements ControlValueAccessor {
-  // ---------------------------------------------------------------------------
-  // Inputs
-  // ---------------------------------------------------------------------------
+  // #region INPUTS
 
-  readonly label = input<string>('');
-
-  readonly placeholder = input<string>('Selecciona una fecha');
-
-  /**
-   * Muestra un botón para limpiar la fecha seleccionada.
-   */
+  readonly calendarWidth = input<'auto' | 'full'>('auto');
+  /** Muestra un botón para limpiar la fecha seleccionada. */
   readonly clearable = input<boolean>(false);
-
-  readonly readonly = input<boolean>(false);
 
   readonly disabled = input<boolean>(false);
 
-  /**
-   * null = detectar automáticamente desde FormControl.
-   */
-  readonly required = input<boolean | null>(null);
+  /** Decide en qué formato se emite el valor cuando el usuario selecciona una fecha. */
+  readonly emitType = input<'date' | 'string'>('date');
 
-  /**
-   * Permite mostrar un estado de error cuando el componente
-   * se utiliza sin Angular Forms.
-   */
-  readonly invalid = input<boolean>(false);
-
-  /**
-   * Mensaje explícito que sobrescribe los mensajes automáticos.
-   */
+  /** Mensaje explícito que sobrescribe los mensajes automáticos. */
   readonly errorMessage = input<string | null>(null);
+
+  /** Formato de visualización y parseo. Ejemplos: DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY */
+  readonly format = input<string>('DD/MM/YYYY');
 
   readonly helpText = input<string | null>(null);
 
-  readonly size = input<DatepickerSize>('medium');
-
-  /**
-   * ID opcional proporcionado por el consumidor.
-   */
+  /** ID opcional proporcionado por el consumidor. */
   readonly id = input<string | null>(null);
+
+  /** Permite mostrar un estado de error cuando se utiliza sin Angular Forms. */
+  readonly invalid = input<boolean>(false);
+
+  readonly label = input<string>('');
 
   readonly name = input<string | null>(null);
 
-  /**
-   * Valor para uso sin Angular Forms.
-   *
-   * [(value)]="selectedDate"
-   */
+  readonly placeholder = input<string>('Selecciona una fecha');
+
+  readonly readonly = input<boolean>(false);
+
+  /** null = detectar automáticamente desde FormControl. */
+  readonly required = input<boolean | null>(null);
+  readonly textAlign = input<'left' | 'center' | 'right'>('left');
+
+  /** Valor para uso sin Angular Forms. */
   readonly value = model<Date | string | null>(null);
 
-  /**
-   * Decide en qué formato se emite el valor cuando el usuario selecciona una fecha.
-   */
-  readonly emitType = input<'date' | 'string'>('date');
+  // #endregion INPUTS
 
-  /**
-   * Formato de visualización y parseo.
-   * Ejemplos válidos: 'DD/MM/YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY'
-   */
-  readonly format = input<string>('DD/MM/YYYY');
+  // #region INTERNAL STATE
 
-  // ---------------------------------------------------------------------------
-  // Internal state
-  // ---------------------------------------------------------------------------
+  /** Mes/año que estamos visualizando. */
+  readonly currentDate = signal<Date>(new Date());
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly injector = inject(Injector);
-
-  private ngControl: NgControl | null = null;
-
-  private readonly formValue = signal<Date | null>(null);
 
   private readonly formDisabled = signal<boolean>(false);
 
-  /**
-   * Fuerza la actualización visual cuando cambia el estado
-   * interno del FormControl.
-   */
+  /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
   private readonly formStateVersion = signal(0);
+
+  private readonly formValue = signal<Date | null>(null);
 
   private readonly generatedId = `app-datepicker-${nextDatepickerId++}`;
 
+  private readonly injector = inject(Injector);
+
   readonly isOpen = signal(false);
 
-  /**
-   * Vista actual del datepicker.
-   */
+  private ngControl: NgControl | null = null;
+
+  /** Vista actual del datepicker. */
   readonly viewMode = signal<'days' | 'months' | 'years'>('days');
 
-  /**
-   * Mes/año que estamos visualizando.
-   */
-  readonly currentDate = signal<Date>(new Date());
+  // #endregion INTERNAL STATE
 
-  // ---------------------------------------------------------------------------
-  // ControlValueAccessor
-  // ---------------------------------------------------------------------------
+  // #region CDK OVERLAY
+
+  private readonly overlay = inject(Overlay);
+
+  private readonly viewContainerRef = inject(ViewContainerRef);
+
+  @ViewChild('calendarTrigger', { static: true })
+  private calendarTrigger!: ElementRef<HTMLButtonElement>;
+
+  @ViewChild('calendarInputWrapper', { static: true })
+  private calendarInputWrapper!: ElementRef<HTMLElement>;
+
+  @ViewChild('calendarTemplate')
+  private calendarTemplate!: TemplateRef<unknown>;
+
+  private overlayRef: OverlayRef | null = null;
+
+  private outsideClickSubscription: Subscription | null = null;
+
+  private readonly overlayPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 4
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -4
+    }
+  ];
+
+  // #endregion CDK OVERLAY
+
+  // #region CONTROL VALUE ACCESSOR
 
   private onChange: (value: Date | string | null) => void = () => {};
 
   private onTouched: () => void = () => {};
 
   ngOnInit(): void {
-    this.ngControl = this.injector.get(NgControl, null, {
-      self: true
-    });
+    this.ngControl = this.injector.get(NgControl, null, { self: true });
 
     const control = this.control;
 
@@ -140,21 +153,13 @@ export class DatepickerComponent implements ControlValueAccessor {
       return;
     }
 
-    /**
-     * events incluye cambios de:
-     *
-     * - value
-     * - status
-     * - touched
-     * - pristine/dirty
-     * - etc.
-     *
-     * Esto hace que el componente reaccione también cuando
-     * el FormControl es modificado desde fuera.
-     */
     control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.formStateVersion.update(value => value + 1);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.closeOverlay();
   }
 
   writeValue(value: Date | string | null): void {
@@ -187,9 +192,9 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Getters
-  // ---------------------------------------------------------------------------
+  // #endregion CONTROL VALUE ACCESSOR
+
+  // #region GETTERS
 
   get control() {
     return this.ngControl?.control ?? null;
@@ -200,11 +205,15 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   get datepickerId(): string {
-    return this.id() ? `${this.id()}-datepicker` : this.generatedId;
+    return this.id() ? `${this.id()}-aesy-datepicker` : this.generatedId;
   }
 
   get calendarId(): string {
-    return `${this.datepickerId}-calendar`;
+    return `${this.datepickerId}-aesy-calendar`;
+  }
+
+  get currentValue(): Date | null {
+    return this.isFormBound ? this.formValue() : this.normalizeValue(this.value());
   }
 
   get isDisabled(): boolean {
@@ -263,14 +272,6 @@ export class DatepickerComponent implements ControlValueAccessor {
     return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
   }
 
-  get currentSizeClass(): string {
-    return `datepicker-${this.size()}`;
-  }
-
-  get currentValue(): Date | null {
-    return this.isFormBound ? this.formValue() : this.normalizeValue(this.value());
-  }
-
   get hasValue(): boolean {
     return this.currentValue !== null;
   }
@@ -289,12 +290,11 @@ export class DatepickerComponent implements ControlValueAccessor {
     return this.formatDate(date);
   }
 
-  // ---------------------------------------------------------------------------
-  // Datepicker
-  // ---------------------------------------------------------------------------
+  // #endregion GETTERS
+
+  // #region DATEPICKER
 
   toggle(): void {
-    console.log('pepe');
     if (this.isDisabled || this.readonly()) {
       return;
     }
@@ -307,7 +307,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   open(): void {
-    if (this.isDisabled || this.readonly()) {
+    if (this.isDisabled || this.readonly() || this.isOpen()) {
       return;
     }
 
@@ -318,6 +318,9 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
 
     this.viewMode.set('days');
+
+    this.openOverlay();
+
     this.isOpen.set(true);
   }
 
@@ -325,6 +328,8 @@ export class DatepickerComponent implements ControlValueAccessor {
     if (!this.isOpen()) {
       return;
     }
+
+    this.closeOverlay();
 
     this.isOpen.set(false);
 
@@ -336,6 +341,59 @@ export class DatepickerComponent implements ControlValueAccessor {
 
       this.formStateVersion.update(value => value + 1);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // CDK Overlay
+  // ---------------------------------------------------------------------------
+
+  private openOverlay(): void {
+    // 1. Elegimos dinámicamente de dónde "cuelga" el overlay
+    const origin = this.calendarWidth() === 'full' ? this.calendarInputWrapper.nativeElement : this.calendarTrigger.nativeElement;
+
+    const positionStrategy = this.overlay.position().flexibleConnectedTo(origin).withFlexibleDimensions(false).withPush(true).withViewportMargin(8).withPositions(this.overlayPositions);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+      hasBackdrop: false,
+      disposeOnNavigation: true
+    });
+
+    if (this.calendarWidth() === 'full') {
+      const width = this.calendarInputWrapper.nativeElement.getBoundingClientRect().width;
+      this.overlayRef.updateSize({
+        width
+      });
+    }
+
+    const portal = new TemplatePortal(this.calendarTemplate, this.viewContainerRef);
+
+    this.overlayRef.attach(portal);
+
+    /*
+     * Cierra cuando se hace click fuera del calendario.
+     *
+     * El botón que abre el calendario está fuera del overlay,
+     * por eso comprobamos que el click no provenga del trigger.
+     */
+    this.outsideClickSubscription = this.overlayRef.outsidePointerEvents().subscribe(event => {
+      const target = event.target as Node | null;
+
+      if (target && origin.contains(target)) {
+        return;
+      }
+
+      this.close();
+    });
+  }
+
+  private closeOverlay(): void {
+    this.outsideClickSubscription?.unsubscribe();
+    this.outsideClickSubscription = null;
+
+    this.overlayRef?.dispose();
+    this.overlayRef = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -429,22 +487,21 @@ export class DatepickerComponent implements ControlValueAccessor {
   private setValue(date: Date | null): void {
     let outputValue: Date | string | null = date;
 
-    // Si hay fecha y nos piden devolver un string
     if (date && this.emitType() === 'string') {
-      // Opción A: Devolverlo con la máscara visual actual (ej: "DD/MM/YYYY")
       outputValue = this.formatDate(date);
-
-      // Opción B: Si prefieres que el string de salida sea siempre ISO estandar:
-      // outputValue = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
 
     if (this.isFormBound) {
-      this.formValue.set(date); // Mantenemos el Date internamente
+      this.formValue.set(date);
       this.onChange(outputValue);
     } else {
       this.value.set(outputValue);
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Clear
+  // ---------------------------------------------------------------------------
 
   clear(event?: Event): void {
     event?.stopPropagation();
@@ -573,11 +630,12 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   // ---------------------------------------------------------------------------
-  // Keyboard & Input Events (Reemplaza la sección actual)
+  // Keyboard & Input Events
   // ---------------------------------------------------------------------------
 
   onBlur(event: FocusEvent): void {
     const input = event.target as HTMLInputElement;
+
     const rawValue = input.value.trim();
 
     if (!rawValue) {
@@ -587,21 +645,21 @@ export class DatepickerComponent implements ControlValueAccessor {
 
       if (parsedDate) {
         this.setValue(parsedDate);
+
         this.currentDate.set(new Date(parsedDate));
       } else {
-        // Si el formato o la fecha son inválidos, reseteamos el valor interno
         this.setValue(null);
       }
     }
 
-    // FUERZA al input visual del DOM a restaurar la fecha válida formateada o vaciarse
     input.value = this.displayValue;
 
-    // Notificar a Angular Forms
     this.onTouched();
+
     if (this.isFormBound) {
       this.control?.markAsTouched();
       this.control?.updateValueAndValidity();
+
       this.formStateVersion.update(value => value + 1);
     }
   }
@@ -617,20 +675,22 @@ export class DatepickerComponent implements ControlValueAccessor {
           event.preventDefault();
           this.close();
         }
+
         break;
 
-      // Flecha abajo para abrir el calendario cómodamente con el teclado
       case 'ArrowDown':
         if (!this.isOpen()) {
           event.preventDefault();
           this.open();
         }
+
         break;
 
       case 'Tab':
         if (this.isOpen()) {
           this.close();
         }
+
         break;
     }
   }
@@ -639,16 +699,24 @@ export class DatepickerComponent implements ControlValueAccessor {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  // NUEVO HELPER: Parsea strings como "15/04/2026" o "15-04-2026"
+  /**
+   * Parsea strings como:
+   * 15/04/2026
+   * 15-04-2026
+   */
   private parseDateString(value: string): Date | null {
     const fmt = this.format().toUpperCase();
 
-    // Detecta el separador usado en el formato (ej. '/' o '-')
     const separatorMatch = fmt.match(/[^A-Z0-9]/);
-    if (!separatorMatch) return null;
+
+    if (!separatorMatch) {
+      return null;
+    }
+
     const separator = separatorMatch[0];
 
     const fmtParts = fmt.split(separator);
+
     const valueParts = value.split(separator);
 
     if (fmtParts.length !== 3 || valueParts.length !== 3) {
@@ -661,50 +729,36 @@ export class DatepickerComponent implements ControlValueAccessor {
 
     for (let i = 0; i < 3; i++) {
       const formatToken = fmtParts[i];
+
       const rawVal = valueParts[i];
+
       const numVal = parseInt(rawVal, 10);
 
-      if (isNaN(numVal)) return null;
+      if (isNaN(numVal)) {
+        return null;
+      }
 
       if (formatToken === 'YYYY') {
-        if (rawVal.length !== 4) return null; // Garantiza año de 4 dígitos
+        if (rawVal.length !== 4) {
+          return null;
+        }
+
         year = numVal;
       } else if (formatToken === 'MM') {
-        month = numVal - 1; // JS usa meses 0-11
+        month = numVal - 1;
       } else if (formatToken === 'DD') {
         day = numVal;
       }
     }
 
-    // Validar límites reales del calendario
     const date = new Date(year, month, day);
+
     if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
       return date;
     }
 
     return null;
   }
-
-  // ---------------------------------------------------------------------------
-  // External click
-  // ---------------------------------------------------------------------------
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (!this.isOpen()) {
-      return;
-    }
-
-    const target = event.target as HTMLElement | null;
-
-    if (!target?.closest('app-datepicker')) {
-      this.close();
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
 
   private normalizeValue(value: Date | string | null): Date | null {
     if (!value) {
@@ -722,9 +776,13 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   private formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
+
     const month = String(date.getMonth() + 1).padStart(2, '0');
+
     const year = String(date.getFullYear());
 
     return this.format().toUpperCase().replace('YYYY', year).replace('MM', month).replace('DD', day);
   }
+
+  // #endregion DATEPICKER
 }

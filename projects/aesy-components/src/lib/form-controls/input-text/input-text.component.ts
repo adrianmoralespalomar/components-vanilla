@@ -57,7 +57,6 @@ export class InputTextComponent implements ControlValueAccessor {
   // #endregion INPUTS
 
   // #region INTERNAL STATE
-  private ngControl: NgControl | null = null;
   private readonly destroyRef = inject(DestroyRef);
   private readonly formDisabled = signal<boolean>(false);
   /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
@@ -65,13 +64,13 @@ export class InputTextComponent implements ControlValueAccessor {
   private readonly formValue = signal<string>('');
   private readonly generatedId = `app-input-text-${nextInputId++}`;
   private readonly injector = inject(Injector);
+  private ngControl: NgControl | null = null;
   protected readonly showPassword = signal<boolean>(false);
 
   // #endregion INTERNAL STATE
 
   // #region CONTROL VALUE ACCESSOR
   private onChange: (value: string) => void = () => {};
-
   private onTouched: () => void = () => {};
 
   ngOnInit(): void {
