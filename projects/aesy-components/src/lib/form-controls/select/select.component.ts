@@ -11,8 +11,6 @@ import { SelectOption } from './models/select-option.interface';
 
 let nextSelectId = 0;
 
-type SelectSize = 'small' | 'medium' | 'large';
-
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
@@ -27,125 +25,53 @@ type SelectSize = 'small' | 'medium' | 'large';
   ]
 })
 export class SelectComponent implements ControlValueAccessor {
-  // ---------------------------------------------------------------------------
-  // Inputs
-  // ---------------------------------------------------------------------------
-
-  readonly options = input<SelectOption[]>([]);
-
-  /**
-   * Permite seleccionar una o varias opciones.
-   *
-   * false:
-   *   T | null
-   *
-   * true:
-   *   T[]
-   */
-  readonly multiple = input<boolean>(false);
-
-  readonly label = input<string>('');
-  readonly placeholder = input<string>('Selecciona una opción');
-
-  /**
-   * Muestra un botón para limpiar la selección.
-   */
+  // #region INPUTS
+  /** Muestra un botón para limpiar la selección. */
   readonly clearable = input<boolean>(false);
-
-  readonly readonly = input<boolean>(false);
   readonly disabled = input<boolean>(false);
-
-  /**
-   * null = detectar automáticamente desde FormControl.
-   */
-  readonly required = input<boolean | null>(null);
-
-  /**
-   * Permite mostrar un estado de error cuando el componente
-   * se utiliza sin Angular Forms.
-   */
-  readonly invalid = input<boolean>(false);
-
-  /**
-   * Mensaje explícito que sobrescribe los mensajes automáticos.
-   */
+  /** Mensaje explícito que sobrescribe los mensajes automáticos. */
   readonly errorMessage = input<string | null>(null);
-
   readonly helpText = input<string | null>(null);
-
-  readonly size = input<SelectSize>('medium');
-
-  /**
-   * ID opcional proporcionado por el consumidor.
-   */
+  /** ID opcional proporcionado por el consumidor. */
   readonly id = input<string | null>(null);
-
+  /** Permite mostrar un estado de error cuando el componente se utiliza sin Angular Forms. */
+  readonly invalid = input<boolean>(false);
+  readonly label = input<string>('');
+  /** Permite seleccionar una o varias opciones. false: T | null. true: T[] */
+  readonly multiple = input<boolean>(false);
   readonly name = input<string | null>(null);
-
-  /**
-   * Valor para uso sin Angular Forms.
-   *
-   * Single:
-   *   [(value)]="selectedCountry"
-   *
-   * Multiple:
-   *   [(value)]="selectedCountries"
-   */
+  readonly options = input<SelectOption[]>([]);
+  readonly placeholder = input<string>('Selecciona una opción');
+  readonly readonly = input<boolean>(false);
+  /** null = detectar automáticamente desde FormControl. */
+  readonly required = input<boolean | null>(null);
+  readonly showSelectedIcon = input<boolean>(false);
+  readonly textAlign = input<'left' | 'center' | 'right'>('left');
+  /** Valor para uso sin Angular Forms. Single: [(value)]="selectedCountry". Multiple: [(value)]="selectedCountries" */
   readonly value = model<any | any[] | null>(null);
+  // #endregion INPUTS
 
-  // ---------------------------------------------------------------------------
-  // Internal state
-  // ---------------------------------------------------------------------------
-
-  private readonly destroyRef = inject(DestroyRef);
-
-  private readonly injector = inject(Injector);
-
+  // #region INTERNAL STATE
   private ngControl: NgControl | null = null;
-
-  private readonly formValue = signal<any | any[] | null>(null);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly formDisabled = signal<boolean>(false);
-
-  /**
-   * Fuerza la actualización visual cuando cambia el estado
-   * interno del FormControl.
-   */
+  /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
   private readonly formStateVersion = signal(0);
-
+  private readonly formValue = signal<any | any[] | null>(null);
   private readonly generatedId = `app-select-${nextSelectId++}`;
-
-  readonly isOpen = signal(false);
-
+  private readonly injector = inject(Injector);
   protected highlightedIndex = signal<number>(-1);
+  readonly isOpen = signal(false);
+  // #endregion INTERNAL STATE
 
-  // ---------------------------------------------------------------------------
-  // ControlValueAccessor
-  // ---------------------------------------------------------------------------
-
+  // #region CONTROL VALUE ACCESSOR
   private onChange: (value: any | any[] | null) => void = () => {};
   private onTouched: () => void = () => {};
 
   ngOnInit(): void {
     this.ngControl = this.injector.get(NgControl, null, { self: true });
-
     const control = this.control;
-
-    if (!control) {
-      return;
-    }
-
-    /**
-     * events incluye cambios de:
-     *
-     * - value
-     * - status
-     * - touched
-     * - pristine/dirty
-     * - etc.
-     *
-     * Esto hace que el componente reaccione también cuando
-     * el FormControl es modificado desde fuera.
-     */
+    if (!control) return;
     control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.formStateVersion.update(value => value + 1);
     });
@@ -153,7 +79,6 @@ export class SelectComponent implements ControlValueAccessor {
 
   writeValue(value: any | any[] | null): void {
     const newValue = this.normalizeValue(value);
-
     this.formValue.set(newValue);
     this.formStateVersion.update(value => value + 1);
   }
@@ -169,16 +94,11 @@ export class SelectComponent implements ControlValueAccessor {
   setDisabledState(isDisabled: boolean): void {
     this.formDisabled.set(isDisabled);
     this.formStateVersion.update(value => value + 1);
-
-    if (isDisabled) {
-      this.close();
-    }
+    if (isDisabled) this.close();
   }
+  // #endregion CONTROL VALUE ACCESSOR
 
-  // ---------------------------------------------------------------------------
-  // Getters
-  // ---------------------------------------------------------------------------
-
+  // #region GETTERS
   get control() {
     return this.ngControl?.control ?? null;
   }
@@ -188,11 +108,15 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   get selectId(): string {
-    return this.id() ? `${this.id()}-select` : this.generatedId;
+    return this.id() ? `${this.id()}-aesy-select` : this.generatedId;
   }
 
   get listboxId(): string {
     return `${this.selectId}-listbox`;
+  }
+
+  get currentValue(): any | any[] | null {
+    return this.isFormBound ? this.formValue() : this.value();
   }
 
   get isDisabled(): boolean {
@@ -201,62 +125,36 @@ export class SelectComponent implements ControlValueAccessor {
 
   get isTouched(): boolean {
     this.formStateVersion();
-
     return !!this.control?.touched;
   }
 
   get isDirty(): boolean {
     this.formStateVersion();
-
     return !!this.control?.dirty;
   }
 
   get isInvalid(): boolean {
     this.formStateVersion();
-
-    if (this.isFormBound) {
-      return !!this.control?.invalid;
-    }
-
+    if (this.isFormBound) return !!this.control?.invalid;
     return this.invalid();
   }
 
   get showError(): boolean {
-    if (!this.isInvalid) {
-      return false;
-    }
-
-    if (!this.isFormBound) {
-      return true;
-    }
-
+    if (!this.isInvalid) return false;
+    if (!this.isFormBound) return true;
     return this.isTouched || this.isDirty;
   }
 
   get isRequired(): boolean {
     this.formStateVersion();
-
     const explicitRequired = this.required();
-
-    if (explicitRequired !== null) {
-      return explicitRequired;
-    }
-
+    if (explicitRequired !== null) return explicitRequired;
     return hasRequiredValidator(this.control);
   }
 
   get currentErrorMessage(): string {
     this.formStateVersion();
-
     return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
-  }
-
-  get currentSizeClass(): string {
-    return `select-${this.size()}`;
-  }
-
-  get currentValue(): any | any[] | null {
-    return this.isFormBound ? this.formValue() : this.value();
   }
 
   get selectedOptions(): SelectOption[] {
@@ -265,16 +163,12 @@ export class SelectComponent implements ControlValueAccessor {
 
     if (this.multiple()) {
       const values = Array.isArray(currentValue) ? currentValue : [];
-
       return options.filter(option => values.some(value => areValuesEqual(value, option.value)));
     }
 
-    if (currentValue === null || currentValue === undefined) {
-      return [];
-    }
+    if (currentValue === null || currentValue === undefined) return [];
 
     const selected = options.find(option => areValuesEqual(option.value, currentValue));
-
     return selected ? [selected] : [];
   }
 
@@ -283,18 +177,12 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   get hasValue(): boolean {
-    if (this.multiple()) {
-      return this.selectedOptions.length > 0;
-    }
-
+    if (this.multiple()) return this.selectedOptions.length > 0;
     return this.selectedOption !== null;
   }
 
   get displayLabel(): string {
-    if (this.multiple()) {
-      return '';
-    }
-
+    if (this.multiple()) return '';
     return this.selectedOption?.label ?? '';
   }
 
@@ -313,7 +201,9 @@ export class SelectComponent implements ControlValueAccessor {
   get currentHighlightedIndex(): number {
     return this.highlightedIndex();
   }
+  // #endregion GETTERS
 
+  // #region EVENTS
   // ---------------------------------------------------------------------------
   // Dropdown
   // ---------------------------------------------------------------------------
@@ -578,4 +468,5 @@ export class SelectComponent implements ControlValueAccessor {
 
     return Array.isArray(value) ? (value[0] ?? null) : value;
   }
+  // #endregion EVENTS
 }

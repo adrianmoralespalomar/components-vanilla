@@ -1,17 +1,17 @@
-<div class="select-container" [class.select-invalid]="showError" [class.select-disabled]="isDisabled" [class.select-readonly]="readonly()" [class]="currentSizeClass">
+<section class="aesy-select-container" [class.aesy-select-error]="showError" [class.aesy-select-disabled]="isDisabled" [class.aesy-select-readonly]="readonly()">
   @if (label()) {
-    <label class="select-label" [class.select-label-disabled]="isDisabled" [attr.for]="selectId">
+    <label class="aesy-select-label" [attr.for]="selectId">
       {{ label() }}
 
       @if (isRequired) {
-        <span class="select-required" aria-hidden="true">*</span>
+        <span class="aesy-form-control-required-asterisk" aria-hidden="true">*</span>
       }
     </label>
   }
 
-  <div class="select-wrapper">
+  <div class="aesy-select-wrapper">
     <button
-      class="select-trigger"
+      class="aesy-select-input-container"
       type="button"
       [id]="selectId"
       [name]="name()"
@@ -22,47 +22,50 @@
       [attr.aria-controls]="listboxId"
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-describedby]="showError ? selectId + '-error' : helpText() ? selectId + '-help' : null"
+      [class.aesy-form-control-text-align-left]="textAlign() === 'left'"
+      [class.aesy-form-control-text-align-center]="textAlign() === 'center'"
+      [class.aesy-form-control-text-align-right]="textAlign() === 'right'"
       (click)="toggle()"
       (keydown)="onKeyDown($event)">
-      <span class="select-value" [class.select-placeholder]="!hasValue">
+      <div class="aesy-select-input-content" [class.placeholder-when-no-value]="!hasValue">
         @if (multiple()) {
           @if (hasValue) {
-            <span class="select-tags">
+            <div class="aesy-select-input-multiple-container">
               @for (option of selectedOptions; track $index) {
-                <span class="select-tag">
-                  <span class="select-tag-label">
+                <div class="aesy-select-input-multiple-element">
+                  <span class="aesy-select-input-multiple-element-label">
                     {{ option.label }}
                   </span>
 
-                  <button class="select-tag-remove" type="button" tabindex="-1" aria-label="Eliminar {{ option.label }}" (click)="selectOption(option, $event)">×</button>
-                </span>
+                  <button class="aesy-select-input-multiple-element-remove" type="button" tabindex="-1" aria-label="Eliminar {{ option.label }}" (click)="selectOption(option, $event)">×</button>
+                </div>
               }
-            </span>
+            </div>
           } @else {
             {{ placeholder() }}
           }
         } @else {
           {{ hasValue ? displayLabel : placeholder() }}
         }
-      </span>
+      </div>
 
       @if (canClear) {
-        <span class="select-clear" role="button" tabindex="-1" aria-label="Limpiar selección" (click)="clear($event)">×</span>
+        <span class="aesy-select-input-clear" role="button" tabindex="-1" aria-label="Limpiar selección" (click)="clear($event)">×</span>
       }
 
-      <span class="select-arrow" [class.select-arrow-open]="isOpen()" aria-hidden="true">
+      <span class="aesy-select-input-arrow" [class.aesy-select-input-arrow-open]="isOpen()" aria-hidden="true">
         <span class="select-arrow-icon"></span>
       </span>
     </button>
 
     @if (isOpen()) {
-      <div class="select-dropdown" [id]="listboxId" role="listbox" [attr.aria-multiselectable]="multiple()">
+      <div class="aesy-select-dropdown-container" [id]="listboxId" role="listbox" [attr.aria-multiselectable]="multiple()">
         @if (availableOptions.length === 0) {
-          <div class="select-empty">No hay opciones disponibles</div>
+          <span class="aesy-select-dropdown-no-options">No hay opciones disponibles</span>
         } @else {
           @for (option of availableOptions; track $index) {
             <div
-              class="select-option"
+              class="aesy-select-dropdown-option"
               [class.select-option-selected]="isSelected(option)"
               [class.select-option-disabled]="option.disabled"
               [class.select-option-highlighted]="currentHighlightedIndex === $index"
@@ -72,19 +75,19 @@
               (mouseenter)="!option.disabled && highlightedIndex.set($index)"
               (click)="selectOption(option)">
               @if (multiple()) {
-                <span class="select-option-check" [class.select-option-check-selected]="isSelected(option)" aria-hidden="true">
+                <div class="aesy-select-dropdown-option-check" [class.aesy-select-dropdown-option-check-selected]="isSelected(option)" aria-hidden="true">
                   @if (isSelected(option)) {
-                    <span class="select-option-checkmark"></span>
+                    <span class="aesy-select-dropdown-option-check-checkmark"></span>
                   }
-                </span>
+                </div>
               }
 
-              <span class="select-option-label">
+              <span class="aesy-select-dropdown-option-label">
                 {{ option.label }}
               </span>
 
-              @if (!multiple() && isSelected(option)) {
-                <span class="select-option-selected-icon" aria-hidden="true">✓</span>
+              @if (!multiple() && isSelected(option) && showSelectedIcon()) {
+                <span class="aesy-select-dropdown-option-selected-icon" aria-hidden="true">✓</span>
               }
             </div>
           }
@@ -94,16 +97,16 @@
   </div>
 
   @if (showError || helpText()) {
-    <div class="select-extra">
+    <div class="aesy-select-extra-data">
       @if (showError) {
-        <div class="select-error" [id]="selectId + '-error'" role="alert">
+        <span class="error-message" [id]="selectId + '-error'" role="alert">
           {{ currentErrorMessage }}
-        </div>
+        </span>
       } @else if (helpText()) {
-        <div class="select-help" [id]="selectId + '-help'">
+        <span class="help-message" [id]="selectId + '-help'">
           {{ helpText() }}
-        </div>
+        </span>
       }
     </div>
   }
-</div>
+</section>
