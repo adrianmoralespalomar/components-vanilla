@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, Injector, forwardRef, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
+import { ConnectedPosition, Overlay, OverlayRef } from '@angular/cdk/overlay';
+
+import { TemplatePortal } from '@angular/cdk/portal';
+
+import { Subscription } from 'rxjs';
+
 import { areValuesEqual } from '../shared/utils/are-values-equal';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
+
 import { SelectOption } from './models/select-option.interface';
 
 let nextSelectId = 0;
@@ -15,7 +22,6 @@ let nextSelectId = 0;
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.css'],
-  imports: [CdkConnectedOverlay, CdkOverlayOrigin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -27,60 +33,135 @@ let nextSelectId = 0;
 })
 export class SelectComponent implements ControlValueAccessor {
   // #region INPUTS
+
   /** Muestra un botón para limpiar la selección. */
   readonly clearable = input<boolean>(false);
+
   readonly disabled = input<boolean>(false);
+
   /** Mensaje explícito que sobrescribe los mensajes automáticos. */
   readonly errorMessage = input<string | null>(null);
+
   readonly helpText = input<string | null>(null);
+
   /** ID opcional proporcionado por el consumidor. */
   readonly id = input<string | null>(null);
+
   /** Permite mostrar un estado de error cuando el componente se utiliza sin Angular Forms. */
   readonly invalid = input<boolean>(false);
+
   readonly label = input<string>('');
+
   /** Permite seleccionar una o varias opciones. false: T | null. true: T[] */
   readonly multiple = input<boolean>(false);
+
   readonly name = input<string | null>(null);
+
   readonly options = input<SelectOption[]>([]);
+
   readonly placeholder = input<string>('Selecciona una opción');
+
   readonly readonly = input<boolean>(false);
+
   /** null = detectar automáticamente desde FormControl. */
   readonly required = input<boolean | null>(null);
+
   readonly showSelectedIcon = input<boolean>(false);
+
   readonly textAlign = input<'left' | 'center' | 'right'>('left');
-  /** Valor para uso sin Angular Forms. Single: [(value)]="selectedCountry". Multiple: [(value)]="selectedCountries" */
+
+  /** Valor para uso sin Angular Forms. */
   readonly value = model<any | any[] | null>(null);
+
   // #endregion INPUTS
 
   // #region INTERNAL STATE
+
   private ngControl: NgControl | null = null;
+
   private readonly destroyRef = inject(DestroyRef);
+
   private readonly formDisabled = signal<boolean>(false);
+
   /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
   private readonly formStateVersion = signal(0);
+
   private readonly formValue = signal<any | any[] | null>(null);
+
   private readonly generatedId = `app-select-${nextSelectId++}`;
+
   private readonly injector = inject(Injector);
+
   protected highlightedIndex = signal<number>(-1);
+
   readonly isOpen = signal(false);
+
   // #endregion INTERNAL STATE
 
+  // #region CDK OVERLAY
+
+  private readonly overlay = inject(Overlay);
+
+  private readonly viewContainerRef = inject(ViewContainerRef);
+
+  @ViewChild('selectInput', { static: true })
+  private selectInput!: ElementRef<HTMLButtonElement>;
+
+  @ViewChild('dropdownTemplate')
+  private dropdownTemplate!: TemplateRef<unknown>;
+
+  private overlayRef: OverlayRef | null = null;
+
+  private outsideClickSubscription: Subscription | null = null;
+
+  private readonly overlayPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 4
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -4
+    }
+  ];
+
+  // #endregion CDK OVERLAY
+
   // #region CONTROL VALUE ACCESSOR
+
   private onChange: (value: any | any[] | null) => void = () => {};
+
   private onTouched: () => void = () => {};
 
   ngOnInit(): void {
     this.ngControl = this.injector.get(NgControl, null, { self: true });
+
     const control = this.control;
-    if (!control) return;
+
+    if (!control) {
+      return;
+    }
+
     control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.formStateVersion.update(value => value + 1);
     });
   }
 
+  ngOnDestroy(): void {
+    this.closeOverlay();
+  }
+
   writeValue(value: any | any[] | null): void {
     const newValue = this.normalizeValue(value);
+
     this.formValue.set(newValue);
+
     this.formStateVersion.update(value => value + 1);
   }
 
@@ -94,12 +175,18 @@ export class SelectComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.formDisabled.set(isDisabled);
+
     this.formStateVersion.update(value => value + 1);
-    if (isDisabled) this.close();
+
+    if (isDisabled) {
+      this.close();
+    }
   }
+
   // #endregion CONTROL VALUE ACCESSOR
 
   // #region GETTERS
+
   get control() {
     return this.ngControl?.control ?? null;
   }
@@ -126,35 +213,53 @@ export class SelectComponent implements ControlValueAccessor {
 
   get isTouched(): boolean {
     this.formStateVersion();
+
     return !!this.control?.touched;
   }
 
   get isDirty(): boolean {
     this.formStateVersion();
+
     return !!this.control?.dirty;
   }
 
   get isInvalid(): boolean {
     this.formStateVersion();
-    if (this.isFormBound) return !!this.control?.invalid;
+
+    if (this.isFormBound) {
+      return !!this.control?.invalid;
+    }
+
     return this.invalid();
   }
 
   get showError(): boolean {
-    if (!this.isInvalid) return false;
-    if (!this.isFormBound) return true;
+    if (!this.isInvalid) {
+      return false;
+    }
+
+    if (!this.isFormBound) {
+      return true;
+    }
+
     return this.isTouched || this.isDirty;
   }
 
   get isRequired(): boolean {
     this.formStateVersion();
+
     const explicitRequired = this.required();
-    if (explicitRequired !== null) return explicitRequired;
+
+    if (explicitRequired !== null) {
+      return explicitRequired;
+    }
+
     return hasRequiredValidator(this.control);
   }
 
   get currentErrorMessage(): string {
     this.formStateVersion();
+
     return getValidationErrorMessage(this.control?.errors ?? null, this.errorMessage());
   }
 
@@ -164,12 +269,16 @@ export class SelectComponent implements ControlValueAccessor {
 
     if (this.multiple()) {
       const values = Array.isArray(currentValue) ? currentValue : [];
+
       return options.filter(option => values.some(value => areValuesEqual(value, option.value)));
     }
 
-    if (currentValue === null || currentValue === undefined) return [];
+    if (currentValue === null || currentValue === undefined) {
+      return [];
+    }
 
     const selected = options.find(option => areValuesEqual(option.value, currentValue));
+
     return selected ? [selected] : [];
   }
 
@@ -178,12 +287,18 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   get hasValue(): boolean {
-    if (this.multiple()) return this.selectedOptions.length > 0;
+    if (this.multiple()) {
+      return this.selectedOptions.length > 0;
+    }
+
     return this.selectedOption !== null;
   }
 
   get displayLabel(): string {
-    if (this.multiple()) return '';
+    if (this.multiple()) {
+      return '';
+    }
+
     return this.selectedOption?.label ?? '';
   }
 
@@ -202,9 +317,11 @@ export class SelectComponent implements ControlValueAccessor {
   get currentHighlightedIndex(): number {
     return this.highlightedIndex();
   }
+
   // #endregion GETTERS
 
   // #region EVENTS
+
   // ---------------------------------------------------------------------------
   // Dropdown
   // ---------------------------------------------------------------------------
@@ -222,12 +339,15 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   open(): void {
-    if (this.isDisabled || this.readonly()) {
+    if (this.isDisabled || this.readonly() || this.isOpen()) {
       return;
     }
 
-    this.isOpen.set(true);
     this.setInitialHighlightedOption();
+
+    this.openOverlay();
+
+    this.isOpen.set(true);
   }
 
   close(): void {
@@ -235,15 +355,73 @@ export class SelectComponent implements ControlValueAccessor {
       return;
     }
 
+    this.closeOverlay();
+
     this.isOpen.set(false);
+
     this.highlightedIndex.set(-1);
+
     this.onTouched();
 
     if (this.isFormBound) {
       this.control?.markAsTouched();
       this.control?.updateValueAndValidity();
+
       this.formStateVersion.update(value => value + 1);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // CDK Overlay
+  // ---------------------------------------------------------------------------
+
+  private openOverlay(): void {
+    const origin = this.selectInput.nativeElement;
+
+    const positionStrategy = this.overlay.position().flexibleConnectedTo(origin).withFlexibleDimensions(false).withPush(true).withViewportMargin(8).withPositions(this.overlayPositions);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+      hasBackdrop: false,
+      disposeOnNavigation: true
+    });
+
+    /*
+     * El dropdown tendrá exactamente el mismo ancho
+     * que el botón que abre el Select.
+     */
+    this.overlayRef.updateSize({
+      width: origin.getBoundingClientRect().width
+    });
+
+    const portal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
+
+    this.overlayRef.attach(portal);
+
+    /*
+     * Cierra al hacer click fuera.
+     *
+     * Comprobamos también el origin porque el botón del Select
+     * está fuera del overlay.
+     */
+    this.outsideClickSubscription = this.overlayRef.outsidePointerEvents().subscribe(event => {
+      const target = event.target as Node | null;
+
+      if (target && origin.contains(target)) {
+        return;
+      }
+
+      this.close();
+    });
+  }
+
+  private closeOverlay(): void {
+    this.outsideClickSubscription?.unsubscribe();
+    this.outsideClickSubscription = null;
+
+    this.overlayRef?.dispose();
+    this.overlayRef = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -263,6 +441,7 @@ export class SelectComponent implements ControlValueAccessor {
     }
 
     this.setSingleValue(option.value);
+
     this.close();
   }
 
@@ -417,6 +596,7 @@ export class SelectComponent implements ControlValueAccessor {
 
   private selectHighlightedOption(): void {
     const index = this.highlightedIndex();
+
     const option = this.options()[index];
 
     if (!option || option.disabled) {
@@ -442,23 +622,6 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   // ---------------------------------------------------------------------------
-  // External click
-  // ---------------------------------------------------------------------------
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (!this.isOpen()) {
-      return;
-    }
-
-    const target = event.target as HTMLElement | null;
-
-    if (!target?.closest('app-select')) {
-      this.close();
-    }
-  }
-
-  // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
 
@@ -469,5 +632,6 @@ export class SelectComponent implements ControlValueAccessor {
 
     return Array.isArray(value) ? (value[0] ?? null) : value;
   }
+
   // #endregion EVENTS
 }

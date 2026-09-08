@@ -11,6 +11,7 @@
 
   <div class="aesy-select-wrapper">
     <button
+      #selectInput
       class="aesy-select-input-container"
       type="button"
       [id]="selectId"
@@ -37,7 +38,7 @@
                     {{ option.label }}
                   </span>
 
-                  <button class="aesy-select-input-multiple-element-remove" type="button" tabindex="-1" aria-label="Eliminar {{ option.label }}" (click)="selectOption(option, $event)">×</button>
+                  <span class="aesy-select-input-multiple-element-remove" role="button" tabindex="-1" [attr.aria-label]="'Eliminar ' + option.label" (click)="selectOption(option, $event)">×</span>
                 </div>
               }
             </div>
@@ -57,44 +58,45 @@
         <span class="select-arrow-icon"></span>
       </span>
     </button>
-
-    @if (isOpen()) {
-      <div class="aesy-select-dropdown-container" [id]="listboxId" role="listbox" [attr.aria-multiselectable]="multiple()">
-        @if (availableOptions.length === 0) {
-          <span class="aesy-select-dropdown-no-options">No hay opciones disponibles</span>
-        } @else {
-          @for (option of availableOptions; track $index) {
-            <div
-              class="aesy-select-dropdown-option"
-              [class.select-option-selected]="isSelected(option)"
-              [class.select-option-disabled]="option.disabled"
-              [class.select-option-highlighted]="currentHighlightedIndex === $index"
-              role="option"
-              [attr.aria-selected]="isSelected(option)"
-              [attr.aria-disabled]="option.disabled"
-              (mouseenter)="!option.disabled && highlightedIndex.set($index)"
-              (click)="selectOption(option)">
-              @if (multiple()) {
-                <div class="aesy-select-dropdown-option-check" [class.aesy-select-dropdown-option-check-selected]="isSelected(option)" aria-hidden="true">
-                  @if (isSelected(option)) {
-                    <span class="aesy-select-dropdown-option-check-checkmark"></span>
-                  }
-                </div>
-              }
-
-              <span class="aesy-select-dropdown-option-label">
-                {{ option.label }}
-              </span>
-
-              @if (!multiple() && isSelected(option) && showSelectedIcon()) {
-                <span class="aesy-select-dropdown-option-selected-icon" aria-hidden="true">✓</span>
-              }
-            </div>
-          }
-        }
-      </div>
-    }
   </div>
+
+  <!--DROPDOWN-->
+  <ng-template #dropdownTemplate>
+    <div class="aesy-select-dropdown-container" [id]="listboxId" role="listbox" [attr.aria-multiselectable]="multiple()">
+      @if (availableOptions.length === 0) {
+        <span class="aesy-select-dropdown-no-options">No hay opciones disponibles</span>
+      } @else {
+        @for (option of availableOptions; track $index) {
+          <div
+            class="aesy-select-dropdown-option"
+            [class.select-option-selected]="isSelected(option)"
+            [class.select-option-disabled]="option.disabled"
+            [class.select-option-highlighted]="currentHighlightedIndex === $index"
+            role="option"
+            [attr.aria-selected]="isSelected(option)"
+            [attr.aria-disabled]="option.disabled"
+            (mouseenter)="!option.disabled && highlightedIndex.set($index)"
+            (click)="selectOption(option)">
+            @if (multiple()) {
+              <div class="aesy-select-dropdown-option-check" [class.aesy-select-dropdown-option-check-selected]="isSelected(option)" aria-hidden="true">
+                @if (isSelected(option)) {
+                  <span class="aesy-select-dropdown-option-check-checkmark"></span>
+                }
+              </div>
+            }
+
+            <span class="aesy-select-dropdown-option-label">
+              {{ option.label }}
+            </span>
+
+            @if (!multiple() && isSelected(option) && showSelectedIcon()) {
+              <span class="aesy-select-dropdown-option-selected-icon" aria-hidden="true">✓</span>
+            }
+          </div>
+        }
+      }
+    </div>
+  </ng-template>
 
   @if (showError || helpText()) {
     <div class="aesy-select-extra-data">

@@ -1,45 +1,9 @@
 :host {
   display: inline-block;
   width: 100%;
-
-  --select-border-color: #d1d5db;
-  --select-border-hover-color: #9ca3af;
-  --select-border-focus-color: #3b82f6;
-  --select-border-error-color: #dc2626;
-
-  --select-background: #ffffff;
-  --select-disabled-background: #f3f4f6;
-  --select-readonly-background: #f9fafb;
-
-  --select-text-color: #374151;
-  --select-placeholder-color: #9ca3af;
-  --select-disabled-text-color: #9ca3af;
-
-  --select-label-color: #374151;
-  --select-help-color: #6b7280;
-  --select-error-color: #dc2626;
-
-  --select-option-hover-background: #f3f4f6;
-  --select-option-selected-background: #eff6ff;
-  --select-option-highlighted-background: #f3f4f6;
-
-  --select-option-selected-color: #2563eb;
-
-  --select-border-radius: 4px;
-
-  --select-font-size: 0.875rem;
-  --select-line-height: 1.5;
-
-  --select-padding-horizontal: 0.75rem;
-  --select-padding-vertical: 0.625rem;
-
-  --select-arrow-color: #6b7280;
-
-  --select-tag-background: #eff6ff;
-  --select-tag-color: #1d4ed8;
-  --select-tag-remove-color: #2563eb;
-
-  --select-container-width: 100%;
+  --aesy-select-input-multiple-element-background: #eff6ff;
+  --aesy-select-input-multiple-element-color: #1d4ed8;
+  --aesy-select-input-multiple-element-remove-color: #2563eb;
 }
 
 section.aesy-select-container {
@@ -76,67 +40,77 @@ button.aesy-select-input-container {
   outline: none;
   padding: var(--aesy-form-controls-padding-y) var(--aesy-form-controls-padding-x);
   width: 100%;
+
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
     background-color 0.15s ease;
-  /*Effects*/
+
   &:hover {
     border-color: var(--aesy-form-controls-border-color-hover);
   }
+
   &:focus-within {
     border-color: var(--aesy-form-controls-border-color-focus);
     box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-focus);
   }
-  /*Status: error/disabled/readonly*/
+
   section.aesy-select-error & {
     border-color: var(--aesy-form-controls-border-color-error);
+
     &:focus-within {
       border-color: var(--aesy-form-controls-border-color-error);
       box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-error);
     }
   }
+
   section.aesy-select-disabled & {
     background: var(--aesy-form-controls-background-disabled);
     cursor: default;
   }
+
   section.aesy-select-readonly & {
     background: var(--aesy-form-controls-background-readonly);
     cursor: default;
   }
 }
 
-/* #region CONTENT VISIBLE OF SELECTED OPTIONS WITHOUT CLICKING */
+/* #region CONTENT VISIBLE OF SELECTED OPTIONS */
+
 div.aesy-select-input-content {
   flex: 1;
   min-width: 0;
+
   &.placeholder-when-no-value {
     color: var(--aesy-form-controls-text-color-placeholder);
   }
-  /*When multiple options are selected*/
+
   & div.aesy-select-input-multiple-container {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+
     & div.aesy-select-input-multiple-element {
       align-items: center;
-      background: var(--select-tag-background);
+      background: var(--aesy-select-input-multiple-element-background);
       border-radius: 3px;
-      color: var(--select-tag-color);
+      color: var(--aesy-select-input-multiple-element-color);
       display: inline-flex;
       font-size: 0.8125rem;
       max-width: 100%;
       padding: 0.125rem 0.375rem;
+
       & span.aesy-select-input-multiple-element-label {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      & button.aesy-select-input-multiple-element-remove {
+
+      & span.aesy-select-input-multiple-element-remove {
         align-items: center;
         background: transparent;
         border: 0;
-        color: var(--select-tag-remove-color);
+        color: var(--aesy-select-input-multiple-element-remove-color);
         cursor: pointer;
         display: inline-flex;
         font-size: 1rem;
@@ -146,6 +120,7 @@ div.aesy-select-input-content {
         margin-left: 0.25rem;
         padding: 0;
         width: 1rem;
+
         &:hover {
           opacity: 0.7;
         }
@@ -156,7 +131,7 @@ div.aesy-select-input-content {
 
 span.aesy-select-input-clear {
   align-items: center;
-  color: var(--select-arrow-color);
+  color: var(--aesy-form-controls-icon-color);
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
@@ -166,101 +141,126 @@ span.aesy-select-input-clear {
   line-height: 1;
   margin-right: 0.25rem;
   width: 1.25rem;
+
   &:hover {
-    color: var(--select-text-color);
+    color: var(--aesy-form-controls-icon-color-hover);
   }
 }
 
 span.aesy-select-input-arrow {
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   flex: 0 0 auto;
-  width: 1.25rem;
   height: 1.25rem;
+  justify-content: center;
   margin-left: 0.25rem;
+  width: 1.25rem;
+
   & span.select-arrow-icon {
-    width: 0.5rem;
+    border-bottom: 1.5px solid var(--aesy-form-controls-icon-color);
+    border-right: 1.5px solid var(--aesy-form-controls-icon-color);
     height: 0.5rem;
-    border-right: 1.5px solid var(--select-arrow-color);
-    border-bottom: 1.5px solid var(--select-arrow-color);
     transform: rotate(45deg);
     transition: transform 0.15s ease;
+    width: 0.5rem;
+
     .aesy-select-input-arrow-open & {
       transform: rotate(225deg);
     }
   }
 }
 
-// #endregion CONTENT VISIBLE OF SELECTED OPTIONS WITHOUT CLICKING
-
+/* #endregion CONTENT VISIBLE OF SELECTED OPTIONS */
 
 /* #region DROPDOWN */
+
 div.aesy-select-dropdown-container {
-  background: var(--select-background);
-  border-radius: var(--select-border-radius);
-  border: 1px solid var(--select-border-color);
+  /*
+   * Estas variables se repiten aquí porque el CDK Overlay
+   * coloca el dropdown fuera del host del componente.
+   */
+
+  --aesy-select-dropdown-option-hover-background: #f3f4f6;
+  --aesy-select-dropdown-option-selected-background: #eff6ff;
+  --aesy-select-dropdown-option-highlighted-background: #f3f4f6;
+  --aesy-select-dropdown-option-selected-color: #2563eb;
+
+  --aesy-select-dropdown-option-text-size: 0.875rem;
+  --aesy-select-dropdown-option-line-height: 1.5;
+
+  background: var(--aesy-form-controls-background);
+  border: var(--aesy-form-controls-border);
+  border-radius: var(--aesy-form-controls-radius);
+
   box-shadow:
     0 4px 6px -1px rgb(0 0 0 / 0.1),
     0 2px 4px -2px rgb(0 0 0 / 0.1);
-  left: 0;
+
+  box-sizing: border-box;
   max-height: 16rem;
   overflow-y: auto;
-  position: absolute;
-  right: 0;
-  top: calc(100% + 0.25rem);
-  z-index: 1000;
+  width: 100%;
 }
-/*When no options are available */
+
+/* Cuando no hay opciones */
+
 span.aesy-select-dropdown-no-options {
-  color: var(--select-placeholder-color);
+  color: var(--aesy-form-controls-text-color-placeholder);
+  display: block;
   font-size: var(--select-font-size);
   padding: 0.75rem;
   text-align: center;
 }
 
+/* Opciones */
+
 div.aesy-select-dropdown-option {
   align-items: center;
-  color: var(--select-text-color);
+  color: var(--aesy-form-controls-icon-color-hover);
   cursor: pointer;
   display: flex;
-  font-size: var(--select-font-size);
-  line-height: var(--select-line-height);
+  font-size: var(--aesy-select-dropdown-option-text-size);
+  line-height: var(--aesy-select-dropdown-option-line-height);
   min-height: 2.25rem;
   padding: 0.5rem 0.75rem;
-  /*Effects*/
+
   &:hover:not(.select-option-disabled) {
-    background: var(--select-option-hover-background);
+    background: var(--aesy-select-dropdown-option-hover-background);
   }
-  /*Status*/
+
   &.select-option-highlighted:not(.select-option-disabled) {
-    background: var(--select-option-highlighted-background);
+    background: var(--aesy-select-dropdown-option-highlighted-background);
   }
+
   &.select-option-selected {
-    color: var(--select-option-selected-color);
-    background: var(--select-option-selected-background);
+    background: var(--aesy-select-dropdown-option-selected-background);
+    color: var(--aesy-select-dropdown-option-selected-color);
   }
+
   &.select-option-disabled {
-    color: var(--select-disabled-text-color);
-    cursor: not-allowed;
+    color: var(--aesy-form-controls-text-color-disabled);
+    cursor: default;
   }
 }
 
-/*When multiple*/
+/* Cuando es multiple */
+
 div.aesy-select-dropdown-option-check {
   align-items: center;
-  background: var(--select-background);
+  background: var(--aesy-form-controls-background);
   border-radius: 3px;
-  border: 1px solid var(--select-border-color);
+  border: var(--aesy-form-controls-border);
   display: flex;
   height: 1rem;
   justify-content: center;
   margin-right: 0.625rem;
   width: 1rem;
+
   &.aesy-select-dropdown-option-check-selected {
-    border-color: var(--select-option-selected-color);
-    background: var(--select-option-selected-color);
+    background: var(--aesy-select-dropdown-option-selected-color);
+    border-color: var(--aesy-select-dropdown-option-selected-color);
   }
+
   & span.aesy-select-dropdown-option-check-checkmark {
     border-bottom: 2px solid white;
     border-left: 2px solid white;
@@ -275,13 +275,15 @@ span.aesy-select-dropdown-option-label {
   min-width: 0;
 }
 
-/*When not multiple*/
+/* Cuando no es multiple */
+
 span.aesy-select-dropdown-option-selected-icon {
-  color: var(--select-option-selected-color);
+  color: var(--aesy-select-dropdown-option-selected-color);
   flex: 0 0 auto;
   font-weight: 600;
   margin-left: 0.75rem;
 }
+
 /* #endregion DROPDOWN */
 
 /* #region EXTRA / VALIDATION */
@@ -293,9 +295,11 @@ div.aesy-select-extra-data {
   gap: 0.75rem;
   justify-content: space-between;
   margin-top: var(--aesy-form-controls-extra-data-margin-top);
+
   & span.error-message {
     color: var(--aesy-form-controls-extra-data-error-text-color);
   }
+
   & span.char-counter {
     margin-left: auto;
     white-space: nowrap;

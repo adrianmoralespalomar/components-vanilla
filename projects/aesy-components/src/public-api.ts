@@ -8,6 +8,7 @@ export * from './lib/form-controls/datepicker/datepicker.component';
 export * from './lib/form-controls/input-number/input-number.component';
 export * from './lib/form-controls/input-text/input-text.component';
 export * from './lib/form-controls/radio-button/radio-button.component';
+export * from './lib/form-controls/select/models/select-option.interface';
 export * from './lib/form-controls/select/select.component';
 export * from './lib/form-controls/textarea/textarea.component';
 

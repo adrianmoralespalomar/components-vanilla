@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SelectComponent } from 'aesy-components';
+import { SelectComponent, SelectOption } from 'aesy-components';
 
 @Component({
   selector: 'app-select-test',
@@ -32,10 +32,10 @@ import { SelectComponent } from 'aesy-components';
   `
 })
 export class SelectTestComponent {
-  countries = [
+  countries: SelectOption[] = [
     { label: 'España', value: 'ES' },
-    { label: 'Francia', value: 'FR' },
-    { label: 'Italia', value: 'IT' },
+    { label: 'Francia', value: 'FR', disabled: true },
+    { label: 'Italia', value: 'IT', disabled: true },
     { label: 'Portugal', value: 'PT' }
   ];
 
