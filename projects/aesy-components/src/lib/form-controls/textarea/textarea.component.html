@@ -1,57 +1,59 @@
-<div class="textarea-container" [class.textarea-invalid]="showError" [class.textarea-disabled]="isDisabled" [class.textarea-readonly]="readonly()" [class]="currentSizeClass">
+<section class="aesy-textarea-container" [class.aesy-textarea-error]="showError" [class.aesy-textarea-disabled]="isDisabled" [class.aesy-textarea-readonly]="readonly()">
   @if (label()) {
-    <label class="textarea-label" [class.textarea-label-disabled]="isDisabled" [attr.for]="textareaId">
+    <label class="aesy-textarea-label" [attr.for]="textareaId">
       {{ label() }}
 
       @if (isRequired) {
-        <span class="textarea-required" aria-hidden="true">*</span>
+        <span class="aesy-form-control-required-asterisk" aria-hidden="true">*</span>
       }
     </label>
   }
 
-  <textarea
-    class="textarea-input"
-    [id]="textareaId"
-    [name]="name()"
-    [value]="currentValue"
-    [placeholder]="placeholder()"
-    [rows]="rows()"
-    [attr.cols]="cols()"
-    [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
-    [required]="isRequired"
-    [readonly]="readonly()"
-    [disabled]="isDisabled"
-    [style.resize]="resize()"
-    [attr.aria-invalid]="isInvalid"
-    [attr.aria-required]="isRequired"
-    [attr.aria-describedby]="showError ? textareaId + '-error' : helpText() ? textareaId + '-help' : null"
-    [class.textarea-align-left]="textAlign() === 'left'"
-    [class.textarea-align-center]="textAlign() === 'center'"
-    [class.textarea-align-right]="textAlign() === 'right'"
-    (input)="onInput($event)"
-    (blur)="onBlur()"></textarea>
+  <div class="aesy-textarea-wrapper">
+    <textarea
+      class="aesy-textarea-textarea"
+      [id]="textareaId"
+      [name]="name()"
+      [value]="currentValue"
+      [placeholder]="placeholder()"
+      [rows]="rows()"
+      [attr.cols]="cols()"
+      [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
+      [required]="isRequired"
+      [readonly]="readonly()"
+      [disabled]="isDisabled"
+      [style.resize]="resize()"
+      [attr.aria-invalid]="isInvalid"
+      [attr.aria-required]="isRequired"
+      [attr.aria-describedby]="showError ? textareaId + '-error' : helpText() ? textareaId + '-help' : null"
+      [class.aesy-form-control-text-align-left]="textAlign() === 'left'"
+      [class.aesy-form-control-text-align-center]="textAlign() === 'center'"
+      [class.aesy-form-control-text-align-right]="textAlign() === 'right'"
+      (input)="onInput($event)"
+      (blur)="onBlur()"></textarea>
+  </div>
 
   @if (showError || helpText() || showCharCount()) {
-    <div class="textarea-extra">
+    <div class="aesy-textarea-extra-data">
       @if (showError) {
-        <div class="textarea-error" [id]="textareaId + '-error'" role="alert">
+        <span class="error-message" [id]="textareaId + '-error'" role="alert">
           {{ currentErrorMessage }}
-        </div>
+        </span>
       } @else if (helpText()) {
-        <div class="textarea-help" [id]="textareaId + '-help'">
+        <span class="help-message" [id]="textareaId + '-help'">
           {{ helpText() }}
-        </div>
+        </span>
       }
 
       @if (showCharCount()) {
-        <div class="textarea-character-count">
+        <span class="char-counter">
           {{ currentLength }}
 
           @if (currentMaxLength !== null) {
             / {{ currentMaxLength }}
           }
-        </div>
+        </span>
       }
     </div>
   }
-</div>
+</section>

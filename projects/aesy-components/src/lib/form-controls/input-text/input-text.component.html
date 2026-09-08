@@ -47,7 +47,7 @@
     }
   </div>
 
-  @if (showError || (showCharCount() && currentMaxLength !== null) || helpText()) {
+  @if (showError || helpText() || showCharCount()) {
     <div class="aesy-input-text-extra-data">
       @if (showError) {
         <span class="error-message" [id]="inputId + '-error'" role="alert">
@@ -59,8 +59,14 @@
         </span>
       }
 
-      @if (showCharCount() && currentMaxLength !== null) {
-        <span class="char-counter">{{ currentLength }} / {{ currentMaxLength }}</span>
+      @if (showCharCount()) {
+        <span class="char-counter">
+          {{ currentLength }}
+
+          @if (currentMaxLength !== null) {
+            / {{ currentMaxLength }}
+          }
+        </span>
       }
     </div>
   }

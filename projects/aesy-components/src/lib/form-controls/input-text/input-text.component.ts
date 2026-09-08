@@ -77,9 +77,7 @@ export class InputTextComponent implements ControlValueAccessor {
   ngOnInit(): void {
     this.ngControl = this.injector.get(NgControl, null);
     const control = this.control;
-
     if (!control) return;
-
     control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.formStateVersion.update(value => value + 1);
     });
