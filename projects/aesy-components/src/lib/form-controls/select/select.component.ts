@@ -15,6 +15,7 @@ let nextSelectId = 0;
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.css'],
+  imports: [CdkConnectedOverlay, CdkOverlayOrigin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
