@@ -1,42 +1,99 @@
-div.table-container {
-  --border-color: #9e9e9e;
-  --border: 1px solid var(--border-color);
-  --gap: 0.25rem;
-  overflow-x: auto;
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #ffffff;
-    thead,
-    tbody {
-      display: table-header-group;
-      border: var(--border);
-      tr th,
-      tr td {
-        align-content: start; /*To Set span at top*/
-        border-bottom: var(--border);
-        padding: 0.5rem;
-        white-space: nowrap;
-        span {
-          display: flex;
-          gap: var(--gap);
-          align-items: center;
-        }
-      }
-      tr th section.header-column-container {
-        display: flex;
-        gap: var(--gap);
-        flex-direction: column;
-        justify-content: space-around;
-        div.header-column-label {
-          display: flex;
-          gap: var(--gap);
-          flex-direction: row;
-        }
-      }
+:host {
+  display: block;
+  width: 100%;
+  /*General*/
+  --aesy-table-border-color: #d1d5db;
+  --aesy-table-border-width: 1px;
+  --aesy-table-border-style: solid;
+
+  --aesy-table-background: #ffffff;
+
+  --aesy-table-text-color: #374151;
+  --aesy-table-text-size: 0.875rem;
+  --aesy-table-text-weight: 500;
+
+  /*Tr*/
+  --aesy-table-tr-elements-padding-y: 0.5rem;
+  --aesy-table-tr-elements-padding-x: 0.875rem;
+  /*Tr in thead*/
+  --aesy-table-thead-tr-background: #ffffff;
+  /*Tr in tbody*/
+  --aesy-table-tbody-tr-odd-background: #fafafa;
+  --aesy-table-tbody-tr-even-background: #ffffff;
+  --aesy-table-tbody-tr-background-hover: #efefef;
+
+  /*Th*/
+  --aesy-table-th-text-weight: 600;
+  --aesy-table-th-background: #ffffff;
+  --aesy-table-th-border-width: 0px 0px var(--aesy-table-border-width) 0px;
+  --aesy-table-th-border-color: #686a6d;
+
+  /*Td*/
+  --aesy-table-td-border-width: 0px 0px var(--aesy-table-border-width) 0px;
+  --aesy-table-td-border-color: #e2e8f0;
+}
+
+div.aesy-table-container {
+  overflow: auto;
+}
+
+table.aesy-table {
+  background-color: var(--aesy-table-background);
+  border-collapse: collapse;
+  width: 100%;
+}
+
+thead.aesy-table-thead {
+  display: table-header-group;
+  border: 0;
+}
+
+tr.aesy-table-tr {
+  outline-color: transparent;
+  &.aesy-table-thead-tr {
+    background: var(--aesy-table-thead-tr-background);
+  }
+  &.aesy-table-tbody-tr {
+    &:nth-child(odd) {
+      background: var(--aesy-table-tbody-tr-odd-background);
     }
-    thead tr th {
-      background-color: #ebf2f5;
+    &:nth-child(even) {
+      background: var(--aesy-table-tbody-tr-even-background);
+    }
+    &:hover {
+      background: var(--aesy-table-tbody-tr-background-hover);
     }
   }
+}
+
+th.aesy-table-th,
+td.aesy-table-td {
+  color: var(--aesy-table-text-color);
+  font-size: var(--aesy-table-text-size);
+  font-weight: var(--aesy-table-text-weight);
+  padding: var(--aesy-table-tr-elements-padding-y) var(--aesy-table-tr-elements-padding-x);
+  text-align: left;
+  vertical-align: middle;
+  &.aesy-table-text-align-left {
+    text-align: left;
+  }
+  &.aesy-table-text-align-center {
+    text-align: center;
+  }
+
+  &.aesy-table-text-align-right {
+    text-align: right;
+  }
+}
+th.aesy-table-th {
+  background: var(--aesy-table-th-background);
+  border-width: var(--aesy-table-th-border-width);
+  border-style: var(--aesy-table-border-style);
+  border-color: var(--aesy-table-th-border-color);
+  font-weight: var(--aesy-table-th-text-weight);
+}
+td.aesy-table-td {
+  border-width: var(--aesy-table-td-border-width);
+  border-style: var(--aesy-table-border-style);
+  border-color: var(--aesy-table-td-border-color);
 }

@@ -10,7 +10,7 @@ import { TableConfig } from './models/table-config.interface';
 type Row = Record<string, unknown>;
 
 @Component({
-  selector: 'app-table',
+  selector: 'aesy-table',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './table.component.html',

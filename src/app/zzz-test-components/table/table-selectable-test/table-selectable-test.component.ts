@@ -5,7 +5,7 @@ import { PaginationMeta, TableComponent, TableConfig } from 'aesy-components';
 @Component({
   template: `
     <span>Tabla con seleccion con todos los datos en memoria pero paginado</span>
-    <app-table [data]="dataCities" [config]="tableConfigCities" [meta]="linksCities" (selectionChange)="this.selectedCities = $event" />
+    <aesy-table [data]="dataCities" [config]="tableConfigCities" [meta]="linksCities" (selectionChange)="this.selectedCities = $event" />
     <pre>{{ this.selectedCities | json }}</pre>
   `,
   styles: [``],

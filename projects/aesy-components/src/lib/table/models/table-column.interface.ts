@@ -5,5 +5,7 @@ export interface TableColumn<T = Record<string, unknown>> {
   options?: unknown[];
   sortable?: boolean;
   filterable?: boolean;
+  alignHeader?: 'left' | 'center' | 'right';
+  alignCell?: 'left' | 'center' | 'right';
 }
 export type TableColumnType = 'text' | 'number' | 'date' | 'select';

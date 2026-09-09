@@ -7,7 +7,7 @@ import { map, Observable } from 'rxjs';
   template: `
     <h3>Hay un error que no renderiza los datos al empezar. Hay q pinchar en algun sitio para que la tabla se "refresque"</h3>
     <span>Tabla con los datos desde 1 endpoint con paginacion en endpoint y con filtracion/ordenacion desde el servidor</span>
-    <app-table [data]="dataProduct()" [config]="tableConfigProduct()" [meta]="linksProduct()" (requestData)="loadProduct($event)" />
+    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [meta]="linksProduct()" (requestData)="loadProduct($event)" />
   `,
   styles: [``],
   imports: [TableComponent]

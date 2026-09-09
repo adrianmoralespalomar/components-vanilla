@@ -4,7 +4,7 @@ import { PaginationMeta, TableComponent, TableConfig } from 'aesy-components';
 @Component({
   template: `
     <span>Tabla con todos los datos en memoria pero paginado</span>
-    <app-table [data]="dataPersons" [config]="tableConfigPersons" [meta]="linksPersonas" />
+    <aesy-table [data]="dataPersons" [config]="tableConfigPersons" [meta]="linksPersonas" />
   `,
   styles: [``],
   imports: [TableComponent]
@@ -26,7 +26,7 @@ export class TableNoApiTestComponent {
 
   tableConfigPersons: TableConfig = {
     columns: [
-      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true },
+      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true, alignHeader: 'center' },
       { key: 'edad', label: 'Edad', type: 'number', sortable: true, filterable: true },
       {
         key: 'pais',
