@@ -1,6 +1,6 @@
 export interface RequestData {
   page: number;
-  pageSize: number;
+  rowsPerPageCurrent: number;
   filters: any;
   sort: { key: string; direction: 'asc' | 'desc' | '' };
 }

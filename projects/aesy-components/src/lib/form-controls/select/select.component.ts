@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, output, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -19,7 +19,7 @@ import { SelectOption } from './models/select-option.interface';
 let nextSelectId = 0;
 
 @Component({
-  selector: 'app-select',
+  selector: 'aesy-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +72,7 @@ export class SelectComponent implements ControlValueAccessor {
 
   /** Valor para uso sin Angular Forms. */
   readonly value = model<any | any[] | null>(null);
+  readonly selectValueChanged = output<any | any[] | null>();
 
   // #endregion INPUTS
 
@@ -88,7 +89,7 @@ export class SelectComponent implements ControlValueAccessor {
 
   private readonly formValue = signal<any | any[] | null>(null);
 
-  private readonly generatedId = `app-select-${nextSelectId++}`;
+  private readonly generatedId = `aesy-select-${nextSelectId++}`;
 
   private readonly injector = inject(Injector);
 
@@ -480,6 +481,7 @@ export class SelectComponent implements ControlValueAccessor {
     } else {
       this.value.set(value);
     }
+    this.selectValueChanged.emit(value);
   }
 
   private toggleMultipleOption(option: SelectOption): void {
@@ -499,6 +501,7 @@ export class SelectComponent implements ControlValueAccessor {
     } else {
       this.value.set(currentValues);
     }
+    this.selectValueChanged.emit(currentValues);
   }
 
   isSelected(option: SelectOption): boolean {

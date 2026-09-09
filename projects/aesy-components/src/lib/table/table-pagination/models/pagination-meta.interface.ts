@@ -1,3 +1,5 @@
+import { PaginationMetaRowsPerPage } from './pagination-meta-rows-per-page.interface';
+
 export interface PaginationMeta {
   goFirstPageButtonShown?: boolean;
   goFirstPageButtonIconSvg?: string;
@@ -8,8 +10,9 @@ export interface PaginationMeta {
   nextIconSvg?: string;
   nextLabel?: string;
   pageShown?: boolean;
+  rowsPerPage?: PaginationMetaRowsPerPage[];
   page: number;
-  pageSize: number;
+  rowsPerPageCurrent: number;
   pageLabelPrefix?: string;
   previousIconSvg?: string;
   previousLabel?: string;

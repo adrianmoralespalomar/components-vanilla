@@ -19,4 +19,8 @@
   @if (paginationMetaConfig().goLastPageButtonShown) {
     <aesy-button [label]="this.paginationMetaConfig().goLastPageButtonLabel" [iconSvg]="getGoLastPageIconSvgPath()" (buttonClick)="changePageToLast()" [disabled]="isLastPageButtonDisabled()" />
   }
+
+  @if ((paginationMetaConfig().rowsPerPage?.length ?? 0) > 0) {
+    <aesy-select class="aesy-table-pagination-rows-page-selector" [options]="paginationMetaConfig().rowsPerPage ?? []" [value]="this.paginationMetaConfig().rowsPerPageCurrent" (selectValueChanged)="changeRowsPerPage($event)" />
+  }
 </div>

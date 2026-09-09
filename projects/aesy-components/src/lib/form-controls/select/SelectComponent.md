@@ -40,27 +40,27 @@ El componente **no incluye búsqueda/filtering de opciones** en esta versión.
 
 ### Inputs
 
-| Input | Tipo | Default | Descripción |
-|---|---|---:|---|
-| `options` | `SelectOption[]` | `[]` | Opciones disponibles. |
-| `multiple` | `boolean` | `false` | Permite seleccionar varias opciones. |
-| `label` | `string` | `''` | Texto del label. |
-| `placeholder` | `string` | `'Selecciona una opción'` | Texto mostrado cuando no hay selección. |
-| `clearable` | `boolean` | `false` | Permite limpiar la selección. |
-| `readonly` | `boolean` | `false` | Impide modificar la selección. |
-| `disabled` | `boolean` | `false` | Deshabilita el componente cuando no está ligado a Forms. |
-| `required` | `boolean \| null` | `null` | Indica si el campo es obligatorio. Con `null`, se detecta automáticamente desde Forms. |
-| `invalid` | `boolean` | `false` | Permite establecer manualmente el estado inválido sin Angular Forms. |
-| `errorMessage` | `string \| null` | `null` | Mensaje de error explícito. Sobrescribe el mensaje automático. |
-| `helpText` | `string \| null` | `null` | Texto de ayuda. |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Tamaño visual del componente. |
-| `id` | `string \| null` | `null` | ID proporcionado por el consumidor. |
-| `name` | `string \| null` | `null` | Nombre del control. |
+| Input          | Tipo                             |                   Default | Descripción                                                                            |
+| -------------- | -------------------------------- | ------------------------: | -------------------------------------------------------------------------------------- |
+| `options`      | `SelectOption[]`                 |                      `[]` | Opciones disponibles.                                                                  |
+| `multiple`     | `boolean`                        |                   `false` | Permite seleccionar varias opciones.                                                   |
+| `label`        | `string`                         |                      `''` | Texto del label.                                                                       |
+| `placeholder`  | `string`                         | `'Selecciona una opción'` | Texto mostrado cuando no hay selección.                                                |
+| `clearable`    | `boolean`                        |                   `false` | Permite limpiar la selección.                                                          |
+| `readonly`     | `boolean`                        |                   `false` | Impide modificar la selección.                                                         |
+| `disabled`     | `boolean`                        |                   `false` | Deshabilita el componente cuando no está ligado a Forms.                               |
+| `required`     | `boolean \| null`                |                    `null` | Indica si el campo es obligatorio. Con `null`, se detecta automáticamente desde Forms. |
+| `invalid`      | `boolean`                        |                   `false` | Permite establecer manualmente el estado inválido sin Angular Forms.                   |
+| `errorMessage` | `string \| null`                 |                    `null` | Mensaje de error explícito. Sobrescribe el mensaje automático.                         |
+| `helpText`     | `string \| null`                 |                    `null` | Texto de ayuda.                                                                        |
+| `size`         | `'small' \| 'medium' \| 'large'` |                `'medium'` | Tamaño visual del componente.                                                          |
+| `id`           | `string \| null`                 |                    `null` | ID proporcionado por el consumidor.                                                    |
+| `name`         | `string \| null`                 |                    `null` | Nombre del control.                                                                    |
 
 ### Model
 
-| Model | Tipo | Descripción |
-|---|---|---|
+| Model   | Tipo                   | Descripción                                          |
+| ------- | ---------------------- | ---------------------------------------------------- |
 | `value` | `any \| any[] \| null` | Valor para utilizar el componente sin Angular Forms. |
 
 El tipo efectivo depende de `multiple`:
@@ -68,7 +68,7 @@ El tipo efectivo depende de `multiple`:
 **Single**
 
 ```ts
-T | null
+T | null;
 ```
 
 **Multiple**
@@ -93,10 +93,10 @@ export interface SelectOption {
 
 ### Propiedades
 
-| Propiedad | Tipo | Descripción |
-|---|---|---|
-| `label` | `string` | Texto mostrado al usuario. |
-| `value` | `any` | Valor asociado a la opción. |
+| Propiedad  | Tipo      | Descripción                     |
+| ---------- | --------- | ------------------------------- |
+| `label`    | `string`  | Texto mostrado al usuario.      |
+| `value`    | `any`     | Valor asociado a la opción.     |
 | `disabled` | `boolean` | Impide seleccionar esta opción. |
 
 ---
@@ -119,24 +119,19 @@ country = 'ES';
 ```
 
 ```html
-<app-select
-  label="País"
-  [options]="countries"
-  [(value)]="country"
-  placeholder="Selecciona un país"
-  [clearable]="true" />
+<aesy-select label="País" [options]="countries" [(value)]="country" placeholder="Selecciona un país" [clearable]="true" />
 ```
 
 El valor seleccionado será:
 
 ```ts
-'ES'
+'ES';
 ```
 
 Al limpiar la selección:
 
 ```ts
-null
+null;
 ```
 
 ---
@@ -146,12 +141,7 @@ null
 Para activar la selección múltiple:
 
 ```html
-<app-select
-  label="Países"
-  [options]="countries"
-  [multiple]="true"
-  [(value)]="selectedCountries"
-  [clearable]="true" />
+<aesy-select label="Países" [options]="countries" [multiple]="true" [(value)]="selectedCountries" [clearable]="true" />
 ```
 
 ```ts
@@ -161,13 +151,13 @@ selectedCountries = ['ES', 'FR'];
 El valor tendrá la forma:
 
 ```ts
-['ES', 'FR']
+['ES', 'FR'];
 ```
 
 Al limpiar:
 
 ```ts
-[]
+[];
 ```
 
 ---
@@ -212,37 +202,22 @@ El componente implementa `ControlValueAccessor`, por lo que puede utilizarse con
 
 ```ts
 form = new FormGroup({
-  country: new FormControl<string | null>(
-    null,
-    Validators.required
-  ),
+  country: new FormControl<string | null>(null, Validators.required),
 
-  countries: new FormControl<string[]>(
-    [],
-    Validators.required
-  )
+  countries: new FormControl<string[]>([], Validators.required)
 });
 ```
 
 ### Single
 
 ```html
-<app-select
-  label="País"
-  [options]="countries"
-  formControlName="country"
-  [clearable]="true" />
+<aesy-select label="País" [options]="countries" formControlName="country" [clearable]="true" />
 ```
 
 ### Multiple
 
 ```html
-<app-select
-  label="Países"
-  [options]="countries"
-  [multiple]="true"
-  formControlName="countries"
-  [clearable]="true" />
+<aesy-select label="Países" [options]="countries" [multiple]="true" formControlName="countries" [clearable]="true" />
 ```
 
 ---
@@ -262,16 +237,13 @@ Se contemplan:
 El `required` se detecta automáticamente mediante:
 
 ```ts
-hasRequiredValidator(this.control)
+hasRequiredValidator(this.control);
 ```
 
 Por ejemplo:
 
 ```ts
-country = new FormControl<string | null>(
-  null,
-  Validators.required
-);
+country = new FormControl<string | null>(null, Validators.required);
 ```
 
 El componente detectará que el campo es obligatorio sin necesidad de:
@@ -305,11 +277,7 @@ getValidationErrorMessage(...)
 También se puede proporcionar un mensaje explícito:
 
 ```html
-<app-select
-  label="País"
-  [options]="countries"
-  formControlName="country"
-  errorMessage="Debes seleccionar un país." />
+<aesy-select label="País" [options]="countries" formControlName="country" errorMessage="Debes seleccionar un país." />
 ```
 
 El `errorMessage` explícito sobrescribe el mensaje automático.
@@ -321,12 +289,7 @@ El `errorMessage` explícito sobrescribe el mensaje automático.
 Cuando el componente se utiliza sin Angular Forms, el estado de error puede establecerse manualmente:
 
 ```html
-<app-select
-  label="País"
-  [options]="countries"
-  [(value)]="country"
-  [invalid]="hasError"
-  errorMessage="Selecciona un país." />
+<aesy-select label="País" [options]="countries" [(value)]="country" [invalid]="hasError" errorMessage="Selecciona un país." />
 ```
 
 En este modo no depende de `touched` o `dirty` de un `FormControl`.
@@ -338,10 +301,7 @@ En este modo no depende de `touched` o `dirty` de un `FormControl`.
 Permite limpiar la selección actual.
 
 ```html
-<app-select
-  [options]="countries"
-  [(value)]="country"
-  [clearable]="true" />
+<aesy-select [options]="countries" [(value)]="country" [clearable]="true" />
 ```
 
 Comportamiento:
@@ -358,10 +318,7 @@ El botón de limpieza solamente está disponible cuando existe una selección y 
 ### Sin Forms
 
 ```html
-<app-select
-  [options]="countries"
-  [(value)]="country"
-  [disabled]="true" />
+<aesy-select [options]="countries" [(value)]="country" [disabled]="true" />
 ```
 
 ### Con Forms
@@ -381,10 +338,7 @@ En este caso, el estado del componente se actualiza automáticamente.
 `readonly` impide modificar la selección pero mantiene el componente visible y operativo como elemento de lectura.
 
 ```html
-<app-select
-  [options]="countries"
-  [(value)]="country"
-  [readonly]="true" />
+<aesy-select [options]="countries" [(value)]="country" [readonly]="true" />
 ```
 
 ---
@@ -414,27 +368,21 @@ Una opción `disabled`:
 El componente admite tres tamaños:
 
 ```html
-<app-select
-  size="small"
-  [options]="countries" />
+<aesy-select size="small" [options]="countries" />
 ```
 
 ```html
-<app-select
-  size="medium"
-  [options]="countries" />
+<aesy-select size="medium" [options]="countries" />
 ```
 
 ```html
-<app-select
-  size="large"
-  [options]="countries" />
+<aesy-select size="large" [options]="countries" />
 ```
 
 Valores disponibles:
 
 ```ts
-'small' | 'medium' | 'large'
+'small' | 'medium' | 'large';
 ```
 
 ---
@@ -443,14 +391,14 @@ Valores disponibles:
 
 El dropdown proporciona navegación básica mediante teclado.
 
-| Tecla | Comportamiento |
-|---|---|
-| `ArrowDown` | Abre el dropdown o mueve el highlight hacia abajo. |
-| `ArrowUp` | Abre el dropdown o mueve el highlight hacia arriba. |
-| `Enter` | Abre el dropdown o selecciona la opción destacada. |
-| `Space` | Abre el dropdown o selecciona la opción destacada. |
-| `Escape` | Cierra el dropdown. |
-| `Tab` | Cierra el dropdown y permite continuar la navegación. |
+| Tecla       | Comportamiento                                        |
+| ----------- | ----------------------------------------------------- |
+| `ArrowDown` | Abre el dropdown o mueve el highlight hacia abajo.    |
+| `ArrowUp`   | Abre el dropdown o mueve el highlight hacia arriba.   |
+| `Enter`     | Abre el dropdown o selecciona la opción destacada.    |
+| `Space`     | Abre el dropdown o selecciona la opción destacada.    |
+| `Escape`    | Cierra el dropdown.                                   |
+| `Tab`       | Cierra el dropdown y permite continuar la navegación. |
 
 Las opciones `disabled` se saltan durante la navegación.
 
@@ -481,7 +429,7 @@ El `label` se asocia con el trigger mediante el ID del componente.
 Si se proporciona:
 
 ```html
-<app-select id="country" />
+<aesy-select id="country" />
 ```
 
 el ID interno del select será:
@@ -499,8 +447,8 @@ country-select-listbox
 Si no se proporciona un ID, el componente genera uno automáticamente:
 
 ```text
-app-select-0-select
-app-select-1-select
+aesy-select-0-select
+aesy-select-1-select
 ...
 ```
 
@@ -511,9 +459,9 @@ app-select-1-select
 El componente mantiene tres piezas principales de estado cuando está integrado con Forms:
 
 ```ts
-formValue
-formDisabled
-formStateVersion
+formValue;
+formDisabled;
+formStateVersion;
 ```
 
 ### `formValue`
@@ -560,7 +508,7 @@ La selección no depende únicamente de igualdad por referencia.
 Para determinar si una opción está seleccionada se utiliza:
 
 ```ts
-areValuesEqual(value, option.value)
+areValuesEqual(value, option.value);
 ```
 
 Esto permite trabajar con valores complejos y mantener el mismo comportamiento definido para otros componentes que utilizan esta utilidad.
@@ -574,7 +522,7 @@ El componente utiliza un dropdown propio.
 No utiliza:
 
 ```html
-<select>
+<select></select>
 ```
 
 ni depende del comportamiento visual del elemento `<select>` nativo.
@@ -596,7 +544,7 @@ El dropdown:
 El componente utiliza:
 
 ```ts
-ChangeDetectionStrategy.OnPush
+ChangeDetectionStrategy.OnPush;
 ```
 
 y Signals para el estado interno.
@@ -604,11 +552,11 @@ y Signals para el estado interno.
 Entre los estados gestionados mediante Signals se encuentran:
 
 ```ts
-isOpen
-highlightedIndex
-formValue
-formDisabled
-formStateVersion
+isOpen;
+highlightedIndex;
+formValue;
+formDisabled;
+formStateVersion;
 ```
 
 Esto mantiene el componente alineado con la arquitectura utilizada por `InputText` y `Textarea`.

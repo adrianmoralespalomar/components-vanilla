@@ -19,7 +19,7 @@
               @if (col.filterable) {
                 <div class="aesy-table-th-filter">
                   @if (col.type === 'select') {
-                    <app-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
+                    <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
                   } @else {
                     <app-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
                   }
@@ -57,6 +57,6 @@
 
 @if (paginationMetaConfig(); as pagination) {
   <div class="aesy-table-pagination-container">
-    <aesy-table-pagination [paginationMetaConfig]="pagination" (pageChanged)="changePage($event)" />
+    <aesy-table-pagination [paginationMetaConfig]="pagination" (pageChanged)="changePage($event)" (rowsPerPageChanged)="changeRowsPerPage($event)" />
   </div>
 }

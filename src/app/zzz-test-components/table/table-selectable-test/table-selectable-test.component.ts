@@ -48,7 +48,7 @@ export class TableSelectableTestComponent {
 
   linksCities: PaginationMeta = {
     page: 1,
-    pageSize: 2,
+    rowsPerPageCurrent: 2,
     total: 0
   };
 }

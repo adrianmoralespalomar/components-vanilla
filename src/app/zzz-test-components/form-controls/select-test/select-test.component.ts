@@ -3,29 +3,29 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validator
 import { SelectComponent, SelectOption } from 'aesy-components';
 
 @Component({
-  selector: 'app-select-test',
+  selector: 'aesy-select-test',
   imports: [SelectComponent, ReactiveFormsModule],
   styles: [``],
   template: `
     <div class="container-formcontrol-test">
-      <app-select label="Valor por defecto " [options]="countries" [(value)]="defaultCountry" placeholder="Selecciona un país" [clearable]="true" />
+      <aesy-select label="Valor por defecto " [options]="countries" [(value)]="defaultCountry" placeholder="Selecciona un país" [clearable]="true" />
       <span>Valor control : {{ defaultCountry }}</span>
     </div>
     <div class="container-formcontrol-test">
-      <app-select label="Valores por defecto seleccionados" [options]="countries" [multiple]="true" [(value)]="defaultSelectedCountries" [clearable]="true" />
+      <aesy-select label="Valores por defecto seleccionados" [options]="countries" [multiple]="true" [(value)]="defaultSelectedCountries" [clearable]="true" />
       <span>Valor control : {{ defaultSelectedCountries }}</span>
     </div>
     <div class="container-formcontrol-test">
-      <app-select label="FormControl requerido" [options]="countries" [multiple]="true" [formControl]="formControlRequerido" [clearable]="true" />
+      <aesy-select label="FormControl requerido" [options]="countries" [multiple]="true" [formControl]="formControlRequerido" [clearable]="true" />
       <span>Valor control : {{ formControlRequerido?.value }}</span>
     </div>
     <form [formGroup]="form">
       <div class="container-formcontrol-test">
-        <app-select label="FormControlName requerido" [options]="countries" formControlName="formControlRequerido" [clearable]="true" />
+        <aesy-select label="FormControlName requerido" [options]="countries" formControlName="formControlRequerido" [clearable]="true" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>
       <div class="container-formcontrol-test">
-        <app-select label="FormControlName requerido multiple al menos 2 opciones" [options]="countries" formControlName="formControlRequeridos" [clearable]="true" [multiple]="true" />
+        <aesy-select label="FormControlName requerido multiple al menos 2 opciones" [options]="countries" formControlName="formControlRequeridos" [clearable]="true" [multiple]="true" />
         <span>Valor control : {{ form.get('formControlRequeridos')?.value }}</span>
       </div>
     </form>

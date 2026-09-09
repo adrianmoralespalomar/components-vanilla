@@ -29,4 +29,7 @@ div.aesy-table-pagination {
       }
     }
   }
+  aesy-select.aesy-table-pagination-rows-page-selector {
+    width: 7rem;
+  }
 }

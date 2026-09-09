@@ -102,7 +102,7 @@ th.aesy-table-th {
     flex-direction: column;
     gap: 0.5rem;
     div.aesy-table-th-filter {
-      app-select {
+      aesy-select {
         --aesy-select-dropdown-option-height: 1rem;
       }
       --aesy-form-controls-height: 2rem;

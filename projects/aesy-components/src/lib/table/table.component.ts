@@ -181,13 +181,13 @@ export class TableComponent<T extends Row = Row> {
 
     meta.total = filtered.length;
 
-    const totalPages = Math.max(1, Math.ceil(meta.total / meta.pageSize));
+    const totalPages = Math.max(1, Math.ceil(meta.total / meta.rowsPerPageCurrent));
 
     meta.page = Math.min(Math.max(meta.page, 1), totalPages);
 
-    const start = (meta.page - 1) * meta.pageSize;
+    const start = (meta.page - 1) * meta.rowsPerPageCurrent;
 
-    this.filteredData = filtered.slice(start, start + meta.pageSize);
+    this.filteredData = filtered.slice(start, start + meta.rowsPerPageCurrent);
   }
 
   private compareValues(a: unknown, b: unknown, direction: 'asc' | 'desc' | ''): number {
@@ -219,7 +219,7 @@ export class TableComponent<T extends Row = Row> {
 
     this.requestData.emit({
       page: this.paginationMetaConfig().page || 1,
-      pageSize: this.paginationMetaConfig().pageSize || 10,
+      rowsPerPageCurrent: this.paginationMetaConfig().rowsPerPageCurrent || 10,
       filters,
       sort: {
         key: this.sortKey,
@@ -256,6 +256,15 @@ export class TableComponent<T extends Row = Row> {
 
   protected changePage(newPage: number): void {
     this.paginationMetaConfig().page = newPage;
+    if (this.config().serverSide) {
+      this.emitRequest();
+    } else {
+      this.applyClientFilteringSortAndPagination();
+    }
+  }
+
+  protected changeRowsPerPage(newRowsPerPage: number): void {
+    this.paginationMetaConfig().rowsPerPageCurrent = newRowsPerPage;
     if (this.config().serverSide) {
       this.emitRequest();
     } else {
