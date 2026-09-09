@@ -1,0 +1,22 @@
+<div class="aesy-table-pagination">
+  <!-- GO FIRST PAGE BUTTON -->
+  @if (paginationMetaConfig().goFirstPageButtonShown) {
+    <aesy-button [label]="this.paginationMetaConfig().goFirstPageButtonLabel" [iconSvg]="getGoFirstPageIconSvgPath()" (buttonClick)="changePageToFirst()" [disabled]="isFirstPageButtonDisabled()" />
+  }
+
+  <!-- GO PREVIOUS PAGE BUTTON -->
+  <aesy-button [label]="this.paginationMetaConfig().previousLabel" [iconSvg]="getPreviousPageIconSvgPath()" (buttonClick)="changePageToPrevious()" [disabled]="paginationMetaConfig().page === 1" />
+
+  <!-- CURRENT PAGE -->
+  @if (paginationMetaConfig().pageShown) {
+    <span>{{ paginationMetaConfig().pageLabelPrefix }} {{ paginationMetaConfig().page }}</span>
+  }
+
+  <!-- GO NEXT PAGE BUTTON -->
+  <aesy-button [label]="paginationMetaConfig().nextLabel" [iconSvg]="getNextPageIconSvgPath()" (buttonClick)="changePageToNext()" [disabled]="isNextPageButtonDisabled()" />
+
+  <!-- GO LAST PAGE BUTTON -->
+  @if (paginationMetaConfig().goLastPageButtonShown) {
+    <aesy-button [label]="this.paginationMetaConfig().goLastPageButtonLabel" [iconSvg]="getGoLastPageIconSvgPath()" (buttonClick)="changePageToLast()" [disabled]="isLastPageButtonDisabled()" />
+  }
+</div>

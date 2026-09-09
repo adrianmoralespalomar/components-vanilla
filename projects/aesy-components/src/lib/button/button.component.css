@@ -62,9 +62,13 @@
   --aesy-button-transition-duration: 0.2s;
 
   --aesy-button-container-width: 100%;
+
+  /*Icon SVG*/
+  --aesy-button-icon-width: 0.875rem;
+  --aesy-button-icon-height: 0.875rem;
 }
 
-[class^='aesy-button-'] {
+button[class^='aesy-button-'] {
   align-items: center;
   border-radius: var(--aesy-button-border-radius);
   border: var(--aesy-button-border-width) solid var(--aesy-button-border-color-primary);
@@ -169,5 +173,13 @@
       background: var(--aesy-button-background-danger-disabled);
       color: var(--aesy-button-text-color-danger-disabled);
     }
+  }
+  svg.aesy-button-icon {
+    display: inline-block;
+    fill: currentColor;
+    flex-shrink: 0;
+    height: var(--aesy-button-icon-height);
+    vertical-align: middle;
+    width: var(--aesy-button-icon-width);
   }
 }

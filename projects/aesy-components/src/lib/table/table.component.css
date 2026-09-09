@@ -2,6 +2,9 @@
   display: block;
   width: 100%;
   /*General*/
+  --aesy-table-min-width: 50rem;
+  --aesy-table-layout: fixed;
+
   --aesy-table-border-color: #d1d5db;
   --aesy-table-border-width: 1px;
   --aesy-table-border-style: solid;
@@ -40,6 +43,8 @@ div.aesy-table-container {
 table.aesy-table {
   background-color: var(--aesy-table-background);
   border-collapse: collapse;
+  min-width: var(--aesy-table-min-width);
+  table-layout: var(--aesy-table-layout);
   width: 100%;
 }
 
@@ -54,6 +59,7 @@ tr.aesy-table-tr {
     background: var(--aesy-table-thead-tr-background);
   }
   &.aesy-table-tbody-tr {
+    transition: background 0.2s;
     &:nth-child(odd) {
       background: var(--aesy-table-tbody-tr-odd-background);
     }
@@ -91,9 +97,26 @@ th.aesy-table-th {
   border-style: var(--aesy-table-border-style);
   border-color: var(--aesy-table-th-border-color);
   font-weight: var(--aesy-table-th-text-weight);
+  section.aesy-table-th-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    div.aesy-table-th-filter {
+      app-select {
+        --aesy-select-dropdown-option-height: 1rem;
+      }
+      --aesy-form-controls-height: 2rem;
+    }
+  }
 }
 td.aesy-table-td {
   border-width: var(--aesy-table-td-border-width);
   border-style: var(--aesy-table-border-style);
   border-color: var(--aesy-table-td-border-color);
+}
+
+div.aesy-table-pagination-container {
+  display: flex;
+  justify-content: start;
+  margin-top: 1rem;
 }

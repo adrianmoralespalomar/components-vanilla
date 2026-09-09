@@ -1,1 +1,9 @@
-<button [class]="'aesy-button-' + type()" [disabled]="disabled()" (click)="buttonClick.emit($event)">{{ label() }}</button>
+<button [class]="'aesy-button-' + type()" [disabled]="disabled()" (click)="buttonClick.emit($event)">
+  @if (label()) {
+    <span class="aesy-button-label">{{ label() }}</span>
+  } @else if (iconSvg()) {
+    <svg class="aesy-button-icon" viewBox="0 0 20 20">
+      <path [attr.d]="iconSvg()" />
+    </svg>
+  }
+</button>

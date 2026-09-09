@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  width: 100%;
+  --aesy-table-pagination-gap: 0.5rem;
+  --aesy-table-pagination-justify-content: center;
+  --aesy-table-pagination-button-padding-x: 0.4rem;
+  --aesy-table-pagination-button-border-width: 0;
+  --aesy-table-pagination-button-background-disabled: transparent;
+  --aesy-table-pagination-button-svg-border-radius: 50%;
+  --aesy-table-pagination-button-svg-background-disabled: transparent;
+}
+
+div.aesy-table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: var(--aesy-table-pagination-justify-content);
+  gap: var(--aesy-table-pagination-gap);
+  /*Some styles for buttons in pagination*/
+  aesy-button {
+    --aesy-button-padding-x: var(--aesy-table-pagination-button-padding-x);
+    --aesy-button-border-width: var(--aesy-table-pagination-button-border-width);
+    --aesy-button-background-primary-disabled: var(--aesy-table-pagination-button-background-disabled);
+    /*Edit button for when its a icon*/
+    ::ng-deep button:has(> svg) {
+      border-radius: var(--aesy-table-pagination-button-svg-border-radius);
+      padding: 0.5rem;
+      &:disabled {
+        background: var(--aesy-table-pagination-button-svg-background-disabled);
+      }
+    }
+  }
+}

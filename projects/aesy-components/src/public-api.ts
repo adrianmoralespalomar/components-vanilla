@@ -12,8 +12,8 @@ export * from './lib/form-controls/select/models/select-option.interface';
 export * from './lib/form-controls/select/select.component';
 export * from './lib/form-controls/textarea/textarea.component';
 
-export * from './lib/table/models/pagination-meta.interface';
 export * from './lib/table/models/request-data.interface';
 export * from './lib/table/models/table-column.interface';
 export * from './lib/table/models/table-config.interface';
+export * from './lib/table/table-pagination/models/pagination-meta.interface';
 export * from './lib/table/table.component';

@@ -31,18 +31,18 @@ import { ButtonComponent, InputTextComponent } from 'aesy-components';
     <div class="container-formcontrol-test">
       <app-input-text label="FormControl Requerido y maximo con 50 caracteres" placeholder="Introduce tu nombre" [allowTypeInvalidValue]="true" [formControl]="formControlRequeridoYMax50Caract" [showCharCount]="true" [maxlength]="50" />
       <span>Valor control : {{ formControlRequeridoYMax50Caract.value }}</span>
-      <app-button [label]="'Save'" [disabled]="formControlRequeridoYMax50Caract.invalid" />
+      <aesy-button [label]="'Save'" [disabled]="formControlRequeridoYMax50Caract.invalid" />
     </div>
     <form [formGroup]="form">
       <div class="container-formcontrol-test">
         <app-input-text label="Nombre" formControlName="formControlRequeridoYMax50Caract" />
         <span>Valor control : {{ form.get('formControlRequeridoYMax50Caract')?.value }}</span>
-        <app-button [label]="'Save'" [disabled]="form.get('formControlRequeridoYMax50Caract')?.invalid" [type]="'success'" />
+        <aesy-button [label]="'Save'" [disabled]="form.get('formControlRequeridoYMax50Caract')?.invalid" [type]="'success'" />
       </div>
       <div class="container-formcontrol-test">
         <app-input-text label="Valor debe ser 'Adrian'" formControlName="formControlErrorCustom" />
         <span>Valor control : {{ form.get('formControlErrorCustom')?.value }}</span>
-        <app-button [label]="'Save'" [disabled]="form.get('formControlErrorCustom')?.invalid" [type]="'secondary'" />
+        <aesy-button [label]="'Save'" [disabled]="form.get('formControlErrorCustom')?.invalid" [type]="'secondary'" />
       </div>
     </form>
   `

@@ -1,11 +1,14 @@
+import { SelectOption } from '../../form-controls/select/models/select-option.interface';
+
 export interface TableColumn<T = Record<string, unknown>> {
+  alignCell?: TableColumnAlign;
+  alignHeader?: TableColumnAlign;
+  filterable?: boolean;
   key: keyof T & string;
   label: string;
-  type: TableColumnType;
-  options?: unknown[];
+  options?: SelectOption[];
   sortable?: boolean;
-  filterable?: boolean;
-  alignHeader?: 'left' | 'center' | 'right';
-  alignCell?: 'left' | 'center' | 'right';
+  type: TableColumnType;
 }
 export type TableColumnType = 'text' | 'number' | 'date' | 'select';
+export type TableColumnAlign = 'left' | 'center' | 'right';

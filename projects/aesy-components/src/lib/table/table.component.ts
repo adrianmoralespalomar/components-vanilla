@@ -2,17 +2,19 @@ import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaginationMeta } from './models/pagination-meta.interface';
+import { InputTextComponent } from '../form-controls/input-text/input-text.component';
+import { SelectComponent } from '../form-controls/select/select.component';
 import { RequestData } from './models/request-data.interface';
+import { Row } from './models/row.type';
 import { TableColumn } from './models/table-column.interface';
 import { TableConfig } from './models/table-config.interface';
-
-type Row = Record<string, unknown>;
+import { PaginationMeta } from './table-pagination/models/pagination-meta.interface';
+import { TablePaginationComponent } from './table-pagination/table-pagination.component';
 
 @Component({
   selector: 'aesy-table',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -24,7 +26,7 @@ export class TableComponent<T extends Row = Row> {
 
   readonly data = input<T[]>([]);
   readonly config = input.required<TableConfig<T>>();
-  readonly meta = input.required<PaginationMeta>();
+  readonly paginationMetaConfig = input.required<PaginationMeta>();
 
   readonly requestData = output<RequestData>();
   readonly selectionChange = output<T[]>();
@@ -108,7 +110,7 @@ export class TableComponent<T extends Row = Row> {
       this.filters[column.key] = control;
 
       control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        this.meta().page = 1;
+        this.paginationMetaConfig().page = 1;
 
         if (this.config().serverSide) {
           this.emitRequest();
@@ -140,7 +142,7 @@ export class TableComponent<T extends Row = Row> {
     const queryParams: Record<string, string | null> = {};
 
     for (const [key, control] of Object.entries(this.filters)) {
-      const value = control.value.trim();
+      const value = control.value?.trim();
 
       queryParams[`${this.config().tableName}${key}`] = value || null;
     }
@@ -153,13 +155,13 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected applyClientFilteringSortAndPagination(): void {
-    const meta = this.meta();
+    const meta = this.paginationMetaConfig();
 
     let filtered = [...this.data()];
 
     // Filtros
     for (const [key, control] of Object.entries(this.filters)) {
-      const value = control.value.trim().toLowerCase();
+      const value = control.value?.trim()?.toLowerCase();
 
       if (!value) {
         continue;
@@ -216,8 +218,8 @@ export class TableComponent<T extends Row = Row> {
     const filters = Object.fromEntries(Object.entries(this.filters).map(([key, control]) => [key, control.value]));
 
     this.requestData.emit({
-      page: this.meta().page || 1,
-      pageSize: this.meta().pageSize || 10,
+      page: this.paginationMetaConfig().page || 1,
+      pageSize: this.paginationMetaConfig().pageSize || 10,
       filters,
       sort: {
         key: this.sortKey,
@@ -253,16 +255,7 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected changePage(newPage: number): void {
-    const meta = this.meta();
-
-    const totalPages = Math.max(1, Math.ceil(meta.total / meta.pageSize));
-
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    meta.page = newPage;
-
+    this.paginationMetaConfig().page = newPage;
     if (this.config().serverSide) {
       this.emitRequest();
     } else {

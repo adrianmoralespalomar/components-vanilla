@@ -5,9 +5,9 @@ import { ButtonComponent } from 'aesy-components';
   selector: 'app-root',
   template: `
     <div style="display:flex; gap:1rem;margin:1rem 0">
-      <app-button [label]="'Button'" [routerLink]="'button'" />
-      <app-button [label]="'Form Controls'" [type]="'secondary'" [routerLink]="'form-controls'" />
-      <app-button [label]="'Table'" [type]="'tertiary'" [routerLink]="'table'" />
+      <aesy-button [label]="'Button'" [routerLink]="'button'" />
+      <aesy-button [label]="'Form Controls'" [type]="'secondary'" [routerLink]="'form-controls'" />
+      <aesy-button [label]="'Table'" [type]="'tertiary'" [routerLink]="'table'" />
     </div>
     <router-outlet />
   `,

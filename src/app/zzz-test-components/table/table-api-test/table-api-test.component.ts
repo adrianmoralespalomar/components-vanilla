@@ -7,9 +7,15 @@ import { map, Observable } from 'rxjs';
   template: `
     <h3>Hay un error que no renderiza los datos al empezar. Hay q pinchar en algun sitio para que la tabla se "refresque"</h3>
     <span>Tabla con los datos desde 1 endpoint con paginacion en endpoint y con filtracion/ordenacion desde el servidor</span>
-    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [meta]="linksProduct()" (requestData)="loadProduct($event)" />
+    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" />
   `,
-  styles: [``],
+  styles: [
+    `
+      aesy-table {
+        --aesy-table-layout: auto;
+      }
+    `
+  ],
   imports: [TableComponent]
 })
 export class TableApiTestComponent {
@@ -25,7 +31,10 @@ export class TableApiTestComponent {
     persistFilters: true
   });
 
-  linksProduct = signal<PaginationMeta>({
+  paginationMetaConfig = signal<PaginationMeta>({
+    goFirstPageButtonShown: true,
+    goLastPageButtonShown: true,
+    pageShown: true,
     page: 1,
     pageSize: 10,
     total: 0
@@ -35,11 +44,12 @@ export class TableApiTestComponent {
     const offset = (event.page - 1) * event.pageSize;
     this.getProductList(event.filters.title, offset, event.pageSize, event.sort.key, event.sort.direction).subscribe((res: any) => {
       this.dataProduct.set(res.data);
-      this.linksProduct.set({
+      this.paginationMetaConfig.update(x => ({
+        ...x,
         page: res.page,
         pageSize: res.pageSize,
         total: res.total
-      });
+      }));
     });
   }
 

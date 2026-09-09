@@ -5,7 +5,7 @@ import { PaginationMeta, TableComponent, TableConfig } from 'aesy-components';
 @Component({
   template: `
     <span>Tabla con seleccion con todos los datos en memoria pero paginado</span>
-    <aesy-table [data]="dataCities" [config]="tableConfigCities" [meta]="linksCities" (selectionChange)="this.selectedCities = $event" />
+    <aesy-table [data]="dataCities" [config]="tableConfigCities" [paginationMetaConfig]="linksCities" (selectionChange)="this.selectedCities = $event" />
     <pre>{{ this.selectedCities | json }}</pre>
   `,
   styles: [``],
@@ -30,7 +30,11 @@ export class TableSelectableTestComponent {
         type: 'select',
         sortable: true,
         filterable: true,
-        options: ['España', 'Francia', 'Italia']
+        options: [
+          { label: 'España', value: 'España' },
+          { label: 'Francia', value: 'Francia' },
+          { label: 'Italia', value: 'Italia' }
+        ]
       }
     ],
     tableName: 'tableConfigCities',
