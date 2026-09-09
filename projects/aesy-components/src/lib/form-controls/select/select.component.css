@@ -4,10 +4,19 @@
   --aesy-select-input-multiple-element-background: #eff6ff;
   --aesy-select-input-multiple-element-color: #1d4ed8;
   --aesy-select-input-multiple-element-remove-color: #2563eb;
+
+  --aesy-select-display: flex;
+  --aesy-select-dropdown-option-hover-background: #f3f4f6;
+  --aesy-select-dropdown-option-selected-background: #eff6ff;
+  --aesy-select-dropdown-option-highlighted-background: #f3f4f6;
+  --aesy-select-dropdown-option-selected-color: #2563eb;
+  --aesy-select-dropdown-option-text-size: 0.875rem;
+  --aesy-select-dropdown-option-line-height: 1.5;
+  --aesy-select-dropdown-option-height: 2rem;
 }
 
 section.aesy-select-container {
-  display: flex;
+  display: var(--aesy-select-display);
   flex-direction: column;
   font-family: inherit;
   width: 100%;
@@ -37,8 +46,9 @@ button.aesy-select-input-container {
   display: flex;
   font-family: inherit;
   font-size: var(--aesy-form-controls-text-size);
+  min-height: var(--aesy-form-controls-height);
   outline: none;
-  padding: var(--aesy-form-controls-padding-y) var(--aesy-form-controls-padding-x);
+  padding: 0 var(--aesy-form-controls-padding-x);
   width: 100%;
 
   transition:
@@ -175,19 +185,6 @@ span.aesy-select-input-arrow {
 /* #region DROPDOWN */
 
 div.aesy-select-dropdown-container {
-  /*
-   * Estas variables se repiten aquí porque el CDK Overlay
-   * coloca el dropdown fuera del host del componente.
-   */
-
-  --aesy-select-dropdown-option-hover-background: #f3f4f6;
-  --aesy-select-dropdown-option-selected-background: #eff6ff;
-  --aesy-select-dropdown-option-highlighted-background: #f3f4f6;
-  --aesy-select-dropdown-option-selected-color: #2563eb;
-
-  --aesy-select-dropdown-option-text-size: 0.875rem;
-  --aesy-select-dropdown-option-line-height: 1.5;
-
   background: var(--aesy-form-controls-background);
   border: var(--aesy-form-controls-border);
   border-radius: var(--aesy-form-controls-radius);
@@ -221,7 +218,7 @@ div.aesy-select-dropdown-option {
   display: flex;
   font-size: var(--aesy-select-dropdown-option-text-size);
   line-height: var(--aesy-select-dropdown-option-line-height);
-  min-height: 2.25rem;
+  min-height: var(--aesy-select-dropdown-option-height);
   padding: 0.5rem 0.75rem;
 
   &:hover:not(.select-option-disabled) {

@@ -113,6 +113,8 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   private readonly viewContainerRef = inject(ViewContainerRef);
 
+  private readonly elementRef = inject(ElementRef);
+
   @ViewChild('calendarTrigger', { static: true })
   private calendarTrigger!: ElementRef<HTMLButtonElement>;
 
@@ -378,6 +380,9 @@ export class DatepickerComponent implements ControlValueAccessor {
 
     this.overlayRef.attach(portal);
 
+    // Copiamos las variables CSS del Select al dropdown del Overlay.
+    this.copyCssVariablesToOverlay();
+
     /*
      * Cierra cuando se hace click fuera del calendario.
      *
@@ -401,6 +406,29 @@ export class DatepickerComponent implements ControlValueAccessor {
 
     this.overlayRef?.dispose();
     this.overlayRef = null;
+  }
+
+  private copyCssVariablesToOverlay(): void {
+    if (!this.overlayRef) return;
+
+    const hostElement = this.elementRef.nativeElement as HTMLElement;
+    const overlayElement = this.overlayRef.overlayElement;
+
+    const hostStyles = getComputedStyle(hostElement);
+
+    for (let i = 0; i < hostStyles.length; i++) {
+      const propertyName = hostStyles[i];
+
+      if (!propertyName.startsWith('--aesy-')) {
+        continue;
+      }
+
+      const value = hostStyles.getPropertyValue(propertyName).trim();
+
+      if (value) {
+        overlayElement.style.setProperty(propertyName, value);
+      }
+    }
   }
 
   // ---------------------------------------------------------------------------

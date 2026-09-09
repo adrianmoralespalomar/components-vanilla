@@ -104,6 +104,8 @@ export class SelectComponent implements ControlValueAccessor {
 
   private readonly viewContainerRef = inject(ViewContainerRef);
 
+  private readonly elementRef = inject(ElementRef);
+
   @ViewChild('selectInput', { static: true })
   private selectInput!: ElementRef<HTMLButtonElement>;
 
@@ -399,6 +401,9 @@ export class SelectComponent implements ControlValueAccessor {
 
     this.overlayRef.attach(portal);
 
+    // Copiamos las variables CSS del Select al dropdown del Overlay.
+    this.copyCssVariablesToOverlay();
+
     /*
      * Cierra al hacer click fuera.
      *
@@ -422,6 +427,29 @@ export class SelectComponent implements ControlValueAccessor {
 
     this.overlayRef?.dispose();
     this.overlayRef = null;
+  }
+
+  private copyCssVariablesToOverlay(): void {
+    if (!this.overlayRef) return;
+
+    const hostElement = this.elementRef.nativeElement as HTMLElement;
+    const overlayElement = this.overlayRef.overlayElement;
+
+    const hostStyles = getComputedStyle(hostElement);
+
+    for (let i = 0; i < hostStyles.length; i++) {
+      const propertyName = hostStyles[i];
+
+      if (!propertyName.startsWith('--aesy-')) {
+        continue;
+      }
+
+      const value = hostStyles.getPropertyValue(propertyName).trim();
+
+      if (value) {
+        overlayElement.style.setProperty(propertyName, value);
+      }
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -489,11 +517,7 @@ export class SelectComponent implements ControlValueAccessor {
 
   clear(event?: Event): void {
     event?.stopPropagation();
-
-    if (!this.canClear) {
-      return;
-    }
-
+    if (!this.canClear) return;
     const newValue = this.multiple() ? [] : null;
 
     if (this.isFormBound) {

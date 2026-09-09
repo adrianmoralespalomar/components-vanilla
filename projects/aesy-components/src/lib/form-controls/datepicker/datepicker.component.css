@@ -1,6 +1,18 @@
 :host {
   display: inline-block;
   width: 100%;
+
+  --aesy-datepicker-hover-background: #dfe8f9;
+  --aesy-datepicker-calendar-today-day-color: #1d4ed8;
+  --aesy-datepicker-calendar-today-day-color-hover: #2563eb;
+  --aesy-datepicker-calendar-today-day-background: var(--aesy-form-controls-background);
+  --aesy-datepicker-calendar-today-day-background-hover: #dfe8f9;
+  --aesy-datepicker-calendar-other-color: #c5c3c3;
+  --aesy-datepicker-calendar-selected-color: #ffffff;
+  --aesy-datepicker-calendar-selected-color-hover: #f3f4f6;
+  --aesy-datepicker-calendar-selected-background: #1d4ed8;
+  --aesy-datepicker-calendar-selected-background-hover: #2563eb;
+  --aesy-datepicker-calendar-disabled: #ececec;
 }
 
 section.datepicker-container {
@@ -142,18 +154,6 @@ button.aesy-datepicker-calendar-btn {
 /* -------------------------------------------------------------------------- */
 
 div.aesy-datepicker-calendar {
-  --aesy-datepicker-hover-background: #dfe8f9;
-  --aesy-datepicker-calendar-today-day-color: #1d4ed8;
-  --aesy-datepicker-calendar-today-day-color-hover: #2563eb;
-  --aesy-datepicker-calendar-today-day-background: var(--aesy-form-controls-background);
-  --aesy-datepicker-calendar-today-day-background-hover: #dfe8f9;
-  --aesy-datepicker-calendar-other-color: #c5c3c3;
-  --aesy-datepicker-calendar-selected-color: #ffffff;
-  --aesy-datepicker-calendar-selected-color-hover: #f3f4f6;
-  --aesy-datepicker-calendar-selected-background: #1d4ed8;
-  --aesy-datepicker-calendar-selected-background-hover: #2563eb;
-  --aesy-datepicker-calendar-disabled: #ececec;
-
   background: var(--aesy-form-controls-background);
   border-radius: var(--aesy-form-controls-radius);
   border: var(--aesy-form-controls-border);
