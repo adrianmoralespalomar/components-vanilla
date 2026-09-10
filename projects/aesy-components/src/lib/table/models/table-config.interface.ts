@@ -4,6 +4,8 @@ export interface TableConfig<T = Record<string, unknown>> {
   columns: TableColumn<T>[];
   tableName: string;
   serverSide?: boolean;
+  sortByKey?: string;
+  sortDirection?: 'asc' | 'desc' | '';
   persistFilters?: boolean;
   selectable?: TableSelectableConfig<T>;
 }

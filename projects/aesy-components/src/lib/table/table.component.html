@@ -32,7 +32,7 @@
     </thead>
 
     <tbody class="aesy-table-tbody">
-      @for (row of displayedData; track $index) {
+      @for (row of displayedData(); track $index) {
         <tr class="aesy-table-tr aesy-table-tbody-tr">
           @for (col of columns; track col.key) {
             <td class="aesy-table-td" [class.aesy-table-text-align-left]="col.alignCell === 'left'" [class.aesy-table-text-align-center]="col.alignCell === 'center'" [class.aesy-table-text-align-right]="col.alignCell === 'right'">
@@ -55,7 +55,7 @@
   </table>
 </div>
 
-@if (paginationMetaConfig(); as pagination) {
+@if (isServerSide() ? paginationMetaConfig() : tableForNoServerSide()?.paginationMetaConfig; as pagination) {
   <div class="aesy-table-pagination-container">
     <aesy-table-pagination [paginationMetaConfig]="pagination" (pageChanged)="changePage($event)" (rowsPerPageChanged)="changeRowsPerPage($event)" />
   </div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +20,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent<T extends Row = Row> {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -30,48 +31,114 @@ export class TableComponent<T extends Row = Row> {
 
   readonly requestData = output<RequestData>();
   readonly selectionChange = output<T[]>();
+  readonly currentPageChange = output<number>();
+  readonly rowsPerPageChange = output<number>();
+
+  protected readonly tableForNoServerSide = signal<{
+    originalData: T[];
+    filteredData: T[];
+    config: TableConfig<T>;
+    paginationMetaConfig: PaginationMeta;
+  } | null>(null);
+
+  private readonly dataToSendBackWhenEvents = signal<RequestData>({
+    page: 1,
+    rowsPerPageCurrent: 10,
+    filters: {},
+    sortByKey: '',
+    sortDirection: 'asc'
+  });
+
+  protected readonly isServerSide = computed(() => this.config()?.serverSide ?? false);
 
   protected readonly selectableKey = '__selectable__';
 
   protected selectedRows = new Set<T>();
   protected filters: Record<string, FormControl<string>> = {};
 
-  protected filteredData: T[] = [];
-
-  protected sortKey = '';
-  protected sortDirection: 'asc' | 'desc' | '' = '';
-
+  private configInitialized = false;
   private filtersInitialized = false;
+  private applyPersistInitialized = false;
 
   constructor() {
-    effect(() => {
-      const config = this.config();
+    effect(() => this.initConfigurations());
+    effect(() => this.initFilters());
+    effect(() => this.applyPersistFilters());
+  }
 
-      if (this.filtersInitialized) {
-        return;
-      }
+  private initConfigurations(): void {
+    //Supongo q esto es para no volver a ejecutar esta logica ... rarete
+    if (this.configInitialized) return;
+    this.configInitialized = true;
 
-      this.filtersInitialized = true;
-      this.initFilters();
+    const config = this.config();
 
-      if (config.persistFilters) {
-        this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-          this.loadFiltersFromUrl(params);
+    if (!config?.serverSide && !this.tableForNoServerSide()) {
+      this.tableForNoServerSide.set({
+        originalData: this.data(),
+        filteredData: this.data(),
+        config: this.config(),
+        paginationMetaConfig: this.paginationMetaConfig()
+      });
+    } else {
+      this.dataToSendBackWhenEvents.set({
+        page: this.paginationMetaConfig().page,
+        rowsPerPageCurrent: this.paginationMetaConfig().rowsPerPageCurrent,
+        filters: {},
+        sortByKey: this.config()?.sortByKey,
+        sortDirection: this.config()?.sortDirection
+      });
+    }
+  }
 
-          if (config.serverSide) {
-            this.emitRequest();
-          } else {
-            this.applyClientFilteringSortAndPagination();
-          }
-        });
-      } else {
-        if (config.serverSide) {
+  private initFilters(): void {
+    if (this.filtersInitialized) return;
+    this.filtersInitialized = true;
+    this.filters = {};
+
+    for (const column of this.config().columns) {
+      if (!column.filterable) continue;
+      const control = new FormControl('', {
+        nonNullable: true
+      });
+
+      this.filters[column.key] = control;
+      control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+        const filtersValues = Object.fromEntries(Object.entries(this.filters).map(([key, control]) => [key, control.value]));
+        if (this.isServerSide()) {
+          this.dataToSendBackWhenEvents.update(x => ({
+            ...x,
+            filters: filtersValues
+          }));
           this.emitRequest();
         } else {
           this.applyClientFilteringSortAndPagination();
         }
-      }
-    });
+
+        if (this.config().persistFilters) this.updateQueryParams();
+      });
+    }
+  }
+
+  private applyPersistFilters() {
+    if (this.applyPersistInitialized) return;
+    this.applyPersistInitialized = true;
+    const config = this.config();
+    if (config.persistFilters) {
+      this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+        if (!this.loadFiltersFromUrlAndReturnIfThereAreFilters(params)) return;
+        const filtersValues = Object.fromEntries(Object.entries(this.filters).map(([key, control]) => [key, control.value]));
+        if (config.serverSide) {
+          this.dataToSendBackWhenEvents.update(x => ({
+            ...x,
+            filters: filtersValues
+          }));
+          this.emitRequest();
+        } else {
+          this.applyClientFilteringSortAndPagination();
+        }
+      });
+    }
   }
 
   protected get columns(): TableColumn<T>[] {
@@ -91,51 +158,33 @@ export class TableComponent<T extends Row = Row> {
     ];
   }
 
-  protected get displayedData(): T[] {
-    return this.config().serverSide ? this.data() : this.filteredData;
+  readonly displayedData = computed((): T[] => {
+    console.log(this.config());
+    console.log(this.tableForNoServerSide());
+    return this.config().serverSide ? this.data() : (this.tableForNoServerSide()?.filteredData ?? []);
+  });
+
+  protected get sortKey(): string | undefined | null {
+    return this.isServerSide() ? this.config()?.sortByKey : this.tableForNoServerSide()?.config?.sortByKey;
   }
 
-  protected initFilters(): void {
-    this.filters = {};
-
-    for (const column of this.config().columns) {
-      if (!column.filterable) {
-        continue;
-      }
-
-      const control = new FormControl('', {
-        nonNullable: true
-      });
-
-      this.filters[column.key] = control;
-
-      control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        this.paginationMetaConfig().page = 1;
-
-        if (this.config().serverSide) {
-          this.emitRequest();
-        } else {
-          this.applyClientFilteringSortAndPagination();
-        }
-
-        if (this.config().persistFilters) {
-          this.updateQueryParams();
-        }
-      });
-    }
+  protected get sortDirection(): 'asc' | 'desc' | '' | undefined | null {
+    return this.isServerSide() ? this.config().sortDirection : this.tableForNoServerSide()?.config?.sortDirection;
   }
 
-  protected loadFiltersFromUrl(params: Record<string, string | string[] | undefined>): void {
+  protected loadFiltersFromUrlAndReturnIfThereAreFilters(params: Record<string, string | string[] | undefined>): boolean {
+    let isThereFilter = false;
     for (const key of Object.keys(this.filters)) {
       const namespacedKey = `${this.config().tableName}${key}`;
       const value = params[namespacedKey];
-
       if (value !== undefined && !Array.isArray(value)) {
         this.filters[key].setValue(value, {
           emitEvent: false
         });
+        isThereFilter = true;
       }
     }
+    return isThereFilter;
   }
 
   protected updateQueryParams(): void {
@@ -155,9 +204,7 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected applyClientFilteringSortAndPagination(): void {
-    const meta = this.paginationMetaConfig();
-
-    let filtered = [...this.data()];
+    let filtered = [...(this.tableForNoServerSide()?.originalData || [])];
 
     // Filtros
     for (const [key, control] of Object.entries(this.filters)) {
@@ -175,19 +222,35 @@ export class TableComponent<T extends Row = Row> {
     }
 
     // Ordenación
-    if (this.sortKey && this.sortDirection) {
-      filtered.sort((a, b) => this.compareValues(a[this.sortKey], b[this.sortKey], this.sortDirection));
+    const sortKey = this.sortKey;
+    const sortDirection = this.sortDirection;
+    if (sortKey && sortDirection) {
+      filtered.sort((a, b) => this.compareValues(a[sortKey], b[sortKey], sortDirection));
     }
 
-    meta.total = filtered.length;
+    //Paginación
+    this.tableForNoServerSide.update(config => {
+      if (!config || !config.paginationMetaConfig) return null;
 
-    const totalPages = Math.max(1, Math.ceil(meta.total / meta.rowsPerPageCurrent));
+      const total = filtered.length;
+      const rowsPerPage = config.paginationMetaConfig.rowsPerPageCurrent;
+      const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+      const page = Math.min(Math.max(config.paginationMetaConfig.page, 1), totalPages);
+      const start = (page - 1) * rowsPerPage;
 
-    meta.page = Math.min(Math.max(meta.page, 1), totalPages);
+      // Devolvemos un objeto nuevo con referencias nuevas en cada nivel
+      return {
+        ...config,
+        filteredData: filtered.slice(start, start + rowsPerPage),
+        paginationMetaConfig: {
+          ...config.paginationMetaConfig,
+          total,
+          page
+        }
+      };
+    });
 
-    const start = (meta.page - 1) * meta.rowsPerPageCurrent;
-
-    this.filteredData = filtered.slice(start, start + meta.rowsPerPageCurrent);
+    console.log(this.tableForNoServerSide());
   }
 
   private compareValues(a: unknown, b: unknown, direction: 'asc' | 'desc' | ''): number {
@@ -215,17 +278,18 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected emitRequest(): void {
-    const filters = Object.fromEntries(Object.entries(this.filters).map(([key, control]) => [key, control.value]));
+    console.trace('emitRequest:');
 
-    this.requestData.emit({
-      page: this.paginationMetaConfig().page || 1,
-      rowsPerPageCurrent: this.paginationMetaConfig().rowsPerPageCurrent || 10,
-      filters,
-      sort: {
-        key: this.sortKey,
-        direction: this.sortDirection
-      }
-    });
+    this.requestData.emit(this.dataToSendBackWhenEvents());
+    // this.requestData.emit({
+    //   page: this.page() || 1,
+    //   rowsPerPageCurrent: this.rowsPerPageCurrent() || 10,
+    //   filters,
+    //   sort: {
+    //     key: this.sortKey,
+    //     direction: this.sortDirection
+    //   }
+    // });
   }
 
   protected changeSort(column: TableColumn<T>): void {
@@ -234,53 +298,90 @@ export class TableComponent<T extends Row = Row> {
     }
 
     const key = column.key;
+    let newSortKey: string = '';
+    let newSortDirection: 'asc' | 'desc' | '' = '';
 
     if (this.sortKey !== key) {
-      this.sortKey = key;
-      this.sortDirection = 'asc';
+      newSortKey = key;
+      newSortDirection = 'asc';
     } else if (this.sortDirection === 'asc') {
-      this.sortDirection = 'desc';
+      newSortDirection = 'desc';
     } else if (this.sortDirection === 'desc') {
-      this.sortDirection = '';
-      this.sortKey = '';
+      newSortDirection = '';
+      newSortKey = '';
     } else {
-      this.sortDirection = 'asc';
+      newSortDirection = 'asc';
     }
 
-    if (this.config().serverSide) {
+    if (this.isServerSide()) {
       this.emitRequest();
     } else {
+      this.tableForNoServerSide.update(config =>
+        config
+          ? {
+              ...config,
+              config: {
+                ...config.config,
+                sortByKey: newSortKey,
+                sortDirection: newSortDirection
+              }
+            }
+          : null
+      );
       this.applyClientFilteringSortAndPagination();
     }
   }
 
   protected changePage(newPage: number): void {
-    this.paginationMetaConfig().page = newPage;
-    if (this.config().serverSide) {
+    if (this.isServerSide()) {
+      this.dataToSendBackWhenEvents.update(x => ({
+        ...x,
+        page: newPage
+      }));
       this.emitRequest();
     } else {
+      this.tableForNoServerSide.update(config =>
+        config
+          ? {
+              ...config,
+              paginationMetaConfig: {
+                ...config.paginationMetaConfig,
+                page: newPage
+              }
+            }
+          : null
+      );
       this.applyClientFilteringSortAndPagination();
     }
   }
 
   protected changeRowsPerPage(newRowsPerPage: number): void {
-    this.paginationMetaConfig().rowsPerPageCurrent = newRowsPerPage;
-    if (this.config().serverSide) {
+    if (this.isServerSide()) {
+      this.dataToSendBackWhenEvents.update(x => ({
+        ...x,
+        rowsPerPageCurrent: newRowsPerPage
+      }));
       this.emitRequest();
     } else {
+      this.tableForNoServerSide.update(config =>
+        config
+          ? {
+              ...config,
+              paginationMetaConfig: {
+                ...config.paginationMetaConfig,
+                rowsPerPageCurrent: newRowsPerPage
+              }
+            }
+          : null
+      );
       this.applyClientFilteringSortAndPagination();
     }
   }
 
   protected toggleRowSelection(row: T, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-
-    if (checked) {
-      this.selectedRows.add(row);
-    } else {
-      this.selectedRows.delete(row);
-    }
-
+    if (checked) this.selectedRows.add(row);
+    else this.selectedRows.delete(row);
     this.selectionChange.emit(Array.from(this.selectedRows));
   }
 
@@ -289,10 +390,7 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected getSortIcon(key: string): string {
-    if (this.sortKey !== key) {
-      return '';
-    }
-
+    if (this.sortKey !== key) return '';
     return this.sortDirection === 'asc' ? '▲' : this.sortDirection === 'desc' ? '▼' : '';
   }
 }

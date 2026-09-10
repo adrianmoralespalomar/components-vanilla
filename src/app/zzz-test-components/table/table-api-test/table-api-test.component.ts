@@ -5,8 +5,9 @@ import { map, Observable } from 'rxjs';
 
 @Component({
   template: `
-    <h3>Hay un error que no renderiza los datos al empezar. Hay q pinchar en algun sitio para que la tabla se "refresque"</h3>
+    <h3>La api filtra tanto por nombre producto como url ...</h3>
     <span>Tabla con los datos desde 1 endpoint con paginacion en endpoint y con filtracion/ordenacion desde el servidor</span>
+    Longitud datos: {{ dataProduct()?.length }}
     <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" />
   `,
   styles: [
@@ -47,7 +48,7 @@ export class TableApiTestComponent {
 
   loadProduct(event: RequestData) {
     const offset = (event.page - 1) * event.rowsPerPageCurrent;
-    this.getProductList(event.filters.title, offset, event.rowsPerPageCurrent, event.sort.key, event.sort.direction).subscribe((res: any) => {
+    this.getProductList(event.filters.title, offset, event.rowsPerPageCurrent, event.sortByKey, event.sortDirection).subscribe((res: any) => {
       this.dataProduct.set(res.data);
       this.paginationMetaConfig.update(x => ({
         ...x,
@@ -61,8 +62,14 @@ export class TableApiTestComponent {
   private readonly httpClient = inject(HttpClient);
 
   private getProductList(search: string | undefined = undefined, offset = 0, limit = 10, sortBy: string | undefined = undefined, order: string = 'asc'): Observable<{ data: any[]; page: number; rowsPerPageCurrent: number; total: number }> {
+    let params = '';
+    if (search) params += `&q=${search}`;
+    if (offset) params += `&skip=${offset}`;
+    if (limit) params += `&limit=${limit}`;
+    if (sortBy) params += `&sortBy=${sortBy}`;
+    if (order) params += `&order=${order}`;
     const url = 'https://dummyjson.com/products';
-    return this.httpClient.get<any>(`${url}/search?q=${search}&skip=${offset}&limit=${limit}&sortBy=${sortBy}&order=${order}`).pipe(
+    return this.httpClient.get<any>(`${params ? url + '/search?' + params.substring(1) : url}`).pipe(
       map(response => {
         const data = response.products.map((p: any, i: number) => ({
           title: p.title,
@@ -80,6 +87,10 @@ export class TableApiTestComponent {
   }
 
   constructor() {
-    this.getProductList().subscribe();
+    this.loadProduct({
+      page: this.paginationMetaConfig()?.page,
+      rowsPerPageCurrent: this.paginationMetaConfig()?.rowsPerPageCurrent,
+      filters: {}
+    });
   }
 }

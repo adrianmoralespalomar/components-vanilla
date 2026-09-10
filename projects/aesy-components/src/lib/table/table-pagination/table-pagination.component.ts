@@ -23,12 +23,12 @@ export class TablePaginationComponent<T extends Row = Row> {
   protected readonly isPreviousPageButtonDisabled = computed(() => this.paginationMetaConfig().page <= 1);
 
   protected readonly getNextPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.nextLabel ? null : (this.paginationMetaConfig().nextIconSvg ?? NEXT_PAGE_SVG_ICON_PATH_DEFAULT)));
-  protected readonly isNextPageButtonDisabled = computed(() => this.paginationMetaConfig().page * this.paginationMetaConfig().rowsPerPageCurrent >= this.paginationMetaConfig().total);
+  protected readonly isNextPageButtonDisabled = computed(() => {
+    return this.paginationMetaConfig().page * this.paginationMetaConfig().rowsPerPageCurrent >= this.paginationMetaConfig().total;
+  });
 
   protected readonly getGoLastPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.goLastPageButtonLabel ? null : (this.paginationMetaConfig().goLastPageButtonIconSvg ?? LAST_PAGE_SVG_ICON_PATH_DEFAULT)));
   protected readonly isLastPageButtonDisabled = computed(() => this.paginationMetaConfig().page * this.paginationMetaConfig().rowsPerPageCurrent >= this.paginationMetaConfig().total);
-
-  // protected readonly rowsPerPageCurrent = computed(() => this.paginationMetaConfig().rowsPerPageCurrent);
 
   protected changePageToFirst(): void {
     this.changePage(1);
