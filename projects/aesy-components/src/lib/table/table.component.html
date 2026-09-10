@@ -37,7 +37,7 @@
           @for (col of columns; track col.key) {
             <td class="aesy-table-td" [class.aesy-table-text-align-left]="col.alignCell === 'left'" [class.aesy-table-text-align-center]="col.alignCell === 'center'" [class.aesy-table-text-align-right]="col.alignCell === 'right'">
               @if (col.key === selectableKey) {
-                <input type="checkbox" [checked]="isSelected(row)" (change)="toggleRowSelection(row, $event)" />
+                <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else {
                 <span>{{ row[col.key] }}</span>
               }

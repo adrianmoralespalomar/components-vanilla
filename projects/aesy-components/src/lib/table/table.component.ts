@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Destro
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CheckboxComponent } from '../form-controls/checkbox/checkbox.component';
 import { InputTextComponent } from '../form-controls/input-text/input-text.component';
 import { SelectComponent } from '../form-controls/select/select.component';
 import { RequestData } from './models/request-data.interface';
@@ -14,7 +15,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
 @Component({
   selector: 'aesy-table',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent],
+  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent, CheckboxComponent],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -378,9 +379,8 @@ export class TableComponent<T extends Row = Row> {
     }
   }
 
-  protected toggleRowSelection(row: T, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    if (checked) this.selectedRows.add(row);
+  protected toggleRowSelection(row: T, isChecked:boolean): void {
+    if (isChecked) this.selectedRows.add(row);
     else this.selectedRows.delete(row);
     this.selectionChange.emit(Array.from(this.selectedRows));
   }

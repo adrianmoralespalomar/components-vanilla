@@ -14,17 +14,17 @@ import { CheckboxComponent } from 'aesy-components';
   ],
   template: `
     <div class="container-formcontrol-test">
-      <app-checkbox id="valorpordefecto" label="Valor por defecto con color distinto" [(value)]="valueByDefault" />
+      <aesy-checkbox id="valorpordefecto" label="Valor por defecto con color distinto" [(value)]="valueByDefault" />
       <span>Valor control : {{ valueByDefault }}</span>
     </div>
     <div class="container-formcontrol-test">
-      <app-checkbox label="FormControl Requerido q tras 2s se marcara" [formControl]="formControlRequerido" />
+      <aesy-checkbox label="FormControl Requerido q tras 2s se marcara" [formControl]="formControlRequerido" />
       <span>Valor control : {{ formControlRequerido.value }}</span>
     </div>
 
     <form [formGroup]="form">
       <div class="container-formcontrol-test">
-        <app-checkbox label="Dentro de Form" formControlName="formControlRequerido" />
+        <aesy-checkbox label="Dentro de Form" formControlName="formControlRequerido" />
         <span>Valor control : {{ form.get('formControlRequerido')?.value }}</span>
       </div>
     </form>

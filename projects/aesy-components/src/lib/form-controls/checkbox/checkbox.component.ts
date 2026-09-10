@@ -4,7 +4,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 let nextCheckboxId = 0;
 
 @Component({
-  selector: 'app-checkbox',
+  selector: 'aesy-checkbox',
   standalone: true,
   templateUrl: './checkbox.component.html',
   styleUrl: './checkbox.component.css',
