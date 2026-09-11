@@ -3,7 +3,15 @@
     <thead class="aesy-table-thead">
       <tr class="aesy-table-tr aesy-table-thead-tr">
         @for (col of columns; track col.key) {
-          <th class="aesy-table-th" [class.aesy-table-text-align-left]="col.alignHeader === 'left'" [class.aesy-table-text-align-center]="col.alignHeader === 'center'" [class.aesy-table-text-align-right]="col.alignHeader === 'right'">
+          <th
+            #thElement
+            class="aesy-table-th"
+            [class.aesy-table-th-fixed]="config()?.isHeaderFixed"
+            [class.aesy-table-th-column-fixed]="col.fixed"
+            [class.aesy-table-text-align-left]="col.alignHeader === 'left'"
+            [class.aesy-table-text-align-center]="col.alignHeader === 'center'"
+            [class.aesy-table-text-align-right]="col.alignHeader === 'right'"
+            [style.--aesy-table-fixed-left]="getFixedColumnLeft(col)">
             <section class="aesy-table-th-container">
               <div class="aesy-table-th-label">
                 <span (click)="changeSort(col)" [class.sortable]="col.sortable !== false">
@@ -35,7 +43,13 @@
       @for (row of displayedData(); track $index) {
         <tr class="aesy-table-tr aesy-table-tbody-tr">
           @for (col of columns; track col.key) {
-            <td class="aesy-table-td" [class.aesy-table-text-align-left]="col.alignCell === 'left'" [class.aesy-table-text-align-center]="col.alignCell === 'center'" [class.aesy-table-text-align-right]="col.alignCell === 'right'">
+            <td
+              class="aesy-table-td"
+              [class.aesy-table-td-fixed]="col.fixed"
+              [class.aesy-table-text-align-left]="col.alignCell === 'left'"
+              [class.aesy-table-text-align-center]="col.alignCell === 'center'"
+              [class.aesy-table-text-align-right]="col.alignCell === 'right'"
+              [style.--aesy-table-fixed-left]="getFixedColumnLeft(col)">
               @if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else {

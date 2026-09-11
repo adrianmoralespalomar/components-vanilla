@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,8 +20,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent<T extends Row = Row> {
-  private readonly cdr = inject(ChangeDetectorRef);
+export class TableComponent<T extends Row = Row> implements AfterViewInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -160,8 +159,6 @@ export class TableComponent<T extends Row = Row> {
   }
 
   readonly displayedData = computed((): T[] => {
-    console.log(this.config());
-    console.log(this.tableForNoServerSide());
     return this.config().serverSide ? this.data() : (this.tableForNoServerSide()?.filteredData ?? []);
   });
 
@@ -172,6 +169,47 @@ export class TableComponent<T extends Row = Row> {
   protected get sortDirection(): 'asc' | 'desc' | '' | undefined | null {
     return this.isServerSide() ? this.config().sortDirection : this.tableForNoServerSide()?.config?.sortDirection;
   }
+
+  // #region FIXED COLUMNS
+  @ViewChildren('thElement') thElements!: QueryList<ElementRef<HTMLTableCellElement>>;
+  private resizeObserver?: ResizeObserver;
+  private fixedLeftOffsets = new Map<string, string>();
+  // Mapa para almacenar las posiciones calculadas
+  ngAfterViewInit(): void {
+    this.calculateFixedOffsets();
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.calculateFixedOffsets();
+    });
+    this.thElements.forEach(th => {
+      this.resizeObserver?.observe(th.nativeElement);
+    });
+
+    // Recalcular si los elementos cambian
+    this.thElements.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.thElements.forEach(th => {
+        this.resizeObserver?.observe(th.nativeElement);
+      });
+      //this.calculateFixedOffsets();
+    });
+  }
+
+  protected calculateFixedOffsets(): void {
+    this.fixedLeftOffsets.clear();
+    let accumulatedLeft = 0;
+    const thNodes = this.thElements.toArray();
+    this.columns.forEach((col, index) => {
+      if (!col.fixed) return;
+      this.fixedLeftOffsets.set(col.key, `${accumulatedLeft}px`);
+      const element = thNodes[index]?.nativeElement;
+      if (element) accumulatedLeft += element.offsetWidth;
+    });
+  }
+
+  protected getFixedColumnLeft(col: TableColumn<T>): string {
+    return this.fixedLeftOffsets.get(col.key) ?? '0px';
+  }
+  // #endregion FIXED COLUMNS
 
   protected loadFiltersFromUrlAndReturnIfThereAreFilters(params: Record<string, string | string[] | undefined>): boolean {
     let isThereFilter = false;
@@ -279,18 +317,7 @@ export class TableComponent<T extends Row = Row> {
   }
 
   protected emitRequest(): void {
-    console.trace('emitRequest:');
-
     this.requestData.emit(this.dataToSendBackWhenEvents());
-    // this.requestData.emit({
-    //   page: this.page() || 1,
-    //   rowsPerPageCurrent: this.rowsPerPageCurrent() || 10,
-    //   filters,
-    //   sort: {
-    //     key: this.sortKey,
-    //     direction: this.sortDirection
-    //   }
-    // });
   }
 
   protected changeSort(column: TableColumn<T>): void {
@@ -379,7 +406,7 @@ export class TableComponent<T extends Row = Row> {
     }
   }
 
-  protected toggleRowSelection(row: T, isChecked:boolean): void {
+  protected toggleRowSelection(row: T, isChecked: boolean): void {
     if (isChecked) this.selectedRows.add(row);
     else this.selectedRows.delete(row);
     this.selectionChange.emit(Array.from(this.selectedRows));

@@ -3,6 +3,7 @@ import { TableColumn } from './table-column.interface';
 export interface TableConfig<T = Record<string, unknown>> {
   columns: TableColumn<T>[];
   tableName: string;
+  isHeaderFixed?: boolean;
   serverSide?: boolean;
   sortByKey?: string;
   sortDirection?: 'asc' | 'desc' | '';

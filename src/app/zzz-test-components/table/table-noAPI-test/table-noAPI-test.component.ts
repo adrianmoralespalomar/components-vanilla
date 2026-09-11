@@ -4,7 +4,9 @@ import { PaginationMeta, RequestData, TableComponent, TableConfig } from 'aesy-c
 @Component({
   template: `
     <span>Tabla con todos los datos en memoria pero paginado</span>
-    <aesy-table [data]="dataPersons()" [config]="tableConfigPersons" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadData($event)" />
+    <div style="width: 40rem;height:18rem">
+      <aesy-table [data]="dataPersons()" [config]="tableConfigPersons" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadData($event)" />
+    </div>
   `,
   styles: [``],
   imports: [TableComponent]
@@ -26,8 +28,8 @@ export class TableNoApiTestComponent {
 
   tableConfigPersons: TableConfig = {
     columns: [
-      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true, alignHeader: 'center' },
-      { key: 'edad', label: 'Edad', type: 'number', sortable: true, filterable: true },
+      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true, alignHeader: 'center', fixed: true },
+      { key: 'edad', label: 'Edad', type: 'number', sortable: true, filterable: true, fixed: true },
       {
         key: 'pais',
         label: 'País',
@@ -41,6 +43,7 @@ export class TableNoApiTestComponent {
         ]
       }
     ],
+    isHeaderFixed: true,
     tableName: 'tableConfigPersons',
     serverSide: false,
     persistFilters: true

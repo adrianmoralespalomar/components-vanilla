@@ -4,6 +4,7 @@ export interface TableColumn<T = Record<string, unknown>> {
   alignCell?: TableColumnAlign;
   alignHeader?: TableColumnAlign;
   filterable?: boolean;
+  fixed?: boolean;
   key: keyof T & string;
   label: string;
   options?: SelectOption[];

@@ -1,6 +1,7 @@
 :host {
   display: block;
   width: 100%;
+  height: 100%;
   /*General*/
   --aesy-table-min-width: 50rem;
   --aesy-table-layout: fixed;
@@ -37,6 +38,8 @@
 }
 
 div.aesy-table-container {
+  width: 100%;
+  height: 100%;
   overflow: auto;
 }
 
@@ -86,7 +89,6 @@ td.aesy-table-td {
   &.aesy-table-text-align-center {
     text-align: center;
   }
-
   &.aesy-table-text-align-right {
     text-align: right;
   }
@@ -97,6 +99,17 @@ th.aesy-table-th {
   border-style: var(--aesy-table-border-style);
   border-color: var(--aesy-table-th-border-color);
   font-weight: var(--aesy-table-th-text-weight);
+  &.aesy-table-th-fixed {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    &.aesy-table-th-column-fixed {
+      position: sticky;
+      left: var(--aesy-table-fixed-left);
+      z-index: 3;
+      background: var(--aesy-table-th-background);
+    }
+  }
   section.aesy-table-th-container {
     display: flex;
     flex-direction: column;
@@ -113,6 +126,12 @@ td.aesy-table-td {
   border-width: var(--aesy-table-td-border-width);
   border-style: var(--aesy-table-border-style);
   border-color: var(--aesy-table-td-border-color);
+  &.aesy-table-td-fixed {
+    position: sticky;
+    left: var(--aesy-table-fixed-left);
+    z-index: 1;
+    background: var(--aesy-table-background);
+  }
 }
 
 div.aesy-table-pagination-container {
