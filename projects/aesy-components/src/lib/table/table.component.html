@@ -1,11 +1,14 @@
 <div class="aesy-table-container">
   <table class="aesy-table">
     <thead class="aesy-table-thead">
-      <tr class="aesy-table-tr aesy-table-thead-tr">
+      <tr class="aesy-table-tr aesy-table-thead-tr" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)">
         @for (col of columns; track col.key) {
           <th
             #thElement
             class="aesy-table-th"
+            cdkDrag
+            [class.aesy-table-th-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
+            [cdkDragDisabled]="col.key === selectableKey || col.fixed"
             [class.aesy-table-th-fixed]="config()?.isHeaderFixed || col.fixed"
             [class.aesy-table-th-column-fixed]="col.fixed"
             [class.aesy-table-text-align-left]="col.alignHeader === 'left'"
@@ -15,9 +18,12 @@
             [style.width]="col.width">
             <section class="aesy-table-th-container">
               <div class="aesy-table-th-label-container" [class.aesy-table-th-sortable]="col.sortable !== false">
-                <span class="aesy-table-th-label" (click)="changeSort(col)">{{ col.label }}</span>
+                <span class="aesy-table-th-label" (click)="changeSort(col)">{{ col.label }} a</span>
+
                 @if (getSortIcon(col.key); as icon) {
-                  <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">{{ icon }}</span>
+                  <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">
+                    {{ icon }}
+                  </span>
                 }
               </div>
 
@@ -31,6 +37,34 @@
                 </div>
               }
             </section>
+
+            @if (config().draggableColumns && col.key !== selectableKey && !col.fixed) {
+              <ng-template cdkDragPreview>
+                <table class="aesy-table-column-drag-preview">
+                  <thead>
+                    <tr>
+                      <th>
+                        {{ col.label }}
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @for (row of displayedData(); track $index) {
+                      <tr>
+                        <td>
+                          {{ row[col.key] }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </ng-template>
+
+              <!-- <ng-template cdkDragPlaceholder>
+            <th class="aesy-table-th aesy-table-column-drag-placeholder"></th>
+          </ng-template> -->
+            }
           </th>
         }
       </tr>

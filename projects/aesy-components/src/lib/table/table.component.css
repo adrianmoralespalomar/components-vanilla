@@ -146,3 +146,11 @@ div.aesy-table-pagination-container {
   justify-content: start;
   margin-top: 1rem;
 }
+
+.aesy-table-th-draggable {
+  cursor: grab;
+}
+
+.aesy-table-th-draggable.cdk-drag-dragging {
+  cursor: grabbing;
+}

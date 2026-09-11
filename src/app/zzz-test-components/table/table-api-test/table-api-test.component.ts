@@ -27,12 +27,13 @@ export class TableApiTestComponent {
   dataProduct = signal<any[]>([]);
   tableConfigProduct = signal<TableConfig>({
     columns: [
-      { key: 'id', label: 'ID', type: 'number', sortable: true },
-      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true, fixed: true },
+      { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true },
+      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true },
       { key: 'url', label: 'URL', type: 'text' }
     ],
     tableName: 'tableConfigProduct',
     serverSide: true,
+    draggableColumns: true,
     persistFilters: true
   });
 

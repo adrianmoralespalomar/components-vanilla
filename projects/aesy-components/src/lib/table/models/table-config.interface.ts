@@ -2,13 +2,14 @@ import { TableColumn } from './table-column.interface';
 
 export interface TableConfig<T = Record<string, unknown>> {
   columns: TableColumn<T>[];
-  tableName: string;
+  draggableColumns?: boolean;
   isHeaderFixed?: boolean;
+  persistFilters?: boolean;
+  selectable?: TableSelectableConfig<T>;
   serverSide?: boolean;
   sortByKey?: string;
   sortDirection?: 'asc' | 'desc' | '';
-  persistFilters?: boolean;
-  selectable?: TableSelectableConfig<T>;
+  tableName: string;
 }
 
 export interface TableSelectableConfig<T = Record<string, unknown>> {

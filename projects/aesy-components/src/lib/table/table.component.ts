@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +16,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
 @Component({
   selector: 'aesy-table',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent, CheckboxComponent],
+  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent, CheckboxComponent, CdkDropList, CdkDrag],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -65,6 +66,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     effect(() => this.initConfigurations());
     effect(() => this.initFilters());
     effect(() => this.applyPersistFilters());
+    effect(() => this.initColumnOrder());
   }
 
   private initConfigurations(): void {
@@ -142,8 +144,15 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     }
   }
 
+  private initColumnOrder(): void {
+    if (this.orderedColumns().length > 0) return;
+
+    this.orderedColumns.set([...this.config().columns]);
+  }
+
+  private readonly orderedColumns = signal<TableColumn<T>[]>([]);
   protected get columns(): TableColumn<T>[] {
-    const columns = this.config().columns;
+    const columns = this.orderedColumns();
 
     if (!this.config().selectable) {
       return columns;
@@ -212,6 +221,30 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     return `${this.fixedLeftOffsets.get(col.key) ?? 0}px`;
   }
   // #endregion FIXED COLUMNS
+
+  //#region COLUMN DRAGGING
+
+  protected dropColumn(event: CdkDragDrop<TableColumn<T>[]>): void {
+    const selectableOffset = this.config().selectable ? 1 : 0;
+
+    const previousIndex = event.previousIndex - selectableOffset;
+    const currentIndex = event.currentIndex - selectableOffset;
+
+    if (previousIndex < 0 || currentIndex < 0) return;
+    if (previousIndex === currentIndex) return;
+
+    this.orderedColumns.update(columns => {
+      const reorderedColumns = [...columns];
+
+      moveItemInArray(reorderedColumns, previousIndex, currentIndex);
+
+      return reorderedColumns;
+    });
+
+    this.cdr.markForCheck();
+  }
+
+  //#endregion COLUMN DRAGGING
 
   protected loadFiltersFromUrlAndReturnIfThereAreFilters(params: Record<string, string | string[] | undefined>): boolean {
     let isThereFilter = false;
