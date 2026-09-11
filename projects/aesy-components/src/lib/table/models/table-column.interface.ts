@@ -7,6 +7,7 @@ export interface TableColumn<T = Record<string, unknown>> {
   fixed?: boolean;
   key: keyof T & string;
   label: string;
+  width?: string;
   options?: SelectOption[];
   sortable?: boolean;
   type: TableColumnType;

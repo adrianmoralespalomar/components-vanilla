@@ -6,21 +6,18 @@
           <th
             #thElement
             class="aesy-table-th"
-            [class.aesy-table-th-fixed]="config()?.isHeaderFixed"
+            [class.aesy-table-th-fixed]="config()?.isHeaderFixed || col.fixed"
             [class.aesy-table-th-column-fixed]="col.fixed"
             [class.aesy-table-text-align-left]="col.alignHeader === 'left'"
             [class.aesy-table-text-align-center]="col.alignHeader === 'center'"
             [class.aesy-table-text-align-right]="col.alignHeader === 'right'"
-            [style.--aesy-table-fixed-left]="getFixedColumnLeft(col)">
+            [style.left]="getFixedColumnLeft(col)"
+            [style.width]="col.width">
             <section class="aesy-table-th-container">
-              <div class="aesy-table-th-label">
-                <span (click)="changeSort(col)" [class.sortable]="col.sortable !== false">
-                  {{ col.label }}
-                </span>
+              <div class="aesy-table-th-label-container" [class.aesy-table-th-sortable]="col.sortable !== false">
+                <span class="aesy-table-th-label" (click)="changeSort(col)">{{ col.label }}</span>
                 @if (getSortIcon(col.key); as icon) {
-                  <span class="aesy-table-th-label-sort-icon">
-                    {{ icon }}
-                  </span>
+                  <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">{{ icon }}</span>
                 }
               </div>
 
@@ -49,7 +46,7 @@
               [class.aesy-table-text-align-left]="col.alignCell === 'left'"
               [class.aesy-table-text-align-center]="col.alignCell === 'center'"
               [class.aesy-table-text-align-right]="col.alignCell === 'right'"
-              [style.--aesy-table-fixed-left]="getFixedColumnLeft(col)">
+              [style.left]="getFixedColumnLeft(col)">
               @if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else {

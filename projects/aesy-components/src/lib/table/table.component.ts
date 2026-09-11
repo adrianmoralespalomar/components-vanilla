@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,6 +22,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
 })
 export class TableComponent<T extends Row = Row> implements AfterViewInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -173,7 +174,8 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   // #region FIXED COLUMNS
   @ViewChildren('thElement') thElements!: QueryList<ElementRef<HTMLTableCellElement>>;
   private resizeObserver?: ResizeObserver;
-  private fixedLeftOffsets = new Map<string, string>();
+  private fixedLeftOffsets = new Map<string, number>();
+
   // Mapa para almacenar las posiciones calculadas
   ngAfterViewInit(): void {
     this.calculateFixedOffsets();
@@ -190,24 +192,24 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       this.thElements.forEach(th => {
         this.resizeObserver?.observe(th.nativeElement);
       });
-      //this.calculateFixedOffsets();
     });
   }
 
   protected calculateFixedOffsets(): void {
     this.fixedLeftOffsets.clear();
     let accumulatedLeft = 0;
-    const thNodes = this.thElements.toArray();
-    this.columns.forEach((col, index) => {
-      if (!col.fixed) return;
-      this.fixedLeftOffsets.set(col.key, `${accumulatedLeft}px`);
-      const element = thNodes[index]?.nativeElement;
-      if (element) accumulatedLeft += element.offsetWidth;
+    this.thElements.forEach((th, index) => {
+      const column = this.columns[index];
+      if (!column?.fixed) return;
+      const width = th.nativeElement.offsetWidth;
+      this.fixedLeftOffsets.set(column.key, accumulatedLeft);
+      accumulatedLeft += width;
     });
+    this.cdr.markForCheck();
   }
 
   protected getFixedColumnLeft(col: TableColumn<T>): string {
-    return this.fixedLeftOffsets.get(col.key) ?? '0px';
+    return `${this.fixedLeftOffsets.get(col.key) ?? 0}px`;
   }
   // #endregion FIXED COLUMNS
 
@@ -288,30 +290,16 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
         }
       };
     });
-
-    console.log(this.tableForNoServerSide());
   }
 
   private compareValues(a: unknown, b: unknown, direction: 'asc' | 'desc' | ''): number {
-    if (a == null && b == null) {
-      return 0;
-    }
-
-    if (a == null) {
-      return 1;
-    }
-
-    if (b == null) {
-      return -1;
-    }
-
+    if (a == null && b == null) return 0;
+    if (a == null) return 1;
+    if (b == null) return -1;
     let result = 0;
 
-    if (a > b) {
-      result = 1;
-    } else if (a < b) {
-      result = -1;
-    }
+    if (a > b) result = 1;
+    else if (a < b) result = -1;
 
     return direction === 'asc' ? result : -result;
   }
@@ -320,28 +308,18 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     this.requestData.emit(this.dataToSendBackWhenEvents());
   }
 
+  //#region SORTING
   protected changeSort(column: TableColumn<T>): void {
-    if (column.key === this.selectableKey || column.sortable === false) {
-      return;
-    }
-
-    const key = column.key;
-    let newSortKey: string = '';
-    let newSortDirection: 'asc' | 'desc' | '' = '';
-
-    if (this.sortKey !== key) {
-      newSortKey = key;
-      newSortDirection = 'asc';
-    } else if (this.sortDirection === 'asc') {
-      newSortDirection = 'desc';
-    } else if (this.sortDirection === 'desc') {
-      newSortDirection = '';
-      newSortKey = '';
-    } else {
-      newSortDirection = 'asc';
-    }
+    if (column.key === this.selectableKey || column.sortable === false) return;
+    const newSortKey: string = column.key;
+    const newSortDirection = this.sortKey !== newSortKey ? 'asc' : this.sortDirection === 'asc' ? 'desc' : 'asc';
 
     if (this.isServerSide()) {
+      this.dataToSendBackWhenEvents.update(x => ({
+        ...x,
+        sortByKey: newSortKey,
+        sortDirection: newSortDirection
+      }));
       this.emitRequest();
     } else {
       this.tableForNoServerSide.update(config =>
@@ -359,7 +337,9 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       this.applyClientFilteringSortAndPagination();
     }
   }
+  //#endregion SORTING
 
+  //#region PAGINATION
   protected changePage(newPage: number): void {
     if (this.isServerSide()) {
       this.dataToSendBackWhenEvents.update(x => ({
@@ -405,6 +385,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       this.applyClientFilteringSortAndPagination();
     }
   }
+  //#endregion PAGINATION
 
   protected toggleRowSelection(row: T, isChecked: boolean): void {
     if (isChecked) this.selectedRows.add(row);

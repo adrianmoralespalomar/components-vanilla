@@ -5,9 +5,13 @@ import { map, Observable } from 'rxjs';
 
 @Component({
   template: `
-    <h3>La api filtra tanto por nombre producto como url ...</h3>
-    <span>Tabla con los datos desde 1 endpoint con paginacion en endpoint y con filtracion/ordenacion desde el servidor</span>
-    Longitud datos: {{ dataProduct()?.length }}
+    <span>Tabla con los datos desde 1 endpoint con paginacion en endpoint y con filtracion/ordenacion desde el servidor. Longitud datos: {{ dataProduct()?.length }}</span>
+    <ul>
+      <li>Columnas ordenables por api</li>
+      <li>Columnas filtrables api (la api filtra tanto por nombre product como url)</li>
+      <li>Columnas Nombre Product Fixed</li>
+      <li>Paginacion con botones personalizados</li>
+    </ul>
     <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" />
   `,
   styles: [
@@ -24,7 +28,7 @@ export class TableApiTestComponent {
   tableConfigProduct = signal<TableConfig>({
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true },
-      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true },
+      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true, fixed: true },
       { key: 'url', label: 'URL', type: 'text' }
     ],
     tableName: 'tableConfigProduct',
@@ -50,6 +54,11 @@ export class TableApiTestComponent {
     const offset = (event.page - 1) * event.rowsPerPageCurrent;
     this.getProductList(event.filters.title, offset, event.rowsPerPageCurrent, event.sortByKey, event.sortDirection).subscribe((res: any) => {
       this.dataProduct.set(res.data);
+      this.tableConfigProduct.update(x => ({
+        ...x,
+        sortByKey: event.sortByKey,
+        sortDirection: event.sortDirection
+      }));
       this.paginationMetaConfig.update(x => ({
         ...x,
         page: res.page,
@@ -74,7 +83,7 @@ export class TableApiTestComponent {
         const data = response.products.map((p: any, i: number) => ({
           title: p.title,
           url: p.description,
-          id: offset + i + 1
+          id: p.id
         }));
         return {
           data,

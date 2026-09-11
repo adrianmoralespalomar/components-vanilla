@@ -4,11 +4,25 @@ import { PaginationMeta, RequestData, TableComponent, TableConfig } from 'aesy-c
 @Component({
   template: `
     <span>Tabla con todos los datos en memoria pero paginado</span>
-    <div style="width: 40rem;height:18rem">
+    <ul>
+      <li>Columnas ordenables</li>
+      <li>Columnas filtrables</li>
+      <li>Columnas Nombre y Edad Fixed</li>
+      <li>Columna Nombre 150px de width y cabecera centrada</li>
+      <li>Cabecera Fixed</li>
+      <li>Paginacion con botones personalizados</li>
+    </ul>
+    <div style="width: 40rem">
       <aesy-table [data]="dataPersons()" [config]="tableConfigPersons" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadData($event)" />
     </div>
   `,
-  styles: [``],
+  styles: [
+    `
+      aesy-table {
+        --aesy-table-container-height: 18rem;
+      }
+    `
+  ],
   imports: [TableComponent]
 })
 export class TableNoApiTestComponent {
@@ -28,13 +42,13 @@ export class TableNoApiTestComponent {
 
   tableConfigPersons: TableConfig = {
     columns: [
-      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true, alignHeader: 'center', fixed: true },
+      { key: 'nombre', label: 'Nombre', type: 'text', sortable: true, filterable: true, alignHeader: 'center', fixed: true, width: '150px' },
       { key: 'edad', label: 'Edad', type: 'number', sortable: true, filterable: true, fixed: true },
       {
         key: 'pais',
         label: 'País',
         type: 'select',
-        sortable: true,
+        sortable: false,
         filterable: true,
         options: [
           { label: 'España', value: 'España' },
