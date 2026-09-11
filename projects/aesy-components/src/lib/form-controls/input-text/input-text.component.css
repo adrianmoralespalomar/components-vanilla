@@ -23,6 +23,7 @@ div.aesy-input-text-wrapper {
   background: var(--aesy-form-controls-background);
   border-radius: var(--aesy-form-controls-radius);
   border: var(--aesy-form-controls-border);
+  box-sizing: border-box;
   display: flex;
   height: var(--aesy-form-controls-height);
   position: relative;

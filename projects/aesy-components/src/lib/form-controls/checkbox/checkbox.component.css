@@ -77,14 +77,15 @@
 }
 
 .checkbox-control {
-  display: inline-flex;
   align-items: center;
+  background: var(--checkbox-background);
+  border-radius: var(--checkbox-radius);
+  border: 1px solid var(--checkbox-border-color);
+  box-sizing: border-box;
+  display: inline-flex;
+  height: var(--checkbox-size);
   justify-content: center;
   width: var(--checkbox-size);
-  height: var(--checkbox-size);
-  border: 1px solid var(--checkbox-border-color);
-  border-radius: var(--checkbox-radius);
-  background: var(--checkbox-background);
   transition:
     border-color 0.15s ease,
     background-color 0.15s ease,

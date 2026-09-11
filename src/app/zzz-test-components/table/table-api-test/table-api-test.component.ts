@@ -29,7 +29,8 @@ export class TableApiTestComponent {
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true },
       { key: 'title', label: 'Nombre Product', type: 'text', filterable: true },
-      { key: 'url', label: 'URL', type: 'text' }
+      { key: 'url', label: 'URL', type: 'text' },
+      { key: 'index', label: 'Index', type: 'number' }
     ],
     tableName: 'tableConfigProduct',
     serverSide: true,
@@ -84,7 +85,8 @@ export class TableApiTestComponent {
         const data = response.products.map((p: any, i: number) => ({
           title: p.title,
           url: p.description,
-          id: p.id
+          id: p.id,
+          index: i
         }));
         return {
           data,

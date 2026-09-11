@@ -2,11 +2,13 @@
   display: block;
   width: 100%;
   height: 100%;
-  /*General*/
+
+  /* ================= GENERAL ================= */
+
   --aesy-table-container-width: 100%;
   --aesy-table-container-height: auto;
+
   --aesy-table-min-width: 50rem;
-  --aesy-table-layout: fixed;
 
   --aesy-table-border-color: #d1d5db;
   --aesy-table-border-width: 1px;
@@ -18,139 +20,440 @@
   --aesy-table-text-size: 0.875rem;
   --aesy-table-text-weight: 500;
 
-  /*Tr*/
-  --aesy-table-tr-elements-padding-y: 0.5rem;
-  --aesy-table-tr-elements-padding-x: 0.875rem;
-  /*Tr in thead*/
-  --aesy-table-thead-tr-background: #ffffff;
-  /*Tr in tbody*/
-  --aesy-table-tbody-tr-odd-background: #fafafa;
-  --aesy-table-tbody-tr-even-background: #ffffff;
-  --aesy-table-tbody-tr-background-hover: #efefef;
+  /* ================= CELLS ================= */
 
-  /*Th*/
-  --aesy-table-th-text-weight: 600;
-  --aesy-table-th-background: #ffffff;
-  --aesy-table-th-border-width: 0px 0px var(--aesy-table-border-width) 0px;
-  --aesy-table-th-border-color: #686a6d;
+  --aesy-table-cell-padding-y: 0.5rem;
+  --aesy-table-cell-padding-x: 0.875rem;
 
-  /*Td*/
-  --aesy-table-td-border-width: 0px 0px var(--aesy-table-border-width) 0px;
-  --aesy-table-td-border-color: #e2e8f0;
+  --aesy-table-cell-height: 40px;
+
+  /* ================= HEADER ================= */
+
+  --aesy-table-header-background: #ffffff;
+  --aesy-table-header-text-weight: 600;
+  --aesy-table-header-border-color: #686a6d;
+
+  --aesy-table-header-label-height: 24px;
+  --aesy-table-header-filter-height: 32px;
+  --aesy-table-header-gap: 0.5rem;
+
+  /* ================= BODY ================= */
+
+  --aesy-table-body-odd-background: #fafafa;
+  --aesy-table-body-even-background: #ffffff;
+  --aesy-table-body-hover-background: #efefef;
+  --aesy-table-body-border-color: #e2e8f0;
 }
 
-div.aesy-table-container {
+/* ========================================================= */
+/* CONTAINER */
+/* ========================================================= */
+
+.aesy-table-container {
   width: var(--aesy-table-container-width);
   height: var(--aesy-table-container-height);
+
   overflow: auto;
+
+  position: relative;
 }
 
-table.aesy-table {
-  background-color: var(--aesy-table-background);
-  border-collapse: collapse;
+/* ========================================================= */
+/* TABLE */
+/* ========================================================= */
+
+.aesy-table {
+  display: flex;
+
+  flex-direction: row;
+  align-items: flex-start;
+
+  width: max-content;
   min-width: var(--aesy-table-min-width);
-  table-layout: var(--aesy-table-layout);
+
+  background: var(--aesy-table-background);
+
+  position: relative;
+  /*
+   * Importante para que CDK pueda calcular
+   * correctamente el espacio horizontal.
+   */
+  flex-wrap: nowrap;
+}
+
+/* ========================================================= */
+/* COLUMN */
+/* ========================================================= */
+
+.aesy-table-column {
+  flex: 0 0 auto;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  background: var(--aesy-table-background);
+
+  color: var(--aesy-table-text-color);
+
+  font-size: var(--aesy-table-text-size);
+  font-weight: var(--aesy-table-text-weight);
+
+  /*
+   * MUY IMPORTANTE para CDK:
+   *
+   * cada columna tiene que comportarse como una pieza
+   * horizontal independiente.
+   */
+  will-change: transform;
+}
+
+/* ========================================================= */
+/* HEADER */
+/* ========================================================= */
+
+.aesy-table-header {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  /*
+   * Todas las columnas tienen exactamente la misma altura.
+   */
+  height: calc(var(--aesy-table-header-label-height) + var(--aesy-table-header-filter-height) + var(--aesy-table-header-gap) + (2 * var(--aesy-table-cell-padding-y)));
+
+  min-height: calc(var(--aesy-table-header-label-height) + var(--aesy-table-header-filter-height) + var(--aesy-table-header-gap) + (2 * var(--aesy-table-cell-padding-y)));
+
+  padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
+
+  box-sizing: border-box;
+
+  background: var(--aesy-table-header-background);
+
+  border-width: 0 0 var(--aesy-table-border-width) 0;
+  border-style: var(--aesy-table-border-style);
+  border-color: var(--aesy-table-header-border-color);
+
+  overflow: hidden;
+}
+
+.aesy-table-header-fixed {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 2;
+}
+
+/* ========================================================= */
+/* HEADER LABEL */
+/* ========================================================= */
+
+.aesy-table-th-label-container {
+  height: var(--aesy-table-header-label-height);
+  min-height: var(--aesy-table-header-label-height);
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  flex: 0 0 auto;
+}
+
+.aesy-table-th-label {
+  font-weight: var(--aesy-table-header-text-weight);
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aesy-table-th-label-sort-icon {
+  flex: 0 0 auto;
+
+  cursor: pointer;
+}
+
+.aesy-table-th-sortable {
+  cursor: pointer;
+}
+
+/* ========================================================= */
+/* HEADER FILTER */
+/* ========================================================= */
+
+.aesy-table-th-filter {
+  height: var(--aesy-table-header-filter-height);
+  min-height: var(--aesy-table-header-filter-height);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-top: var(--aesy-table-header-gap);
+  overflow: hidden;
+  --aesy-form-controls-height: 2rem;
+}
+
+.aesy-table-th-filter-empty {
+  /*
+   * Sigue ocupando exactamente el mismo espacio
+   * que ocuparía un filtro real.
+   */
+  visibility: hidden;
+}
+
+.aesy-table-th-filter aesy-select {
+  --aesy-select-dropdown-option-height: 1rem;
+
   width: 100%;
 }
 
-thead.aesy-table-thead {
-  display: table-header-group;
-  border: 0;
+.aesy-table-th-filter app-input-text {
+  width: 100%;
 }
 
-tr.aesy-table-tr {
-  outline-color: transparent;
-  &.aesy-table-thead-tr {
-    background: var(--aesy-table-thead-tr-background);
-  }
-  &.aesy-table-tbody-tr {
-    transition: background 0.2s;
-    &:nth-child(odd) {
-      background: var(--aesy-table-tbody-tr-odd-background);
-    }
-    &:nth-child(even) {
-      background: var(--aesy-table-tbody-tr-even-background);
-    }
-    &:hover {
-      background: var(--aesy-table-tbody-tr-background-hover);
-    }
-  }
-}
+/* ========================================================= */
+/* CELLS */
+/* ========================================================= */
 
-th.aesy-table-th,
-td.aesy-table-td {
-  color: var(--aesy-table-text-color);
-  font-size: var(--aesy-table-text-size);
-  font-weight: var(--aesy-table-text-weight);
-  padding: var(--aesy-table-tr-elements-padding-y) var(--aesy-table-tr-elements-padding-x);
-  text-align: left;
-  vertical-align: middle;
-  &.aesy-table-text-align-left {
-    text-align: left;
-  }
-  &.aesy-table-text-align-center {
-    text-align: center;
-  }
-  &.aesy-table-text-align-right {
-    text-align: right;
-  }
-}
-th.aesy-table-th {
-  background: var(--aesy-table-th-background);
-  border-width: var(--aesy-table-th-border-width);
-  border-style: var(--aesy-table-border-style);
-  border-color: var(--aesy-table-th-border-color);
-  font-weight: var(--aesy-table-th-text-weight);
-  &.aesy-table-th-fixed {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    &.aesy-table-th-column-fixed {
-      position: sticky;
-      z-index: 3;
-      background: var(--aesy-table-th-background);
-    }
-  }
-  section.aesy-table-th-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    div.aesy-table-th-label-container {
-      display: flex;
-      gap: 0.5rem;
-      &.aesy-table-th-sortable * {
-        cursor: pointer;
-      }
-    }
-    div.aesy-table-th-filter {
-      aesy-select {
-        --aesy-select-dropdown-option-height: 1rem;
-      }
-      --aesy-form-controls-height: 2rem;
-    }
-  }
-}
-td.aesy-table-td {
-  border-width: var(--aesy-table-td-border-width);
-  border-style: var(--aesy-table-border-style);
-  border-color: var(--aesy-table-td-border-color);
-  &.aesy-table-td-fixed {
-    position: sticky;
-    z-index: 1;
-    background: var(--aesy-table-background);
-  }
-}
+.aesy-table-cell {
+  box-sizing: border-box;
 
-div.aesy-table-pagination-container {
+  /*
+   * Para que las filas de todas las columnas mantengan
+   * la misma altura.
+   */
+  height: var(--aesy-table-cell-height);
+  min-height: var(--aesy-table-cell-height);
+
   display: flex;
-  justify-content: start;
-  margin-top: 1rem;
+
+  align-items: center;
+
+  padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
+
+  border-width: 0 0 var(--aesy-table-border-width) 0;
+  border-style: var(--aesy-table-border-style);
+  border-color: var(--aesy-table-body-border-color);
+
+  overflow: hidden;
+
+  white-space: nowrap;
 }
 
-.aesy-table-th-draggable {
+.aesy-table-cell > span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* ========================================================= */
+/* ROW STRIPING */
+/* ========================================================= */
+
+.aesy-table-row-odd {
+  background: var(--aesy-table-body-odd-background);
+}
+
+.aesy-table-row-even {
+  background: var(--aesy-table-body-even-background);
+}
+
+/* ========================================================= */
+/* ROW HOVER */
+/* ========================================================= */
+
+.aesy-table-row-hover {
+  background: var(--aesy-table-body-hover-background) !important;
+}
+
+/* ========================================================= */
+/* TEXT ALIGN */
+/* ========================================================= */
+
+.aesy-table-text-align-left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.aesy-table-text-align-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.aesy-table-text-align-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ========================================================= */
+/* FIXED COLUMNS */
+/* ========================================================= */
+
+.aesy-table-column-fixed {
+  position: sticky;
+
+  z-index: 3;
+
+  background: var(--aesy-table-background);
+}
+
+.aesy-table-column-fixed .aesy-table-header {
+  z-index: 4;
+}
+
+.aesy-table-column-fixed .aesy-table-cell {
+  position: relative;
+}
+
+/* ========================================================= */
+/* DRAGGING */
+/* ========================================================= */
+
+.aesy-table-column-draggable {
   cursor: grab;
 }
 
-.aesy-table-th-draggable.cdk-drag-dragging {
+.aesy-table-column-draggable.cdk-drag-dragging {
   cursor: grabbing;
+}
+
+/*
+ * ESTO ES LO QUE HACE QUE EL RESTO DE COLUMNAS
+ * SE DESPLACEN SUAVEMENTE.
+ *
+ * No necesitamos modificar el array mientras se arrastra.
+ * CDK aplica transforms a los siblings.
+ */
+
+.aesy-table.cdk-drop-list-dragging .aesy-table-column:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/*
+ * Animación final de la columna cuando termina el drag.
+ */
+
+.aesy-table-column.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ========================================================= */
+/* DRAG PLACEHOLDER */
+/* ========================================================= */
+
+.aesy-table-column-placeholder {
+  flex: 0 0 auto;
+
+  box-sizing: border-box;
+
+  opacity: 0.35;
+
+  background: #cbd5e1;
+
+  border: 2px dashed #64748b;
+
+  pointer-events: none;
+
+  /*
+   * MUY IMPORTANTE:
+   * nunca permitir que flex reduzca el placeholder.
+   */
+  flex-shrink: 0;
+
+  /*
+   * El placeholder debe tener exactamente la misma
+   * geometría horizontal que la columna arrastrada.
+   */
+  min-height: 100%;
+}
+
+/* ========================================================= */
+/* DRAG PREVIEW */
+/* ========================================================= */
+
+.aesy-table-column-preview {
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  background: var(--aesy-table-background);
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  opacity: 0.95;
+
+  pointer-events: none;
+
+  /*
+   * El preview está fuera del flujo normal.
+   */
+  z-index: 1000;
+}
+
+/*
+ * Filtro falso que mostramos en el preview.
+ */
+
+.aesy-table-preview-filter {
+  height: 2rem;
+
+  display: flex;
+
+  align-items: center;
+
+  box-sizing: border-box;
+
+  padding: 0 0.5rem;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 4px;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  font-size: 0.75rem;
+}
+
+/* ========================================================= */
+/* EMPTY */
+/* ========================================================= */
+
+.aesy-table-empty {
+  width: 100%;
+
+  min-height: 80px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+  padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
+
+  color: var(--aesy-table-text-color);
+}
+
+/* ========================================================= */
+/* PAGINATION */
+/* ========================================================= */
+
+.aesy-table-pagination-container {
+  display: flex;
+
+  justify-content: start;
+
+  margin-top: 1rem;
 }

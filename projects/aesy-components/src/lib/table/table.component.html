@@ -1,103 +1,143 @@
 <div class="aesy-table-container">
-  <table class="aesy-table">
-    <thead class="aesy-table-thead">
-      <tr class="aesy-table-tr aesy-table-thead-tr" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)">
-        @for (col of columns; track col.key) {
-          <th
-            #thElement
-            class="aesy-table-th"
-            cdkDrag
-            [class.aesy-table-th-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
-            [cdkDragDisabled]="col.key === selectableKey || col.fixed"
-            [class.aesy-table-th-fixed]="config()?.isHeaderFixed || col.fixed"
-            [class.aesy-table-th-column-fixed]="col.fixed"
-            [class.aesy-table-text-align-left]="col.alignHeader === 'left'"
-            [class.aesy-table-text-align-center]="col.alignHeader === 'center'"
-            [class.aesy-table-text-align-right]="col.alignHeader === 'right'"
-            [style.left]="getFixedColumnLeft(col)"
-            [style.width]="col.width">
-            <section class="aesy-table-th-container">
-              <div class="aesy-table-th-label-container" [class.aesy-table-th-sortable]="col.sortable !== false">
-                <span class="aesy-table-th-label" (click)="changeSort(col)">{{ col.label }} a</span>
+  <div class="aesy-table" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)">
+    @for (col of columns; track col.key) {
+      <div
+        #columnElement
+        class="aesy-table-column"
+        cdkDrag
+        (cdkDragStarted)="onDragStarted($event)"
+        [cdkDragDisabled]="isColumnDragDisabled(col)"
+        [class.aesy-table-column-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
+        [class.aesy-table-column-fixed]="col.fixed"
+        [style.width]="col.width"
+        [style.left]="getFixedColumnLeft(col)">
+        <!-- ================================================= -->
+        <!-- HEADER                                            -->
+        <!-- ================================================= -->
+
+        <div class="aesy-table-header" [class.aesy-table-header-fixed]="config().isHeaderFixed || col.fixed">
+          <!-- LABEL / SORT -->
+
+          <div class="aesy-table-th-label-container">
+            <span class="aesy-table-th-label" [class.aesy-table-th-sortable]="col.sortable !== false" (click)="changeSort(col)">
+              {{ col.label }}
+            </span>
+
+            @if (getSortIcon(col.key); as icon) {
+              <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">
+                {{ icon }}
+              </span>
+            }
+          </div>
+
+          <!-- FILTER -->
+
+          <div class="aesy-table-th-filter" [class.aesy-table-th-filter-empty]="!col.filterable">
+            @if (col.filterable) {
+              @if (col.type === 'select') {
+                <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
+              } @else {
+                <app-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
+              }
+            }
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- BODY                                              -->
+        <!-- ================================================= -->
+
+        @for (row of displayedData(); track $index) {
+          <div
+            class="aesy-table-cell"
+            [attr.data-row-index]="$index"
+            [class.aesy-table-row-odd]="$index % 2 === 0"
+            [class.aesy-table-row-even]="$index % 2 !== 0"
+            [class.aesy-table-row-hover]="hoveredRowIndex() === $index"
+            [class.aesy-table-cell-fixed]="col.fixed"
+            [class.aesy-table-text-align-left]="col.alignCell === 'left'"
+            [class.aesy-table-text-align-center]="col.alignCell === 'center'"
+            [class.aesy-table-text-align-right]="col.alignCell === 'right'"
+            (mouseenter)="setHoveredRow($index)"
+            (mouseleave)="clearHoveredRow($index)">
+            @if (col.key === selectableKey) {
+              <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
+            } @else {
+              <span>
+                {{ row[col.key] }}
+              </span>
+            }
+          </div>
+        }
+
+        <!-- ================================================= -->
+        <!-- DRAG PREVIEW                                      -->
+        <!-- ================================================= -->
+
+        <ng-template cdkDragPreview matchSize>
+          <div class="aesy-table-column aesy-table-column-preview">
+            <div class="aesy-table-header">
+              <div class="aesy-table-th-label-container">
+                <span class="aesy-table-th-label">
+                  {{ col.label }}
+                </span>
 
                 @if (getSortIcon(col.key); as icon) {
-                  <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">
+                  <span class="aesy-table-th-label-sort-icon">
                     {{ icon }}
                   </span>
                 }
               </div>
 
-              @if (col.filterable) {
-                <div class="aesy-table-th-filter">
+              <div class="aesy-table-th-filter" [class.aesy-table-th-filter-empty]="!col.filterable">
+                @if (col.filterable) {
                   @if (col.type === 'select') {
-                    <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
+                    <div class="aesy-table-preview-filter">
+                      {{ col.label }}
+                    </div>
                   } @else {
-                    <app-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
+                    <div class="aesy-table-preview-filter">
+                      {{ col.label }}
+                    </div>
                   }
-                </div>
-              }
-            </section>
+                }
+              </div>
+            </div>
 
-            @if (config().draggableColumns && col.key !== selectableKey && !col.fixed) {
-              <ng-template cdkDragPreview>
-                <table class="aesy-table-column-drag-preview">
-                  <thead>
-                    <tr>
-                      <th>
-                        {{ col.label }}
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    @for (row of displayedData(); track $index) {
-                      <tr>
-                        <td>
-                          {{ row[col.key] }}
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </ng-template>
-
-              <!-- <ng-template cdkDragPlaceholder>
-            <th class="aesy-table-th aesy-table-column-drag-placeholder"></th>
-          </ng-template> -->
+            @for (row of displayedData(); track $index) {
+              <div
+                class="aesy-table-cell"
+                [class.aesy-table-row-odd]="$index % 2 === 0"
+                [class.aesy-table-row-even]="$index % 2 !== 0"
+                [class.aesy-table-text-align-left]="col.alignCell === 'left'"
+                [class.aesy-table-text-align-center]="col.alignCell === 'center'"
+                [class.aesy-table-text-align-right]="col.alignCell === 'right'">
+                @if (col.key === selectableKey) {
+                  <aesy-checkbox [value]="isSelected(row)" />
+                } @else {
+                  <span>
+                    {{ row[col.key] }}
+                  </span>
+                }
+              </div>
             }
-          </th>
-        }
-      </tr>
-    </thead>
+          </div>
+        </ng-template>
 
-    <tbody class="aesy-table-tbody">
-      @for (row of displayedData(); track $index) {
-        <tr class="aesy-table-tr aesy-table-tbody-tr">
-          @for (col of columns; track col.key) {
-            <td
-              class="aesy-table-td"
-              [class.aesy-table-td-fixed]="col.fixed"
-              [class.aesy-table-text-align-left]="col.alignCell === 'left'"
-              [class.aesy-table-text-align-center]="col.alignCell === 'center'"
-              [class.aesy-table-text-align-right]="col.alignCell === 'right'"
-              [style.left]="getFixedColumnLeft(col)">
-              @if (col.key === selectableKey) {
-                <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
-              } @else {
-                <span>{{ row[col.key] }}</span>
-              }
-            </td>
-          }
-        </tr>
-      } @empty {
-        <tr class="aesy-table-tr aesy-table-tbody-tr">
-          <td [attr.colspan]="columns.length" [class.aesy-table-text-align-left]="columns?.[0]?.alignCell === 'left'" [class.aesy-table-text-align-center]="columns?.[0]?.alignCell === 'center'" [class.aesy-table-text-align-right]="columns?.[0]?.alignCell === 'right'">
-            <span>No hay datos disponibles.</span>
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+        <!-- ================================================= -->
+        <!-- PLACEHOLDER                                       -->
+        <!-- ================================================= -->
+
+        <ng-template cdkDragPlaceholder>
+          <div class="aesy-table-column aesy-table-column-placeholder" [style.width.px]="getColumnDragWidth(col)" [style.min-width.px]="getColumnDragWidth(col)"></div>
+        </ng-template>
+      </div>
+    } @empty {
+      <div class="aesy-table-empty">
+        <span>No hay datos disponibles.</span>
+      </div>
+    }
+  </div>
 </div>
 
 @if (isServerSide() ? paginationMetaConfig() : tableForNoServerSide()?.paginationMetaConfig; as pagination) {
