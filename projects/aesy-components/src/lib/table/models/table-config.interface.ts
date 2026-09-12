@@ -3,6 +3,7 @@ import { TableColumn } from './table-column.interface';
 export interface TableConfig<T = Record<string, unknown>> {
   columns: TableColumn<T>[];
   draggableColumns?: boolean;
+  draggableRows?: boolean;
   isHeaderFixed?: boolean;
   persistFilters?: boolean;
   selectable?: TableSelectableConfig<T>;

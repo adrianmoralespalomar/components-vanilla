@@ -8,6 +8,7 @@ import { ButtonComponent } from 'aesy-components';
       <aesy-button [label]="'Button'" [routerLink]="'button'" />
       <aesy-button [label]="'Form Controls'" [type]="'secondary'" [routerLink]="'form-controls'" />
       <aesy-button [label]="'Table'" [type]="'tertiary'" [routerLink]="'table'" />
+      <aesy-button [label]="'MyOtherStuff'" [type]="'tertiary'" [routerLink]="'myotherstuff'" />
     </div>
     <router-outlet />
   `,

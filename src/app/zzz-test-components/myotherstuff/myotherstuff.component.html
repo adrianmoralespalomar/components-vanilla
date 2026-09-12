@@ -1,0 +1,42 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 40px"></th>
+        <!-- Iteramos las columnas dinámicamente -->
+        <th
+          *ngFor="let col of columns; let i = index"
+          draggable="true"
+          (dragstart)="onColDragStart(i)"
+          (dragover)="onColDragOver($event, i)"
+          (dragleave)="dragOverColIndex = null"
+          (drop)="onColDrop($event, i)"
+          (dragend)="resetDragState()"
+          [class.dragging]="draggedColIndex === i && dragType === 'col'"
+          [class.drag-over-col]="dragOverColIndex === i">
+          {{ col.label }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Iteramos las filas -->
+      <tr
+        *ngFor="let row of rows; let rowIndex = index"
+        draggable="true"
+        (dragstart)="onRowDragStart(rowIndex)"
+        (dragover)="onRowDragOver($event, rowIndex)"
+        (dragleave)="dragOverRowIndex = null"
+        (drop)="onRowDrop($event, rowIndex)"
+        (dragend)="resetDragState()"
+        [class.dragging]="draggedRowIndex === rowIndex && dragType === 'row'"
+        [class.drag-over-row]="dragOverRowIndex === rowIndex">
+        <td class="drag-handle">☰</td>
+
+        <!-- Renderizamos las celdas basándonos en el orden actual de 'columns' -->
+        <td *ngFor="let col of columns">
+          {{ row[col.key] }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

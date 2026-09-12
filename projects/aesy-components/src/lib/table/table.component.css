@@ -64,9 +64,7 @@
 
 .aesy-table {
   display: flex;
-
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
 
   width: max-content;
   min-width: var(--aesy-table-min-width);
@@ -74,20 +72,26 @@
   background: var(--aesy-table-background);
 
   position: relative;
-  /*
-   * Importante para que CDK pueda calcular
-   * correctamente el espacio horizontal.
-   */
-  flex-wrap: nowrap;
 }
 
 /* ========================================================= */
-/* COLUMN */
+/* THEAD (CONTENEDOR DE COLUMNAS PARA DRAG HORIZONTAL) */
 /* ========================================================= */
 
-.aesy-table-column {
-  flex: 0 0 auto;
+.aesy-table-thead {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  width: max-content;
+}
 
+/* ========================================================= */
+/* TH (CADA COLUMNA EN LA CABECERA) */
+/* ========================================================= */
+
+.aesy-table-th {
+  flex: 0 0 auto;
   position: relative;
 
   display: flex;
@@ -102,17 +106,11 @@
   font-size: var(--aesy-table-text-size);
   font-weight: var(--aesy-table-text-weight);
 
-  /*
-   * MUY IMPORTANTE para CDK:
-   *
-   * cada columna tiene que comportarse como una pieza
-   * horizontal independiente.
-   */
   will-change: transform;
 }
 
 /* ========================================================= */
-/* HEADER */
+/* HEADER INTERIOR */
 /* ========================================================= */
 
 .aesy-table-header {
@@ -121,16 +119,11 @@
   display: flex;
   flex-direction: column;
 
-  /*
-   * Todas las columnas tienen exactamente la misma altura.
-   */
   height: calc(var(--aesy-table-header-label-height) + var(--aesy-table-header-filter-height) + var(--aesy-table-header-gap) + (2 * var(--aesy-table-cell-padding-y)));
 
   min-height: calc(var(--aesy-table-header-label-height) + var(--aesy-table-header-filter-height) + var(--aesy-table-header-gap) + (2 * var(--aesy-table-cell-padding-y)));
 
   padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
-
-  box-sizing: border-box;
 
   background: var(--aesy-table-header-background);
 
@@ -143,9 +136,7 @@
 
 .aesy-table-header-fixed {
   position: sticky;
-
   top: 0;
-
   z-index: 2;
 }
 
@@ -158,7 +149,6 @@
   min-height: var(--aesy-table-header-label-height);
 
   display: flex;
-
   align-items: center;
 
   gap: 0.5rem;
@@ -201,21 +191,41 @@
 }
 
 .aesy-table-th-filter-empty {
-  /*
-   * Sigue ocupando exactamente el mismo espacio
-   * que ocuparía un filtro real.
-   */
   visibility: hidden;
 }
 
 .aesy-table-th-filter aesy-select {
   --aesy-select-dropdown-option-height: 1rem;
-
   width: 100%;
 }
 
 .aesy-table-th-filter app-input-text {
   width: 100%;
+}
+
+/* ========================================================= */
+/* TBODY (CONTENEDOR DE FILAS) */
+/* ========================================================= */
+
+.aesy-table-tbody {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+}
+
+/* ========================================================= */
+/* ROW */
+/* ========================================================= */
+
+.aesy-table-row {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  will-change: transform;
+}
+
+.aesy-table-row:hover {
+  background: var(--aesy-table-body-hover-background) !important;
 }
 
 /* ========================================================= */
@@ -225,15 +235,10 @@
 .aesy-table-cell {
   box-sizing: border-box;
 
-  /*
-   * Para que las filas de todas las columnas mantengan
-   * la misma altura.
-   */
   height: var(--aesy-table-cell-height);
   min-height: var(--aesy-table-cell-height);
 
   display: flex;
-
   align-items: center;
 
   padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
@@ -249,9 +254,7 @@
 
 .aesy-table-cell > span {
   min-width: 0;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
 }
 
@@ -265,14 +268,6 @@
 
 .aesy-table-row-even {
   background: var(--aesy-table-body-even-background);
-}
-
-/* ========================================================= */
-/* ROW HOVER */
-/* ========================================================= */
-
-.aesy-table-row-hover {
-  background: var(--aesy-table-body-hover-background) !important;
 }
 
 /* ========================================================= */
@@ -300,9 +295,7 @@
 
 .aesy-table-column-fixed {
   position: sticky;
-
   z-index: 3;
-
   background: var(--aesy-table-background);
 }
 
@@ -310,12 +303,27 @@
   z-index: 4;
 }
 
-.aesy-table-column-fixed .aesy-table-cell {
-  position: relative;
+.aesy-table-cell-fixed {
+  position: sticky;
+  z-index: 2;
+  background: inherit;
+}
+
+/* Para mantener el fondo correcto en filas impares/pares en celdas fijas al hacer scroll */
+.aesy-table-row-odd .aesy-table-cell-fixed {
+  background: var(--aesy-table-body-odd-background);
+}
+
+.aesy-table-row-even .aesy-table-cell-fixed {
+  background: var(--aesy-table-body-even-background);
+}
+
+.aesy-table-row:hover .aesy-table-cell-fixed {
+  background: var(--aesy-table-body-hover-background) !important;
 }
 
 /* ========================================================= */
-/* DRAGGING */
+/* COLUMN DRAGGING */
 /* ========================================================= */
 
 .aesy-table-column-draggable {
@@ -326,104 +334,75 @@
   cursor: grabbing;
 }
 
-/*
- * ESTO ES LO QUE HACE QUE EL RESTO DE COLUMNAS
- * SE DESPLACEN SUAVEMENTE.
- *
- * No necesitamos modificar el array mientras se arrastra.
- * CDK aplica transforms a los siblings.
- */
-
-.aesy-table.cdk-drop-list-dragging .aesy-table-column:not(.cdk-drag-placeholder) {
+.aesy-table-thead.cdk-drop-list-dragging .aesy-table-th:not(.cdk-drag-placeholder) {
   transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-/*
- * Animación final de la columna cuando termina el drag.
- */
-
-.aesy-table-column.cdk-drag-animating {
+.aesy-table-th.cdk-drag-animating {
   transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 /* ========================================================= */
-/* DRAG PLACEHOLDER */
+/* ROW DRAGGING */
+/* ========================================================= */
+
+.aesy-table-tbody.cdk-drop-list-dragging .aesy-table-row:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-row.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-row.cdk-drag-dragging {
+  cursor: grabbing;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* ========================================================= */
+/* DRAG PLACEHOLDERS & PREVIEWS */
 /* ========================================================= */
 
 .aesy-table-column-placeholder {
   flex: 0 0 auto;
-
   box-sizing: border-box;
-
   opacity: 0.35;
-
   background: #cbd5e1;
-
   border: 2px dashed #64748b;
-
   pointer-events: none;
-
-  /*
-   * MUY IMPORTANTE:
-   * nunca permitir que flex reduzca el placeholder.
-   */
   flex-shrink: 0;
-
-  /*
-   * El placeholder debe tener exactamente la misma
-   * geometría horizontal que la columna arrastrada.
-   */
   min-height: 100%;
 }
-
-/* ========================================================= */
-/* DRAG PREVIEW */
-/* ========================================================= */
 
 .aesy-table-column-preview {
   display: flex;
   flex-direction: column;
-
   box-sizing: border-box;
-
   background: var(--aesy-table-background);
-
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-
   opacity: 0.95;
-
   pointer-events: none;
-
-  /*
-   * El preview está fuera del flujo normal.
-   */
   z-index: 1000;
 }
 
-/*
- * Filtro falso que mostramos en el preview.
- */
-
-.aesy-table-preview-filter {
-  height: 2rem;
-
-  display: flex;
-
-  align-items: center;
-
+.aesy-table-row-placeholder {
+  width: 100%;
+  height: var(--aesy-table-cell-height);
+  background: #cbd5e1;
+  border: 2px dashed #64748b;
+  opacity: 0.35;
   box-sizing: border-box;
+}
 
-  padding: 0 0.5rem;
-
-  border: 1px solid #d1d5db;
-
-  border-radius: 4px;
-
-  background: #f8fafc;
-
-  color: #94a3b8;
-
-  font-size: 0.75rem;
+.aesy-table-row-preview {
+  display: flex;
+  flex-direction: row;
+  background: var(--aesy-table-background);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 1000;
 }
 
 /* ========================================================= */
@@ -432,13 +411,10 @@
 
 .aesy-table-empty {
   width: 100%;
-
   min-height: 80px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: flex-start;
 
   padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x);
@@ -452,8 +428,34 @@
 
 .aesy-table-pagination-container {
   display: flex;
-
   justify-content: start;
-
   margin-top: 1rem;
+}
+
+/* ========================================================= */
+/* CDK DRAG & DROP - ANIMACIÓN IN SITU (EN TIEMPO REAL) */
+/* ========================================================= */
+
+/* Columnas: Animación suave mientras se arrastra y se desplazan los hermanos */
+.aesy-table-thead.cdk-drop-list-dragging .aesy-table-th:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-th.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Filas: Animación fluida in situ al desplazar y reorganizar */
+.aesy-table-tbody.cdk-drop-list-dragging .aesy-table-row:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-row.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-row.cdk-drag-dragging {
+  cursor: grabbing;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }

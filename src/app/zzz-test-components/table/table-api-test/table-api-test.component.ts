@@ -1,3 +1,4 @@
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { PaginationMeta, RequestData, TableComponent, TableConfig } from 'aesy-components';
@@ -12,7 +13,7 @@ import { map, Observable } from 'rxjs';
       <li>Columnas Nombre Product Fixed</li>
       <li>Paginacion con botones personalizados</li>
     </ul>
-    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" />
+    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" (rowOrderChange)="onRowOrderChange($event)" />
   `,
   styles: [
     `
@@ -24,6 +25,16 @@ import { map, Observable } from 'rxjs';
   imports: [TableComponent]
 })
 export class TableApiTestComponent {
+  onRowOrderChange(event: any) {
+    // 1. Obtienes la versión actual de la señal
+    const currentList = [...this.dataProduct()];
+
+    // 2. Reordenas los elementos usando el índice anterior y el actual del evento
+    moveItemInArray(currentList, event.previousIndex, event.currentIndex);
+
+    // 3. Actualizas la señal con el nuevo array ordenado
+    this.dataProduct.set(currentList);
+  }
   dataProduct = signal<any[]>([]);
   tableConfigProduct = signal<TableConfig>({
     columns: [
@@ -35,6 +46,7 @@ export class TableApiTestComponent {
     tableName: 'tableConfigProduct',
     serverSide: true,
     draggableColumns: true,
+    draggableRows: true,
     persistFilters: true
   });
 

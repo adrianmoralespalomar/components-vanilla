@@ -12,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'table',
     loadChildren: () => import('./zzz-test-components/table/table-test.routes').then(m => m.tableTestRoutes)
+  },
+  {
+    path: 'myotherstuff',
+    loadComponent: () => import('./zzz-test-components/myotherstuff/myotherstuff.component').then(m => m.MyotherstuffComponent)
   }
 ];
