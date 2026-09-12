@@ -343,6 +343,23 @@
 }
 
 /* ========================================================= */
+/* COLUMN DRAGGING - BODY                                 */
+/* ========================================================= */
+
+/*
+ * CDK solo mueve los elementos del cdkDropList horizontal (los TH).
+ * Durante el drag replicamos ese movimiento en las celdas del body.
+ */
+.aesy-table-column-dragging .aesy-table-cell {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.aesy-table-column-dragging .aesy-table-column-dragging-cell {
+  position: relative;
+  z-index: 10;
+}
+
+/* ========================================================= */
 /* ROW DRAGGING */
 /* ========================================================= */
 

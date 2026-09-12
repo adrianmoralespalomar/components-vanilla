@@ -13,12 +13,13 @@ import { map, Observable } from 'rxjs';
       <li>Columnas Nombre Product Fixed</li>
       <li>Paginacion con botones personalizados</li>
     </ul>
-    <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" (rowOrderChange)="onRowOrderChange($event)" />
+    <div style="width: 800px">
+      <aesy-table [data]="dataProduct()" [config]="tableConfigProduct()" [paginationMetaConfig]="paginationMetaConfig()" (requestData)="loadProduct($event)" (rowOrderChange)="onRowOrderChange($event)" />
+    </div>
   `,
   styles: [
     `
       aesy-table {
-        --aesy-table-layout: auto;
       }
     `
   ],

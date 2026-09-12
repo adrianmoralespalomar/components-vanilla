@@ -1,4 +1,4 @@
-import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDragPreview, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -157,7 +157,6 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   }
 
   readonly displayedData = computed((): T[] => {
-    console.log(this.data());
     return this.config().serverSide ? this.data() : (this.tableForNoServerSide()?.filteredData ?? []);
   });
 
@@ -179,6 +178,17 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   private resizeObserver?: ResizeObserver;
   private fixedLeftOffsets = new Map<string, number>();
   private columnWidths = new Map<string, number>();
+
+  private draggedColumnKey: string | null = null;
+  protected get draggedColumnKeyForTemplate(): string | null {
+    return this.draggedColumnKey;
+  }
+  private draggedColumnInitialIndex = -1;
+  private draggedColumnCurrentIndex = -1;
+  private draggedColumnDistanceX = 0;
+  private draggedColumnDistanceY = 0;
+
+  private columnBodyTransforms = new Map<string, number>();
 
   ngAfterViewInit(): void {
     this.calculateFixedOffsets();
@@ -208,6 +218,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       const column = this.columns[index];
       if (!column) return;
       const width = element.nativeElement.getBoundingClientRect().width;
+      console.log(`Column: ${column.key}, Width: ${width}`);
       this.columnWidths.set(column.key, width);
 
       if (column.fixed) {
@@ -251,11 +262,103 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   // DRAG AND DROP
   // ============================================================
 
-  protected onDragStarted(event: CdkDragStart): void {
+  protected onDragStarted(event: CdkDragStart, column: TableColumn<T>): void {
+    // CDK no necesita que le pasemos los datos para ordenar, pero guardar la
+    // columna aquí nos permite aplicar el mismo movimiento visual a las celdas.
+    if (column?.key) {
+      this.draggedColumnKey = column.key;
+      this.draggedColumnInitialIndex = this.columns.findIndex(x => x.key === column.key);
+      this.draggedColumnCurrentIndex = this.draggedColumnInitialIndex;
+      this.draggedColumnDistanceX = 0;
+      this.columnBodyTransforms.clear();
+    }
+
     setTimeout(() => {
       const previewElement = document.querySelector('.cdk-drag-preview') as HTMLElement;
       if (previewElement) this.copyCssVariablesToElement(previewElement);
     });
+  }
+
+  protected onColumnDragMoved(event: CdkDragMove<TableColumn<T>>): void {
+    if (!this.draggedColumnKey) return;
+
+    // La columna del body sigue al ratón exactamente igual que el preview del header.
+    this.draggedColumnDistanceX = event.distance.x;
+    this.draggedColumnDistanceY = event.distance.y;
+    this.updateColumnBodyTransforms();
+    this.cdr.markForCheck();
+  }
+
+  protected onColumnSorted(event: CdkDragSortEvent<TableColumn<T>>): void {
+    if (!this.draggedColumnKey) return;
+
+    this.draggedColumnCurrentIndex = event.currentIndex;
+    this.updateColumnBodyTransforms();
+    this.cdr.markForCheck();
+  }
+
+  protected onColumnDragEnded(): void {
+    this.clearColumnDragState();
+  }
+
+  private updateColumnBodyTransforms(): void {
+    this.columnBodyTransforms.clear();
+
+    const columns = this.columns;
+    const initialIndex = this.draggedColumnInitialIndex;
+    const currentIndex = this.draggedColumnCurrentIndex;
+    const draggedKey = this.draggedColumnKey;
+
+    if (!draggedKey || initialIndex < 0 || currentIndex < 0 || initialIndex === currentIndex) return;
+
+    const draggedWidth = this.getColumnDragWidth(columns[initialIndex]);
+    if (draggedWidth <= 0) return;
+
+    if (currentIndex > initialIndex) {
+      // Al mover a la derecha, las columnas que quedan entre origen y destino
+      // ocupan temporalmente el hueco que deja la columna arrastrada.
+      for (let index = initialIndex + 1; index <= currentIndex; index++) {
+        const column = columns[index];
+        if (column && column.key !== draggedKey) {
+          this.columnBodyTransforms.set(column.key, -draggedWidth);
+        }
+      }
+    } else {
+      // Al mover a la izquierda, las columnas intermedias se desplazan a la derecha.
+      for (let index = currentIndex; index < initialIndex; index++) {
+        const column = columns[index];
+        if (column && column.key !== draggedKey) {
+          this.columnBodyTransforms.set(column.key, draggedWidth);
+        }
+      }
+    }
+  }
+
+  protected getColumnBodyTransform(column: TableColumn<T>): string | null {
+    if (!this.draggedColumnKey) {
+      return null;
+    }
+
+    if (column.key === this.draggedColumnKey) {
+      return `translate3d(${this.draggedColumnDistanceX}px, ${this.draggedColumnDistanceY}px, 0)`;
+    }
+
+    const translateX = this.columnBodyTransforms.get(column.key);
+
+    return translateX !== undefined ? `translate3d(${translateX}px, 0, 0)` : null;
+  }
+
+  protected isColumnDragActive(): boolean {
+    return this.draggedColumnKey !== null;
+  }
+
+  private clearColumnDragState(): void {
+    this.draggedColumnKey = null;
+    this.draggedColumnInitialIndex = -1;
+    this.draggedColumnCurrentIndex = -1;
+    this.draggedColumnDistanceX = 0;
+    this.columnBodyTransforms.clear();
+    this.cdr.markForCheck();
   }
 
   private copyCssVariablesToElement(targetElement: HTMLElement): void {

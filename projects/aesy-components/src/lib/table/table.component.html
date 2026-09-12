@@ -3,13 +3,18 @@
     <!-- ================================================= -->
     <!-- THEAD / COLUMN DRAGGING                           -->
     <!-- ================================================= -->
-    <div class="aesy-table-thead" cdkDropList cdkDropListOrientation="horizontal" cdkDropListSortingDisabled="false" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)">
+
+    <div class="aesy-table-thead" cdkDropList cdkDropListOrientation="horizontal" cdkDropListSortingDisabled="false" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)" (cdkDropListSorted)="onColumnSorted($event)">
       @for (col of columns; track col.key) {
         <div
           #headerElement
           class="aesy-table-th"
+          cdkDragLockAxis="x"
           cdkDrag
-          (cdkDragStarted)="onDragStarted($event)"
+          [cdkDragData]="col"
+          (cdkDragStarted)="onDragStarted($event, col)"
+          (cdkDragMoved)="onColumnDragMoved($event)"
+          (cdkDragEnded)="onColumnDragEnded()"
           [cdkDragDisabled]="isColumnDragDisabled(col)"
           [class.aesy-table-column-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
           [class.aesy-table-column-fixed]="col.fixed"
@@ -63,19 +68,23 @@
     <!-- ================================================= -->
     <!-- TBODY / ROW DRAGGING                              -->
     <!-- ================================================= -->
-    <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" (cdkDropListDropped)="dropRow($event)">
+
+    <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" [class.aesy-table-column-dragging]="isColumnDragActive()" (cdkDropListDropped)="dropRow($event)">
       @for (row of displayedData(); track $index) {
         <div class="aesy-table-row" cdkDrag [class.aesy-table-row-odd]="$index % 2 === 0" [class.aesy-table-row-even]="$index % 2 !== 0">
           <!-- Renderizamos las celdas iterando el orden actual de columns -->
           @for (col of columns; track col.key) {
             <div
+              #cellElement
               class="aesy-table-cell"
               [class.aesy-table-cell-fixed]="col.fixed"
+              [class.aesy-table-column-dragging-cell]="col.key === draggedColumnKeyForTemplate"
               [class.aesy-table-text-align-left]="col.alignCell === 'left'"
               [class.aesy-table-text-align-center]="col.alignCell === 'center'"
               [class.aesy-table-text-align-right]="col.alignCell === 'right'"
               [style.width]="getColumnWidth(col) ? getColumnWidth(col) + 'px' : col.width"
-              [style.left]="getFixedColumnLeft(col)">
+              [style.left]="getFixedColumnLeft(col)"
+              [style.transform]="isColumnDragActive() ? getColumnBodyTransform(col) : null">
               @if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else {
