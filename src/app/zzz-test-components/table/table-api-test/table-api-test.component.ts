@@ -36,6 +36,7 @@ export class TableApiTestComponent {
     this.dataProduct.set(currentList);
   }
   dataProduct = signal<any[]>([]);
+
   tableConfigProduct = signal<TableConfig>({
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true },
