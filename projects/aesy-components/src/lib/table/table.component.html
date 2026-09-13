@@ -103,3 +103,9 @@
     </div>
   </div>
 </div>
+
+@if (isServerSide() ? paginationMetaConfig() : tableForNoServerSide()?.paginationMetaConfig; as pagination) {
+  <div class="aesy-table-pagination-container">
+    <aesy-table-pagination [paginationMetaConfig]="pagination" (pageChanged)="changePage($event)" (rowsPerPageChanged)="changeRowsPerPage($event)" />
+  </div>
+}
