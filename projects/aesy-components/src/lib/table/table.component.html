@@ -4,7 +4,7 @@
     <!-- THEAD / COLUMN DRAGGING                           -->
     <!-- ================================================= -->
 
-    <div class="aesy-table-thead" cdkDropList cdkDropListOrientation="horizontal" cdkDropListSortingDisabled="false" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListDropped)="dropColumn($event)" (cdkDropListSorted)="onColumnSorted($event)">
+    <div class="aesy-table-thead" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!config().draggableColumns" (cdkDropListSorted)="onColumnSorted($event)" (cdkDropListDropped)="dropColumn($event)">
       @for (col of columns; track col.key) {
         <div
           #headerElement
@@ -13,28 +13,24 @@
           cdkDrag
           [cdkDragData]="col"
           (cdkDragStarted)="onDragStarted($event, col)"
-          (cdkDragMoved)="onColumnDragMoved($event)"
           (cdkDragEnded)="onColumnDragEnded()"
           [cdkDragDisabled]="isColumnDragDisabled(col)"
+          [style.width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
+          [style.min-width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
+          [style.max-width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
           [class.aesy-table-column-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
           [class.aesy-table-column-fixed]="col.fixed"
-          [style.width]="col.width"
           [style.left]="getFixedColumnLeft(col)">
           <div class="aesy-table-header" [class.aesy-table-header-fixed]="config().isHeaderFixed || col.fixed">
-            <!-- LABEL / SORT -->
             <div class="aesy-table-th-label-container">
               <span class="aesy-table-th-label" [class.aesy-table-th-sortable]="col.sortable !== false" (click)="changeSort(col)">
                 {{ col.label }}
               </span>
-
               @if (getSortIcon(col.key); as icon) {
-                <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">
-                  {{ icon }}
-                </span>
+                <span class="aesy-table-th-label-sort-icon" (click)="changeSort(col)">{{ icon }}</span>
               }
             </div>
 
-            <!-- FILTER -->
             <div class="aesy-table-th-filter" [class.aesy-table-th-filter-empty]="!col.filterable">
               @if (col.filterable) {
                 @if (col.type === 'select') {
@@ -46,20 +42,27 @@
             </div>
           </div>
 
-          <!-- COLUMN DRAG PREVIEW (Fantasma de la cabecera) -->
-          <ng-template cdkDragPreview matchSize>
-            <div class="aesy-table-th aesy-table-column-preview">
-              <div class="aesy-table-header">
+          <!-- AG-GRID STYLE PREVIEW: El tooltip oscuro flotante -->
+          <ng-template cdkDragPreview matchSize="false">
+            <div class="aesy-table-drag-tooltip">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                  fill-rule="evenodd"
+                  d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z" />
+              </svg>
+              <span>{{ col.label }}</span>
+            </div>
+          </ng-template>
+
+          <!-- AG-GRID STYLE PLACEHOLDER: La cabecera resaltada en el hueco final -->
+          <ng-template cdkDragPlaceholder>
+            <div class="aesy-table-th" [style.width.px]="getColumnDragWidth(col)" [style.min-width.px]="getColumnDragWidth(col)">
+              <div class="aesy-table-header aesy-table-drop-target">
                 <div class="aesy-table-th-label-container">
                   <span class="aesy-table-th-label">{{ col.label }}</span>
                 </div>
               </div>
             </div>
-          </ng-template>
-
-          <!-- COLUMN PLACEHOLDER -->
-          <ng-template cdkDragPlaceholder>
-            <div class="aesy-table-th aesy-table-column-placeholder" [style.width.px]="getColumnDragWidth(col)" [style.min-width.px]="getColumnDragWidth(col)"></div>
           </ng-template>
         </div>
       }
@@ -69,22 +72,21 @@
     <!-- TBODY / ROW DRAGGING                              -->
     <!-- ================================================= -->
 
-    <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" [class.aesy-table-column-dragging]="isColumnDragActive()" (cdkDropListDropped)="dropRow($event)">
+    <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" (cdkDropListDropped)="dropRow($event)">
       @for (row of displayedData(); track $index) {
         <div class="aesy-table-row" cdkDrag [class.aesy-table-row-odd]="$index % 2 === 0" [class.aesy-table-row-even]="$index % 2 !== 0">
-          <!-- Renderizamos las celdas iterando el orden actual de columns -->
-          @for (col of columns; track col.key) {
+          <!-- AQUÍ SE USA bodyColumns() PARA REORDENAR EN TIEMPO REAL -->
+          @for (col of bodyColumns(); track col.key) {
             <div
               #cellElement
               class="aesy-table-cell"
               [class.aesy-table-cell-fixed]="col.fixed"
-              [class.aesy-table-column-dragging-cell]="col.key === draggedColumnKeyForTemplate"
               [class.aesy-table-text-align-left]="col.alignCell === 'left'"
               [class.aesy-table-text-align-center]="col.alignCell === 'center'"
               [class.aesy-table-text-align-right]="col.alignCell === 'right'"
+              [class.aesy-table-drop-target]="col.key === draggedColKey()"
               [style.width]="getColumnWidth(col) ? getColumnWidth(col) + 'px' : col.width"
-              [style.left]="getFixedColumnLeft(col)"
-              [style.transform]="isColumnDragActive() ? getColumnBodyTransform(col) : null">
+              [style.left]="getFixedColumnLeft(col)">
               @if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else {
@@ -93,32 +95,11 @@
             </div>
           }
 
-          <!-- ROW DRAG PREVIEW (Muestra la fila entera flotando) -->
-          <ng-template cdkDragPreview>
-            <div class="aesy-table-row aesy-table-row-preview">
-              @for (col of columns; track col.key) {
-                <div class="aesy-table-cell" [style.width]="getColumnWidth(col) + 'px'">
-                  {{ row[col.key] }}
-                </div>
-              }
-            </div>
-          </ng-template>
-
-          <ng-template cdkDragPlaceholder>
-            <div class="aesy-table-row aesy-table-row-placeholder"></div>
-          </ng-template>
+          <ng-template cdkDragPlaceholder><div class="aesy-table-row aesy-table-row-placeholder"></div></ng-template>
         </div>
       } @empty {
-        <div class="aesy-table-empty">
-          <span>No hay datos disponibles.</span>
-        </div>
+        <div class="aesy-table-empty"><span>No hay datos disponibles.</span></div>
       }
     </div>
   </div>
 </div>
-
-@if (isServerSide() ? paginationMetaConfig() : tableForNoServerSide()?.paginationMetaConfig; as pagination) {
-  <div class="aesy-table-pagination-container">
-    <aesy-table-pagination [paginationMetaConfig]="pagination" (pageChanged)="changePage($event)" (rowsPerPageChanged)="changeRowsPerPage($event)" />
-  </div>
-}

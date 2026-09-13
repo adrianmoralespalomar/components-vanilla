@@ -1,4 +1,4 @@
-import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -30,8 +30,6 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   private readonly elementRef = inject(ElementRef);
 
   readonly data = input<T[]>([]);
-
-  // Nota: Asegúrate de añadir `draggableRows?: boolean` a tu interfaz TableConfig
   readonly config = input.required<TableConfig<T>>();
   readonly paginationMetaConfig = input.required<PaginationMeta>();
 
@@ -39,8 +37,6 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   readonly selectionChange = output<T[]>();
   readonly currentPageChange = output<number>();
   readonly rowsPerPageChange = output<number>();
-
-  // NUEVO: Output para notificar el movimiento de filas
   readonly rowOrderChange = output<{ previousIndex: number; currentIndex: number; row: T }>();
 
   protected readonly tableForNoServerSide = signal<{
@@ -69,16 +65,19 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
 
   private readonly orderedColumns = signal<TableColumn<T>[]>([]);
 
-  // Eliminado: hoveredRowIndex. Ya no es necesario al tener un contenedor de fila real.
+  // === NUEVO: SIGNALS PARA EL DRAG & DROP ESTILO AG-GRID ===
+  protected readonly draggedColKey = signal<string | null>(null);
+  protected readonly draggedInitialIdx = signal<number>(-1);
+  protected readonly draggedCurrentIdx = signal<number>(-1);
 
   constructor() {
     effect(() => this.initConfigurations());
     effect(() => this.initFilters());
     effect(() => this.applyPersistFilters());
-    effect(() => this.initColumnOrder());
+    effect(() => this.initColumnOrder(), { allowSignalWrites: true });
   }
 
-  // --- MÉTODOS DE INIT (Sin cambios) ---
+  // --- MÉTODOS DE INIT ---
   private initConfigurations(): void {
     if (this.configInitialized) return;
     this.configInitialized = true;
@@ -156,6 +155,19 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     return [{ key: this.selectableKey as keyof T & string, label: 'Pick', type: 'text' }, ...columns];
   }
 
+  // === NUEVO: COLUMNAS REACTIVAS PARA EL TBODY ===
+  protected readonly bodyColumns = computed(() => {
+    const cols = [...this.columns];
+    const dragKey = this.draggedColKey();
+    const from = this.draggedInitialIdx();
+    const to = this.draggedCurrentIdx();
+
+    if (dragKey && from !== -1 && to !== -1 && from !== to) {
+      moveItemInArray(cols, from, to);
+    }
+    return cols;
+  });
+
   readonly displayedData = computed((): T[] => {
     return this.config().serverSide ? this.data() : (this.tableForNoServerSide()?.filteredData ?? []);
   });
@@ -169,26 +181,14 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   }
 
   // ============================================================
-  // FIXED COLUMNS (REFACTORIZADO A HEADERS)
+  // FIXED COLUMNS
   // ============================================================
 
-  @ViewChildren('headerElement')
-  headerElements!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren('headerElement') headerElements!: QueryList<ElementRef<HTMLElement>>;
 
   private resizeObserver?: ResizeObserver;
   private fixedLeftOffsets = new Map<string, number>();
   private columnWidths = new Map<string, number>();
-
-  private draggedColumnKey: string | null = null;
-  protected get draggedColumnKeyForTemplate(): string | null {
-    return this.draggedColumnKey;
-  }
-  private draggedColumnInitialIndex = -1;
-  private draggedColumnCurrentIndex = -1;
-  private draggedColumnDistanceX = 0;
-  private draggedColumnDistanceY = 0;
-
-  private columnBodyTransforms = new Map<string, number>();
 
   ngAfterViewInit(): void {
     this.calculateFixedOffsets();
@@ -218,7 +218,6 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       const column = this.columns[index];
       if (!column) return;
       const width = element.nativeElement.getBoundingClientRect().width;
-      console.log(`Column: ${column.key}, Width: ${width}`);
       this.columnWidths.set(column.key, width);
 
       if (column.fixed) {
@@ -259,124 +258,39 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   }
 
   // ============================================================
-  // DRAG AND DROP
+  // DRAG AND DROP (REFACTORIZADO A SEGUIMIENTO POR INDEX)
   // ============================================================
 
   protected onDragStarted(event: CdkDragStart, column: TableColumn<T>): void {
-    // CDK no necesita que le pasemos los datos para ordenar, pero guardar la
-    // columna aquí nos permite aplicar el mismo movimiento visual a las celdas.
-    if (column?.key) {
-      this.draggedColumnKey = column.key;
-      this.draggedColumnInitialIndex = this.columns.findIndex(x => x.key === column.key);
-      this.draggedColumnCurrentIndex = this.draggedColumnInitialIndex;
-      this.draggedColumnDistanceX = 0;
-      this.columnBodyTransforms.clear();
+    const idx = this.columns.findIndex(c => c.key === column.key);
+    if (idx !== -1) {
+      this.draggedColKey.set(column.key);
+      this.draggedInitialIdx.set(idx);
+      this.draggedCurrentIdx.set(idx);
     }
-
-    setTimeout(() => {
-      const previewElement = document.querySelector('.cdk-drag-preview') as HTMLElement;
-      if (previewElement) this.copyCssVariablesToElement(previewElement);
-    });
-  }
-
-  protected onColumnDragMoved(event: CdkDragMove<TableColumn<T>>): void {
-    if (!this.draggedColumnKey) return;
-
-    // La columna del body sigue al ratón exactamente igual que el preview del header.
-    this.draggedColumnDistanceX = event.distance.x;
-    this.draggedColumnDistanceY = event.distance.y;
-    this.updateColumnBodyTransforms();
-    this.cdr.markForCheck();
   }
 
   protected onColumnSorted(event: CdkDragSortEvent<TableColumn<T>>): void {
-    if (!this.draggedColumnKey) return;
-
-    this.draggedColumnCurrentIndex = event.currentIndex;
-    this.updateColumnBodyTransforms();
-    this.cdr.markForCheck();
+    this.draggedCurrentIdx.set(event.currentIndex);
   }
 
   protected onColumnDragEnded(): void {
-    this.clearColumnDragState();
-  }
-
-  private updateColumnBodyTransforms(): void {
-    this.columnBodyTransforms.clear();
-
-    const columns = this.columns;
-    const initialIndex = this.draggedColumnInitialIndex;
-    const currentIndex = this.draggedColumnCurrentIndex;
-    const draggedKey = this.draggedColumnKey;
-
-    if (!draggedKey || initialIndex < 0 || currentIndex < 0 || initialIndex === currentIndex) return;
-
-    const draggedWidth = this.getColumnDragWidth(columns[initialIndex]);
-    if (draggedWidth <= 0) return;
-
-    if (currentIndex > initialIndex) {
-      // Al mover a la derecha, las columnas que quedan entre origen y destino
-      // ocupan temporalmente el hueco que deja la columna arrastrada.
-      for (let index = initialIndex + 1; index <= currentIndex; index++) {
-        const column = columns[index];
-        if (column && column.key !== draggedKey) {
-          this.columnBodyTransforms.set(column.key, -draggedWidth);
-        }
-      }
-    } else {
-      // Al mover a la izquierda, las columnas intermedias se desplazan a la derecha.
-      for (let index = currentIndex; index < initialIndex; index++) {
-        const column = columns[index];
-        if (column && column.key !== draggedKey) {
-          this.columnBodyTransforms.set(column.key, draggedWidth);
-        }
-      }
-    }
-  }
-
-  protected getColumnBodyTransform(column: TableColumn<T>): string | null {
-    if (!this.draggedColumnKey) {
-      return null;
-    }
-
-    if (column.key === this.draggedColumnKey) {
-      return `translate3d(${this.draggedColumnDistanceX}px, ${this.draggedColumnDistanceY}px, 0)`;
-    }
-
-    const translateX = this.columnBodyTransforms.get(column.key);
-
-    return translateX !== undefined ? `translate3d(${translateX}px, 0, 0)` : null;
-  }
-
-  protected isColumnDragActive(): boolean {
-    return this.draggedColumnKey !== null;
-  }
-
-  private clearColumnDragState(): void {
-    this.draggedColumnKey = null;
-    this.draggedColumnInitialIndex = -1;
-    this.draggedColumnCurrentIndex = -1;
-    this.draggedColumnDistanceX = 0;
-    this.columnBodyTransforms.clear();
+    this.clearDragState();
     this.cdr.markForCheck();
   }
 
-  private copyCssVariablesToElement(targetElement: HTMLElement): void {
-    const hostElement = this.elementRef.nativeElement as HTMLElement;
-    const hostStyles = getComputedStyle(hostElement);
-    for (let i = 0; i < hostStyles.length; i++) {
-      const propertyName = hostStyles[i];
-      if (propertyName.startsWith('--aesy-')) {
-        const value = hostStyles.getPropertyValue(propertyName).trim();
-        if (value) targetElement.style.setProperty(propertyName, value);
-      }
-    }
+  private clearDragState(): void {
+    this.draggedColKey.set(null);
+    this.draggedInitialIdx.set(-1);
+    this.draggedCurrentIdx.set(-1);
   }
 
   protected dropColumn(event: CdkDragDrop<TableColumn<T>[]>): void {
     const selectableOffset = this.config().selectable ? 1 : 0;
     const previousIndex = event.previousIndex - selectableOffset;
     const currentIndex = event.currentIndex - selectableOffset;
+
+    this.clearDragState();
 
     if (previousIndex < 0 || currentIndex < 0) return;
     if (previousIndex >= this.orderedColumns().length || currentIndex >= this.orderedColumns().length) return;
@@ -388,32 +302,30 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       return reorderedColumns;
     });
 
-    queueMicrotask(() => this.calculateFixedOffsets());
-    this.cdr.markForCheck();
+    // 1. Forzamos a Angular a reordenar el DOM de forma síncrona INMEDIATAMENTE
+    this.cdr.detectChanges();
+    // 2. Ahora que el DOM y los datos están sincronizados, recalculamos
+    this.calculateFixedOffsets();
   }
 
   protected dropRow(event: CdkDragDrop<T[]>): void {
     if (event.previousIndex === event.currentIndex) return;
 
     if (this.isServerSide()) {
-      // Emitimos para que el backend lo guarde
       this.rowOrderChange.emit({
         previousIndex: event.previousIndex,
         currentIndex: event.currentIndex,
         row: this.displayedData()[event.previousIndex]
       });
     } else {
-      // Ordenación en cliente
       this.tableForNoServerSide.update(state => {
         if (!state) return state;
 
         const newFilteredData = [...state.filteredData];
         const movedItem = newFilteredData[event.previousIndex];
 
-        // 1. Movemos en la vista actual filtrada
         moveItemInArray(newFilteredData, event.previousIndex, event.currentIndex);
 
-        // 2. Si no hay filtros/orden aplicados, es seguro mover en la original también
         const newOriginalData = [...state.originalData];
         const activeFilters = Object.values(this.filters).some(c => !!c.value);
         if (!activeFilters && !this.sortKey) {
@@ -436,9 +348,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   }
 
   // ============================================================
-  // EL RESTO DEL CÓDIGO SE MANTIENE INTACTO
-  // (loadFilters, updateQueryParams, emitRequest, changeSort,
-  // changePage, applyClientFilteringSortAndPagination, selection...)
+  // LÓGICA DE FILTROS, ORDENACIÓN Y UI
   // ============================================================
 
   protected loadFiltersFromUrlAndReturnIfThereAreFilters(params: Record<string, string | string[] | undefined>): boolean {

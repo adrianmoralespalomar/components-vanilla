@@ -476,3 +476,39 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   z-index: 10;
 }
+/* ========================================================= */
+/* ESTILOS DE DRAG & DROP (ESTILO AG-GRID)                   */
+/* ========================================================= */
+
+/* El tooltip oscuro que sigue al ratón */
+.aesy-table-drag-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+
+  background-color: #21252d; /* Gris oscuro tipo ag-Grid */
+  color: #ffffff;
+
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+  font-family: inherit;
+  font-size: var(--aesy-table-text-size);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: grabbing;
+}
+
+/* El estilo de destino (el hueco azul/verde) */
+/* Lo aplicamos tanto a la cabecera (.aesy-table-header) como a la celda (.aesy-table-cell) */
+.aesy-table-drop-target {
+  background-color: #008b8b !important; /* El tono Teal de tu imagen */
+  color: #ffffff !important;
+  border-color: #007a7a !important;
+}
+
+/* Evitamos que el CDK oculte del todo el elemento original (opcional pero ayuda a la fluidez) */
+.cdk-drag-placeholder {
+  opacity: 1 !important;
+}
