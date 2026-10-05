@@ -66,14 +66,12 @@
   display: flex;
   flex-direction: column;
 
-  width: max-content;
-  min-width: var(--aesy-table-min-width);
+  width: max(100%, var(--aesy-table-min-width));
 
   background: var(--aesy-table-background);
 
   position: relative;
 }
-
 /* ========================================================= */
 /* THEAD (CONTENEDOR DE COLUMNAS PARA DRAG HORIZONTAL) */
 /* ========================================================= */
@@ -83,7 +81,8 @@
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: nowrap;
-  width: max-content;
+
+  width: 100%;
 }
 
 /* ========================================================= */
@@ -107,6 +106,11 @@
   font-weight: var(--aesy-table-text-weight);
 
   will-change: transform;
+}
+
+.aesy-table-th-auto-width {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* ========================================================= */
@@ -210,7 +214,7 @@
 .aesy-table-tbody {
   display: flex;
   flex-direction: column;
-  width: max-content;
+  width: 100%;
 }
 
 /* ========================================================= */
@@ -220,7 +224,7 @@
 .aesy-table-row {
   display: flex;
   flex-direction: row;
-  width: max-content;
+  width: 100%;
   will-change: transform;
 }
 
@@ -320,6 +324,11 @@
 
 .aesy-table-row:hover .aesy-table-cell-fixed {
   background: var(--aesy-table-body-hover-background) !important;
+}
+
+.aesy-table-cell-auto-width {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* ========================================================= */

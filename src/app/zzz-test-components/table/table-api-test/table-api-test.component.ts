@@ -40,8 +40,8 @@ export class TableApiTestComponent {
 
   tableConfigProduct = signal<TableConfig>({
     columns: [
-      { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true },
-      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true },
+      { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true, width: '10%' },
+      { key: 'title', label: 'Nombre Product', type: 'text', filterable: true, width: '200px' },
       { key: 'url', label: 'URL', type: 'text' },
       { key: 'index', label: 'Index', type: 'number' }
     ],

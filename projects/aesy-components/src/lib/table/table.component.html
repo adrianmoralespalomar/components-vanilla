@@ -15,6 +15,7 @@
           (cdkDragStarted)="onDragStarted($event, col)"
           (cdkDragEnded)="onColumnDragEnded()"
           [cdkDragDisabled]="isColumnDragDisabled(col)"
+          [class.aesy-table-th-auto-width]="!col.width"
           [style.width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
           [style.min-width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
           [style.max-width]="draggedColKey() === col.key ? getColumnDragWidth(col) + 'px' : col.width"
@@ -80,6 +81,7 @@
             <div
               #cellElement
               class="aesy-table-cell"
+              [class.aesy-table-cell-auto-width]="!col.width"
               [class.aesy-table-cell-fixed]="col.fixed"
               [class.aesy-table-text-align-left]="col.alignCell === 'left'"
               [class.aesy-table-text-align-center]="col.alignCell === 'center'"
