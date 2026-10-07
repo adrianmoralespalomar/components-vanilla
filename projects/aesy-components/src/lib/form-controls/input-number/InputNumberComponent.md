@@ -53,7 +53,7 @@ No depende de PrimeNG ni de ninguna otra librería externa de componentes.
 Importar el componente directamente:
 
 ```ts
-import { InputNumberComponent } from '@/form-controls/input-number/input-number.component';
+import { InputNumberComponent } from 'aesy-components';
 
 @Component({
   imports: [
@@ -88,7 +88,7 @@ El componente dispone de tres formas principales de utilización.
 ## 1. Uso independiente
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Precio"
   [value]="1234.56"
 />
@@ -109,7 +109,7 @@ precio = 1234.56;
 ```
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Precio"
   [(value)]="precio"
 />
@@ -152,7 +152,7 @@ precio = new FormControl<number | null>(1234.56);
 ```
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Precio"
   [formControl]="precio"
 />
@@ -187,7 +187,7 @@ form = new FormGroup({
 ```html
 <form [formGroup]="form">
 
-  <app-input-number
+  <aesy-input-number
     label="Precio"
     formControlName="precio"
   />
@@ -210,7 +210,7 @@ El componente utiliza `Intl.NumberFormat` para determinar automáticamente:
 ## Español
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234567.89"
   [locale]="'es-ES'"
 />
@@ -231,7 +231,7 @@ Internamente:
 ## Inglés
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234567.89"
   [locale]="'en-US'"
 />
@@ -246,7 +246,7 @@ Muestra:
 ## Alemán
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234567.89"
   [locale]="'de-DE'"
 />
@@ -267,7 +267,7 @@ El valor mantiene el formato correspondiente al `locale` incluso mientras el usu
 Por ejemplo, utilizando:
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="3444.57"
   [locale]="'es-ES'"
 />
@@ -313,7 +313,7 @@ useGrouping = true
 Por ejemplo:
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234567.89"
   [locale]="'es-ES'"
 />
@@ -328,7 +328,7 @@ Muestra:
 Para desactivarlo:
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234567.89"
   [useGrouping]="false"
 />
@@ -352,7 +352,7 @@ Se pueden configurar los decimales mínimos y máximos mediante:
 Por ejemplo:
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.5"
   [minFractionDigits]="2"
   [maxFractionDigits]="2"
@@ -368,7 +368,7 @@ Muestra:
 ## Diferencia entre mínimo y máximo
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.5"
   [minFractionDigits]="2"
   [maxFractionDigits]="4"
@@ -392,7 +392,7 @@ Resultados:
 Por ejemplo:
 
 ```html
-<app-input-number
+<aesy-input-number
   [maxFractionDigits]="2"
 />
 ```
@@ -443,7 +443,7 @@ roundingMode = 'round'
 ## Redondeo
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="12.789"
   [maxFractionDigits]="2"
   [roundingMode]="'round'"
@@ -459,7 +459,7 @@ Muestra:
 ## Truncado
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="12.789"
   [maxFractionDigits]="2"
   [roundingMode]="'truncate'"
@@ -568,7 +568,7 @@ La restricción no representa un error de negocio ni una validación de Angular 
 Se puede añadir texto antes del número mediante `prefix`.
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Precio"
   [value]="1234.56"
   prefix="€ "
@@ -596,7 +596,7 @@ El valor sigue siendo:
 También se puede añadir texto después del número mediante `suffix`.
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Descuento"
   [value]="15.5"
   suffix=" %"
@@ -620,7 +620,7 @@ El valor interno sigue siendo:
 # Prefijo y sufijo simultáneamente
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Importe"
   [value]="1234.56"
   prefix="≈ "
@@ -659,7 +659,7 @@ textAlign = 'left'
 ## Izquierda
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.56"
   [textAlign]="'left'"
 />
@@ -668,7 +668,7 @@ textAlign = 'left'
 ## Centrado
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.56"
   [textAlign]="'center'"
 />
@@ -677,7 +677,7 @@ textAlign = 'left'
 ## Derecha
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.56"
   [textAlign]="'right'"
 />
@@ -692,7 +692,7 @@ La alineación únicamente afecta a la presentación visual.
 Se pueden indicar límites mediante `min` y `max`:
 
 ```html
-<app-input-number
+<aesy-input-number
   [min]="0"
   [max]="100"
 />
@@ -726,7 +726,7 @@ allowNegative = true
 Para impedir valores negativos:
 
 ```html
-<app-input-number
+<aesy-input-number
   [allowNegative]="false"
 />
 ```
@@ -740,7 +740,7 @@ El signo negativo nunca forma parte de un prefijo o sufijo; forma parte del valo
 El incremento utilizado por los botones se define mediante `step`.
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="10"
   [step]="1"
   [showButtons]="true"
@@ -760,7 +760,7 @@ Permite:
 Para cantidades decimales:
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="10"
   [step]="0.5"
   [showButtons]="true"
@@ -803,7 +803,7 @@ importe = new FormControl<number | null>(null, {
 ```
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Importe"
   prefix="€ "
   [formControl]="importe"
@@ -839,7 +839,7 @@ Valor inválido
 Se puede sobrescribir el mensaje automático:
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Importe"
   [formControl]="importe"
   errorMessage="Introduce un importe válido"
@@ -872,7 +872,7 @@ El componente utilizará automáticamente el `message`.
 # Estado readonly
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.56"
   [readonly]="true"
 />
@@ -885,7 +885,7 @@ El usuario podrá visualizar y seleccionar el valor, pero no modificarlo.
 # Estado disabled
 
 ```html
-<app-input-number
+<aesy-input-number
   [value]="1234.56"
   [disabled]="true"
 />
@@ -906,7 +906,7 @@ El estado `disabled` del `FormControl` tiene prioridad cuando el componente est�
 # Texto de ayuda
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Importe"
   helpText="Introduce el importe sin impuestos"
 />
@@ -921,7 +921,7 @@ El texto aparece debajo del campo cuando no se está mostrando un mensaje de err
 Se puede proporcionar un icono mediante:
 
 ```html
-<app-input-number
+<aesy-input-number
   label="Importe"
   icon="€"
 />
@@ -930,7 +930,7 @@ Se puede proporcionar un icono mediante:
 La posición puede ser:
 
 ```html
-<app-input-number
+<aesy-input-number
   icon="€"
   [iconPosition]="'left'"
 />
@@ -939,51 +939,13 @@ La posición puede ser:
 o:
 
 ```html
-<app-input-number
+<aesy-input-number
   icon="€"
   [iconPosition]="'right'"
 />
 ```
 
 Actualmente `icon` representa el contenido visual del icono. La implementación puede sustituirse posteriormente por un sistema de iconos propio sin modificar el funcionamiento del componente.
-
----
-
-# Tamaños
-
-Admite tres tamaños:
-
-```ts
-'small'
-'medium'
-'large'
-```
-
-Por defecto:
-
-```ts
-size = 'medium'
-```
-
-Ejemplo:
-
-```html
-<app-input-number
-  [size]="'small'"
-/>
-```
-
-```html
-<app-input-number
-  [size]="'medium'"
-/>
-```
-
-```html
-<app-input-number
-  [size]="'large'"
-/>
-```
 
 ---
 
@@ -1016,7 +978,6 @@ Ejemplo:
 | `helpText` | `string \| null` | `null` | Texto de ayuda |
 | `icon` | `string \| null` | `null` | Icono |
 | `iconPosition` | `'left' \| 'right'` | `'left'` | Posición del icono |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Tamaño |
 | `id` | `string \| null` | `null` | ID HTML personalizado |
 
 ---
@@ -1059,7 +1020,7 @@ form = new FormGroup({
 ```html
 <form [formGroup]="form">
 
-  <app-input-number
+  <aesy-input-number
     label="Precio"
     formControlName="precio"
     prefix="€ "
@@ -1069,7 +1030,7 @@ form = new FormGroup({
     [textAlign]="'right'"
   />
 
-  <app-input-number
+  <aesy-input-number
     label="Descuento"
     formControlName="descuento"
     suffix=" %"
@@ -1118,7 +1079,7 @@ import {
 
 import {
   InputNumberComponent
-} from './input-number/input-number.component';
+} from 'aesy-components';
 
 @Component({
   selector: 'app-example',
@@ -1165,7 +1126,7 @@ export class ExampleComponent {
 ```html
 <form [formGroup]="form">
 
-  <app-input-number
+  <aesy-input-number
     label="Precio"
     formControlName="precio"
     prefix="€ "
@@ -1175,7 +1136,7 @@ export class ExampleComponent {
     [textAlign]="'right'"
   />
 
-  <app-input-number
+  <aesy-input-number
     label="Descuento"
     formControlName="descuento"
     suffix=" %"
@@ -1184,7 +1145,7 @@ export class ExampleComponent {
     [textAlign]="'right'"
   />
 
-  <app-input-number
+  <aesy-input-number
     label="Cantidad"
     formControlName="cantidad"
     [step]="1"

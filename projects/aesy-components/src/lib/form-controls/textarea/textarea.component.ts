@@ -8,12 +8,12 @@ import { getValidationErrorMessage } from '../shared/utils/get-validation-error-
 
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
 
+import { TextareaResize } from './models/textarea-resize.type';
+
 let nextTextareaId = 0;
 
-type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
-
 @Component({
-  selector: 'app-textarea',
+  selector: 'aesy-textarea',
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,7 +62,7 @@ export class TextareaComponent implements ControlValueAccessor {
   /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
   private readonly formStateVersion = signal(0);
   private readonly formValue = signal<string>('');
-  private readonly generatedId = `app-textarea-${nextTextareaId++}`;
+  private readonly generatedId = `aesy-textarea-${nextTextareaId++}`;
   private readonly injector = inject(Injector);
   // #endregion INTERNAL STATE
 
@@ -110,6 +110,11 @@ export class TextareaComponent implements ControlValueAccessor {
 
   get textareaId(): string {
     return this.id() ? `${this.id()}-textarea` : this.generatedId;
+  }
+
+  /** Con `field-sizing: content` el navegador ignora `rows`, así que se aplica como altura mínima (líneas + padding + borde). */
+  get minHeightFromRows(): string {
+    return `calc(${this.rows()}lh + 1.5rem + 2px)`;
   }
 
   get currentValue(): string {

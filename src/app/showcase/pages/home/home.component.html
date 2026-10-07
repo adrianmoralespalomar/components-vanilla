@@ -1,0 +1,97 @@
+<section class="home-hero">
+  <span class="home-badge">Angular 22 · standalone · signals</span>
+  <h1 class="home-title">Cada componente que creas, probado a la vista.</h1>
+  <p class="home-lead">
+    Un banco de pruebas vivo para la librería. Cada componente tiene aquí su vista previa funcionando y una página con todos sus casos de uso, el código y su API.
+  </p>
+  <div class="home-actions">
+    <a class="home-primary-link" routerLink="/" fragment="home-components">Ver componentes</a>
+    <code class="home-import">import {{ '{' }} ButtonComponent {{ '}' }} from 'aesy-components';</code>
+  </div>
+</section>
+
+<section id="home-components" class="home-components" aria-labelledby="home-components-title">
+  <h2 id="home-components-title" class="home-section-title">Componentes</h2>
+
+  <div class="home-grid">
+    @for (entry of SHOWCASE_ENTRIES; track entry.slug) {
+      <article class="home-card" [class.home-card-wide]="entry.isPreviewWide">
+        <header class="home-card-header">
+          <h3 class="home-card-title">{{ entry.name }}</h3>
+          <code class="home-card-selector">&lt;{{ entry.selector }}&gt;</code>
+        </header>
+        <p class="home-card-description">{{ entry.description }}</p>
+
+        <div class="home-card-demo">
+          @switch (entry.slug) {
+            @case ('button') {
+              <div class="demo-row">
+                <aesy-button label="Primary" (buttonClick)="onPreviewButtonClicked('primary')" />
+                <aesy-button type="secondary" label="Secondary" (buttonClick)="onPreviewButtonClicked('secondary')" />
+                <aesy-button type="success" label="Success" (buttonClick)="onPreviewButtonClicked('success')" />
+                <aesy-button type="danger" label="Danger" (buttonClick)="onPreviewButtonClicked('danger')" />
+              </div>
+              <app-value-preview label="Último evento" [value]="lastButtonEvent()" />
+            }
+            @case ('checkbox') {
+              <div class="demo-stack">
+                <aesy-checkbox label="Acepto las condiciones" [(value)]="acceptedTerms" />
+                <aesy-checkbox label="Recibir novedades" [(value)]="newsletter" />
+              </div>
+            }
+            @case ('datepicker') {
+              <aesy-datepicker label="Fecha de entrega" [clearable]="true" [(value)]="deliveryDate" />
+            }
+            @case ('input-number') {
+              <aesy-input-number label="Importe" suffix="€" [minFractionDigits]="2" [(value)]="amount" />
+              <app-value-preview [value]="amount()" />
+            }
+            @case ('input-text') {
+              <aesy-input-text label="Nombre completo" placeholder="Escribe tu nombre" [maxlength]="40" [showCharCount]="true" [(value)]="fullName" />
+            }
+            @case ('radio-button') {
+              <aesy-radio-button label="Plan de facturación" orientation="horizontal" [options]="PLAN_OPTIONS" [(value)]="plan" />
+              <app-value-preview [value]="plan()" />
+            }
+            @case ('select') {
+              <aesy-select label="País" placeholder="Selecciona un país" [clearable]="true" [options]="COUNTRY_OPTIONS" [(value)]="country" />
+              <app-value-preview [value]="country()" />
+            }
+            @case ('table') {
+              <aesy-table [data]="PEOPLE" [config]="HOME_TABLE_CONFIG" [paginationMetaConfig]="HOME_TABLE_PAGINATION" />
+            }
+            @case ('textarea') {
+              <aesy-textarea label="Comentarios" placeholder="Cuéntanos algo…" [rows]="3" [maxlength]="200" [showCharCount]="true" [(value)]="comments" />
+            }
+            @default {
+              <p class="demo-caption">Este componente aún no tiene vista previa en la landing.</p>
+            }
+          }
+        </div>
+
+        <a class="home-card-link" [routerLink]="['/components', entry.slug]">
+          Ver más ejemplos
+          <span aria-hidden="true">→</span>
+        </a>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="home-new-component" aria-labelledby="home-new-component-title">
+  <h2 id="home-new-component-title" class="home-new-component-title">¿Un componente nuevo?</h2>
+  <ol class="home-steps">
+    <li>
+      <span class="home-step-number">01</span>
+      <span>Créalo en la librería y expórtalo en <code>public-api.ts</code>.</span>
+    </li>
+    <li>
+      <span class="home-step-number">02</span>
+      <span>Añade su entrada en <code>SHOWCASE_ENTRIES</code>: aparecerá en la barra lateral y aquí.</span>
+    </li>
+    <li>
+      <span class="home-step-number">03</span>
+      <span>Crea su página con <code>app-doc-page</code> y una <code>app-doc-section</code> por caso: el índice se genera solo.</span>
+    </li>
+  </ol>
+</section>

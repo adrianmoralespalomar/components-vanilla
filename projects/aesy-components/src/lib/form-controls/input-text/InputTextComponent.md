@@ -34,7 +34,7 @@ El componente está construido únicamente con **Angular, HTML y CSS**, sin depe
 El componente es standalone, por lo que solamente es necesario importarlo donde se vaya a utilizar.
 
 ```ts
-import { InputTextComponent } from './input-text/input-text.component';
+import { InputTextComponent } from 'aesy-components';
 
 @Component({
   standalone: true,
@@ -83,7 +83,7 @@ nombre = '';
 ### HTML
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   placeholder="Introduce tu nombre"
   [(value)]="nombre"
@@ -116,7 +116,7 @@ nombreControl = new FormControl('', {
 ### HTML
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   placeholder="Introduce tu nombre"
   [formControl]="nombreControl"
@@ -170,13 +170,13 @@ form = new FormGroup({
 ```html
 <form [formGroup]="form">
 
-  <app-input-text
+  <aesy-input-text
     label="Nombre"
     placeholder="Introduce tu nombre"
     formControlName="nombre"
   />
 
-  <app-input-text
+  <aesy-input-text
     label="Email"
     placeholder="Introduce tu email"
     type="email"
@@ -248,7 +248,7 @@ El componente detectará automáticamente el `message` y lo mostrará.
 También podemos proporcionar un mensaje directamente al componente:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [formControl]="nombreControl"
   errorMessage="El nombre no es válido"
@@ -270,7 +270,7 @@ nombreControl = new FormControl('', Validators.required);
 ```
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [formControl]="nombreControl"
 />
@@ -285,7 +285,7 @@ Nombre *
 También podemos forzar manualmente el estado:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [required]="true"
 />
@@ -294,7 +294,7 @@ También podemos forzar manualmente el estado:
 Si queremos desactivarlo explícitamente:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [required]="false"
 />
@@ -309,7 +309,7 @@ Cuando `required` no se especifica, el componente intenta detectarlo automática
 Podemos establecer `maxlength` directamente:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   maxlength="50"
 />
@@ -322,7 +322,7 @@ nombreControl = new FormControl('', Validators.maxLength(50));
 ```
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [formControl]="nombreControl"
 />
@@ -335,7 +335,7 @@ nombreControl = new FormControl('', Validators.maxLength(50));
 Podemos mostrar un contador mediante:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   maxlength="50"
   [showCharCount]="true"
@@ -361,7 +361,7 @@ El contador funciona tanto utilizando `maxlength` como obteniendo el límite des
 Por defecto, cuando existe `maxlength`, el atributo HTML `maxlength` impide que el usuario escriba más caracteres.
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   maxlength="10"
 />
@@ -370,7 +370,7 @@ Por defecto, cuando existe `maxlength`, el atributo HTML `maxlength` impide que 
 Si queremos permitir que el usuario escriba más caracteres y que sea Angular Forms quien marque el campo como inválido:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   maxlength="10"
   [allowTypeInvalidValue]="true"
@@ -394,7 +394,7 @@ Esta opción es especialmente útil cuando queremos que el usuario pueda visuali
 Podemos utilizar:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Contraseña"
   type="password"
 />
@@ -409,7 +409,7 @@ passwordControl = new FormControl('', Validators.required);
 ```
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Contraseña"
   type="password"
   [formControl]="passwordControl"
@@ -421,7 +421,7 @@ passwordControl = new FormControl('', Validators.required);
 # Email
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Email"
   type="email"
   placeholder="usuario@ejemplo.com"
@@ -438,7 +438,7 @@ emailControl = new FormControl('', [
 ```
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Email"
   type="email"
   [formControl]="emailControl"
@@ -452,7 +452,7 @@ emailControl = new FormControl('', [
 Para impedir que el usuario modifique el valor:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [readonly]="true"
   [(value)]="nombre"
@@ -468,7 +468,7 @@ Para impedir que el usuario modifique el valor:
 ## Sin formulario
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [disabled]="true"
 />
@@ -500,7 +500,7 @@ El componente detectará automáticamente el estado.
 Podemos mostrar información adicional debajo del campo:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre de usuario"
   helpText="Utiliza entre 3 y 50 caracteres."
 />
@@ -515,7 +515,7 @@ El texto de ayuda desaparece cuando se está mostrando un error.
 Podemos añadir un icono:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Buscar"
   icon="search"
   iconPosition="left"
@@ -525,7 +525,7 @@ Podemos añadir un icono:
 También podemos situarlo a la derecha:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Buscar"
   icon="search"
   iconPosition="right"
@@ -536,59 +536,12 @@ Actualmente `icon` representa el contenido visual del icono. La librería puede 
 
 ---
 
-# Tamaños
-
-Existen tres tamaños:
-
-```text
-small
-medium
-large
-```
-
-Por defecto:
-
-```html
-<app-input-text
-  label="Nombre"
-/>
-```
-
-equivale a:
-
-```html
-<app-input-text
-  label="Nombre"
-  size="medium"
-/>
-```
-
-Tamaño pequeño:
-
-```html
-<app-input-text
-  label="Nombre"
-  size="small"
-/>
-```
-
-Tamaño grande:
-
-```html
-<app-input-text
-  label="Nombre"
-  size="large"
-/>
-```
-
----
-
 # Estado de error sin Angular Forms
 
 Cuando utilizamos el componente fuera de un formulario también podemos controlar manualmente el estado de error:
 
 ```html
-<app-input-text
+<aesy-input-text
   label="Nombre"
   [(value)]="nombre"
   [invalid]="nombreInvalido"
@@ -624,7 +577,7 @@ Esto permite utilizar el componente en escenarios donde no necesitamos `FormCont
 | `helpText` | `string \| null` | `null` | Texto de ayuda |
 | `icon` | `string \| null` | `null` | Icono |
 | `iconPosition` | `'left' \| 'right'` | `'left'` | Posición del icono |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Tamaño |
+| `textAlign` | `'left' \| 'center' \| 'right'` | `'left'` | Alineación del texto |
 | `id` | `string \| null` | `null` | ID HTML |
 | `value` | `string` | `''` | Valor para uso independiente |
 | `disabled` | `boolean` | `false` | Disabled para uso independiente |
@@ -667,14 +620,14 @@ form = new FormGroup({
 ```html
 <form [formGroup]="form">
 
-  <app-input-text
+  <aesy-input-text
     label="Nombre"
     placeholder="Introduce tu nombre"
     formControlName="nombre"
     [showCharCount]="true"
   />
 
-  <app-input-text
+  <aesy-input-text
     label="Email"
     type="email"
     placeholder="usuario@ejemplo.com"
@@ -752,7 +705,7 @@ import {
 
 import {
   InputTextComponent
-} from './input-text/input-text.component';
+} from 'aesy-components';
 
 @Component({
   selector: 'app-example',
@@ -790,21 +743,21 @@ export class ExampleComponent {
 ```html
 <form [formGroup]="form">
 
-  <app-input-text
+  <aesy-input-text
     label="Nombre"
     placeholder="Introduce tu nombre"
     formControlName="nombre"
     [showCharCount]="true"
   />
 
-  <app-input-text
+  <aesy-input-text
     label="Email"
     type="email"
     placeholder="usuario@ejemplo.com"
     formControlName="email"
   />
 
-  <app-input-text
+  <aesy-input-text
     label="Contraseña"
     type="password"
     placeholder="Introduce tu contraseña"

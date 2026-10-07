@@ -1,0 +1,53 @@
+<app-doc-page slug="textarea">
+  <app-doc-section sectionId="basico" heading="Básico" description="Uso sin Angular Forms con [(value)]." [snippet]="SNIPPETS.basic">
+    <div class="demo-stack">
+      <aesy-textarea label="Comentarios" placeholder="Cuéntanos algo…" [(value)]="comments" />
+      <app-value-preview [value]="comments()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="filas-y-redimensionado" heading="Filas y redimensionado" description="rows fija la altura inicial y resize decide hacia dónde se puede estirar: none, vertical, horizontal o both." [snippet]="SNIPPETS.rowsAndResize">
+    <div class="demo-grid">
+      <aesy-textarea label="2 filas, sin redimensionar" resize="none" [rows]="2" />
+      <aesy-textarea label="6 filas, redimensionable en ambos ejes" resize="both" [rows]="6" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="contador" heading="Contador de caracteres" description="showCharCount junto a maxlength muestra lo que llevas y el máximo." [snippet]="SNIPPETS.charCount">
+    <aesy-textarea label="Biografía" [maxlength]="160" [showCharCount]="true" [(value)]="bio" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="alineacion" heading="Alineación" description="textAlign coloca el texto a la izquierda, al centro o a la derecha." [snippet]="SNIPPETS.alignment">
+    <aesy-textarea label="Centrado" textAlign="center" [rows]="2" [(value)]="quote" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly deja seleccionar y copiar pero no editar." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-textarea label="Deshabilitado" [disabled]="true" [rows]="2" [value]="'No editable'" />
+      <aesy-textarea label="Solo lectura" [readonly]="true" [rows]="2" [value]="'Se puede seleccionar y copiar'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista; sin Angular Forms, invalid y errorMessage muestran un error." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-grid">
+      <aesy-textarea label="Descripción" helpText="Describe el problema con el máximo detalle." [rows]="3" />
+      <aesy-textarea label="Descripción" errorMessage="La descripción no puede estar vacía." [invalid]="true" [rows]="3" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con formControlName detecta Validators.required y traduce minlength y maxlength." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="feedbackForm">
+      <aesy-textarea label="Mensaje (20 a 200 caracteres)" formControlName="message" [maxlength]="200" [showCharCount]="true" [allowTypeInvalidValue]="true" />
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateFeedbackButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="feedbackFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="No tiene variables propias: usa las comunes --aesy-form-controls- de :root, que también puedes acotar a un campo." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

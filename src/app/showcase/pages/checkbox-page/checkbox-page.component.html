@@ -1,0 +1,62 @@
+<app-doc-page slug="checkbox">
+  <app-doc-section sectionId="basico" heading="Básico" description="Uso sin Angular Forms con [(value)]." [snippet]="SNIPPETS.basic">
+    <aesy-checkbox label="Acepto las condiciones" [(value)]="acceptedTerms" />
+    <app-value-preview [value]="acceptedTerms()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="indeterminado" heading="Estado indeterminado" description="indeterminate muestra el estado mixto. Útil para una casilla padre que resume a sus hijas." [snippet]="SNIPPETS.indeterminate">
+    <div class="demo-stack">
+      <aesy-checkbox label="Todas las notificaciones" [value]="areAllNotificationsSelected()" [indeterminate]="areSomeNotificationsSelected()" (valueChange)="onAllNotificationsChanged($event)" />
+      <div class="demo-stack demo-indent">
+        @for (notificationLabel of NOTIFICATION_LABELS; track notificationLabel; let notificationIndex = $index) {
+          <aesy-checkbox [label]="notificationLabel" [value]="selectedNotifications()[notificationIndex]" (valueChange)="onNotificationChanged(notificationIndex, $event)" />
+        }
+      </div>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="posicion-etiqueta" heading="Posición de la etiqueta" description="labelPosition coloca el texto a la derecha (por defecto) o a la izquierda." [snippet]="SNIPPETS.labelPosition">
+    <div class="demo-row demo-row-spacious">
+      <aesy-checkbox label="Etiqueta a la derecha" [value]="true" />
+      <aesy-checkbox label="Etiqueta a la izquierda" labelPosition="left" [value]="true" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="tamanos" heading="Tamaños" description="size ajusta la casilla y el texto: small, medium o large." [snippet]="SNIPPETS.sizes">
+    <div class="demo-row demo-row-spacious">
+      <aesy-checkbox label="Small" size="small" [value]="true" />
+      <aesy-checkbox label="Medium" size="medium" [value]="true" />
+      <aesy-checkbox label="Large" size="large" [value]="true" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly mantiene el aspecto pero ignora los clics." [snippet]="SNIPPETS.states">
+    <div class="demo-row demo-row-spacious">
+      <aesy-checkbox label="Deshabilitado" [disabled]="true" [value]="true" />
+      <aesy-checkbox label="Solo lectura" [readonly]="true" [value]="true" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista bajo la casilla; invalid y errorMessage muestran un error." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-stack">
+      <aesy-checkbox label="Quiero recibir el boletín" helpText="Un correo al mes, sin spam." />
+      <aesy-checkbox label="Acepto la política de privacidad" errorMessage="Debes aceptar la política para continuar." [invalid]="true" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con [formControl] o formControlName detecta Validators.required y Validators.requiredTrue (asterisco incluido) y muestra el error al tocarlo. errorMessage sustituye el mensaje automático." [snippet]="SNIPPETS.reactiveForms">
+    <div class="demo-stack">
+      <aesy-checkbox label="Acepto las condiciones" errorMessage="Debes aceptar las condiciones." [formControl]="termsControl" />
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateTermsButtonClicked()" />
+      </div>
+      <app-value-preview label="Estado" [value]="termsControlStatus()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables CSS con prefijo --aesy-checkbox- declaradas en el propio componente: fondo, borde, check, radio, tamaño, colores de error y de ayuda." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

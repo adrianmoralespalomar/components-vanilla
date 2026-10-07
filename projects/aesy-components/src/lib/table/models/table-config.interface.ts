@@ -14,6 +14,8 @@ export interface TableConfig<T = Record<string, unknown>> {
 }
 
 export interface TableSelectableConfig<T = Record<string, unknown>> {
+  /** Texto de la cabecera de la columna de casillas. Por defecto, vacía. */
+  headerLabel?: string;
   key: keyof T & string;
   selectedValues?: unknown[];
 }

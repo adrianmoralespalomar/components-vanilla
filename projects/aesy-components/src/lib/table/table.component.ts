@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, untracked, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { CheckboxComponent } from '../form-controls/checkbox/checkbox.component'
 import { InputTextComponent } from '../form-controls/input-text/input-text.component';
 import { SelectComponent } from '../form-controls/select/select.component';
 import { RequestData } from './models/request-data.interface';
+import { RowOrderChange } from './models/row-order-change.interface';
 import { Row } from './models/row.type';
 import { TableColumn } from './models/table-column.interface';
 import { TableConfig } from './models/table-config.interface';
@@ -22,7 +23,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent<T extends Row = Row> implements AfterViewInit {
+export class TableComponent<T extends object = Row> implements AfterViewInit {
   private readonly route = inject(ActivatedRoute);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
@@ -37,7 +38,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   readonly selectionChange = output<T[]>();
   readonly currentPageChange = output<number>();
   readonly rowsPerPageChange = output<number>();
-  readonly rowOrderChange = output<{ previousIndex: number; currentIndex: number; row: T }>();
+  readonly rowOrderChange = output<RowOrderChange<T>>();
 
   protected readonly tableForNoServerSide = signal<{
     originalData: T[];
@@ -56,12 +57,20 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
 
   protected readonly isServerSide = computed(() => this.config()?.serverSide ?? false);
   protected readonly selectableKey = '__selectable__';
-  protected selectedRows = new Set<T>();
+  /** Valores de `selectable.key` de las filas seleccionadas. Empieza con `selectable.selectedValues`. */
+  protected readonly selectedKeys = signal<Set<unknown>>(new Set());
+  /**
+   * Objeto de cada fila seleccionada, por su clave. Se guarda al marcarla para que `selectionChange` pueda devolverla
+   * aunque en modo servidor el usuario cambie de página y ya no esté en `data`.
+   */
+  private readonly selectedRowsByKey = new Map<unknown, T>();
   protected filters: Record<string, FormControl<string>> = {};
 
   private configInitialized = false;
   private filtersInitialized = false;
   private applyPersistInitialized = false;
+  /** Último paginationMetaConfig recibido por input, para distinguir un cambio del consumidor de los internos. */
+  private lastPaginationMetaConfigInput: PaginationMeta | null = null;
 
   private readonly orderedColumns = signal<TableColumn<T>[]>([]);
 
@@ -75,6 +84,9 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     effect(() => this.initFilters());
     effect(() => this.applyPersistFilters());
     effect(() => this.initColumnOrder(), { allowSignalWrites: true });
+    effect(() => this.syncLocalDataWithInput());
+    effect(() => this.syncLocalPaginationWithInput());
+    effect(() => this.syncSelectedRowsWithData());
   }
 
   // --- MÉTODOS DE INIT ---
@@ -82,6 +94,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     if (this.configInitialized) return;
     this.configInitialized = true;
     const config = this.config();
+    this.selectedKeys.set(new Set(config?.selectable?.selectedValues ?? []));
     if (!config?.serverSide && !this.tableForNoServerSide()) {
       this.tableForNoServerSide.set({
         originalData: this.data(),
@@ -89,6 +102,9 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
         config: this.config(),
         paginationMetaConfig: this.paginationMetaConfig()
       });
+      this.lastPaginationMetaConfigInput = this.paginationMetaConfig();
+      // Sin esto, la primera pintada muestra todas las filas hasta el primer filtro, orden o cambio de página
+      this.applyClientFilteringSortAndPagination();
     } else {
       this.dataToSendBackWhenEvents.set({
         page: this.paginationMetaConfig().page,
@@ -97,6 +113,47 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
         sortByKey: this.config()?.sortByKey,
         sortDirection: this.config()?.sortDirection
       });
+    }
+  }
+
+  /** Modo local: si cambia `data` (carga asíncrona, altas, bajas…) se vuelven a aplicar filtros, orden y página. */
+  private syncLocalDataWithInput(): void {
+    const data = this.data();
+    if (this.isServerSide()) return;
+
+    const localTable = untracked(() => this.tableForNoServerSide());
+    if (!localTable || localTable.originalData === data) return;
+
+    this.tableForNoServerSide.set({ ...localTable, originalData: data });
+    untracked(() => this.applyClientFilteringSortAndPagination());
+  }
+
+  /** Modo local: si el consumidor cambia `paginationMetaConfig` (página, filas por página, textos…) se aplica. */
+  private syncLocalPaginationWithInput(): void {
+    const paginationMetaConfig = this.paginationMetaConfig();
+    if (this.isServerSide() || paginationMetaConfig === this.lastPaginationMetaConfigInput) return;
+
+    const localTable = untracked(() => this.tableForNoServerSide());
+    if (!localTable) return;
+
+    this.lastPaginationMetaConfigInput = paginationMetaConfig;
+    this.tableForNoServerSide.set({ ...localTable, paginationMetaConfig });
+    untracked(() => this.applyClientFilteringSortAndPagination());
+  }
+
+  /**
+   * Guarda los objetos de las filas seleccionadas que llegan en `data`: las de `selectedValues` en cuanto se cargan
+   * y versiones más recientes de las ya guardadas. En local `data` es el total, así que las que desaparecen se quitan.
+   */
+  private syncSelectedRowsWithData(): void {
+    const rows = this.data();
+    if (!this.config().selectable) return;
+
+    const selectedKeys = untracked(() => this.selectedKeys());
+    if (!this.isServerSide()) this.selectedRowsByKey.clear();
+    for (const row of rows) {
+      const rowSelectionKey = this.getRowSelectionKey(row);
+      if (selectedKeys.has(rowSelectionKey)) this.selectedRowsByKey.set(rowSelectionKey, row);
     }
   }
 
@@ -152,7 +209,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   protected get columns(): TableColumn<T>[] {
     const columns = this.orderedColumns();
     if (!this.config().selectable) return columns;
-    return [{ key: this.selectableKey as keyof T & string, label: 'Pick', type: 'text' }, ...columns];
+    return [{ key: this.selectableKey as keyof T & string, label: this.config().selectable?.headerLabel ?? '', type: 'text' }, ...columns];
   }
 
   // === NUEVO: COLUMNAS REACTIVAS PARA EL TBODY ===
@@ -418,7 +475,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
       const value = control.value?.trim()?.toLowerCase();
       if (!value) continue;
       filtered = filtered.filter(item =>
-        String(item[key] ?? '')
+        String(this.getCellValue(item, key) ?? '')
           .toLowerCase()
           .includes(value)
       );
@@ -427,7 +484,7 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     const sortKey = this.sortKey;
     const sortDirection = this.sortDirection;
     if (sortKey && sortDirection) {
-      filtered.sort((a, b) => this.compareValues(a[sortKey], b[sortKey], sortDirection));
+      filtered.sort((a, b) => this.compareValues(this.getCellValue(a, sortKey), this.getCellValue(b, sortKey), sortDirection));
     }
 
     this.tableForNoServerSide.update(config => {
@@ -446,6 +503,11 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
     });
   }
 
+  /** Lee el valor de una columna con una clave en texto. Así `T` puede ser una interfaz y no solo un `Record<string, unknown>`. */
+  private getCellValue(row: T, key: string): unknown {
+    return (row as Record<string, unknown>)[key];
+  }
+
   private compareValues(a: unknown, b: unknown, direction: 'asc' | 'desc' | ''): number {
     if (a == null && b == null) return 0;
     if (a == null) return 1;
@@ -457,13 +519,26 @@ export class TableComponent<T extends Row = Row> implements AfterViewInit {
   }
 
   protected toggleRowSelection(row: T, isChecked: boolean): void {
-    if (isChecked) this.selectedRows.add(row);
-    else this.selectedRows.delete(row);
-    this.selectionChange.emit(Array.from(this.selectedRows));
+    const rowSelectionKey = this.getRowSelectionKey(row);
+    this.selectedKeys.update(selectedKeys => {
+      const updatedKeys = new Set(selectedKeys);
+      if (isChecked) updatedKeys.add(rowSelectionKey);
+      else updatedKeys.delete(rowSelectionKey);
+      return updatedKeys;
+    });
+    if (isChecked) this.selectedRowsByKey.set(rowSelectionKey, row);
+    else this.selectedRowsByKey.delete(rowSelectionKey);
+    this.selectionChange.emit(Array.from(this.selectedRowsByKey.values()));
   }
 
   protected isSelected(row: T): boolean {
-    return this.selectedRows.has(row);
+    return this.selectedKeys().has(this.getRowSelectionKey(row));
+  }
+
+  /** Identifica la fila por `selectable.key`; así la selección sobrevive a que `data` traiga objetos nuevos. */
+  private getRowSelectionKey(row: T): unknown {
+    const selectionKey = this.config().selectable?.key;
+    return selectionKey ? this.getCellValue(row, selectionKey) : row;
   }
 
   protected getSortIcon(key: string): string {

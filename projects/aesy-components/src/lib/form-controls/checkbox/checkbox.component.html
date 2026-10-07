@@ -16,7 +16,8 @@
         type="checkbox"
         [id]="inputId"
         [name]="name()"
-        [checked]="value()"
+        [checked]="currentValue"
+        [indeterminate]="indeterminate()"
         [disabled]="isDisabled"
         [attr.aria-invalid]="showError"
         [attr.aria-required]="isRequired"
@@ -28,7 +29,7 @@
       <span class="checkbox-control" aria-hidden="true">
         @if (indeterminate()) {
           <span class="checkbox-indeterminate"></span>
-        } @else if (value()) {
+        } @else if (currentValue) {
           <span class="checkbox-check"></span>
         }
       </span>
@@ -49,7 +50,7 @@
     <div class="checkbox-extra">
       @if (showError) {
         <div class="checkbox-error" [id]="inputId + '-error'" role="alert">
-          {{ errorMessage() }}
+          {{ currentErrorMessage }}
         </div>
       } @else if (helpText()) {
         <div class="checkbox-help" [id]="inputId + '-help'">

@@ -1,11 +1,11 @@
 <div class="aesy-table-pagination">
   <!-- GO FIRST PAGE BUTTON -->
   @if (paginationMetaConfig().goFirstPageButtonShown) {
-    <aesy-button [label]="this.paginationMetaConfig().goFirstPageButtonLabel" [iconSvg]="getGoFirstPageIconSvgPath()" (buttonClick)="changePageToFirst()" [disabled]="isFirstPageButtonDisabled()" />
+    <aesy-button [label]="this.paginationMetaConfig().goFirstPageButtonLabel" [ariaLabel]="paginationMetaConfig().goFirstPageButtonLabel ? null : 'Primera página'" [iconSvg]="getGoFirstPageIconSvgPath()" (buttonClick)="changePageToFirst()" [disabled]="isFirstPageButtonDisabled()" />
   }
 
   <!-- GO PREVIOUS PAGE BUTTON -->
-  <aesy-button [label]="this.paginationMetaConfig().previousLabel" [iconSvg]="getPreviousPageIconSvgPath()" (buttonClick)="changePageToPrevious()" [disabled]="paginationMetaConfig().page === 1" />
+  <aesy-button [label]="this.paginationMetaConfig().previousLabel" [ariaLabel]="paginationMetaConfig().previousLabel ? null : 'Página anterior'" [iconSvg]="getPreviousPageIconSvgPath()" (buttonClick)="changePageToPrevious()" [disabled]="paginationMetaConfig().page === 1" />
 
   <!-- CURRENT PAGE -->
   @if (paginationMetaConfig().pageShown) {
@@ -13,11 +13,11 @@
   }
 
   <!-- GO NEXT PAGE BUTTON -->
-  <aesy-button [label]="paginationMetaConfig().nextLabel" [iconSvg]="getNextPageIconSvgPath()" (buttonClick)="changePageToNext()" [disabled]="isNextPageButtonDisabled()" />
+  <aesy-button [label]="paginationMetaConfig().nextLabel" [ariaLabel]="paginationMetaConfig().nextLabel ? null : 'Página siguiente'" [iconSvg]="getNextPageIconSvgPath()" (buttonClick)="changePageToNext()" [disabled]="isNextPageButtonDisabled()" />
 
   <!-- GO LAST PAGE BUTTON -->
   @if (paginationMetaConfig().goLastPageButtonShown) {
-    <aesy-button [label]="this.paginationMetaConfig().goLastPageButtonLabel" [iconSvg]="getGoLastPageIconSvgPath()" (buttonClick)="changePageToLast()" [disabled]="isLastPageButtonDisabled()" />
+    <aesy-button [label]="this.paginationMetaConfig().goLastPageButtonLabel" [ariaLabel]="paginationMetaConfig().goLastPageButtonLabel ? null : 'Última página'" [iconSvg]="getGoLastPageIconSvgPath()" (buttonClick)="changePageToLast()" [disabled]="isLastPageButtonDisabled()" />
   }
 
   @if ((paginationMetaConfig().rowsPerPage?.length ?? 0) > 0) {

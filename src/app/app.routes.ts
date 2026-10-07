@@ -1,20 +1,20 @@
 import { Routes } from '@angular/router';
+import { SHOWCASE_ENTRIES } from './showcase/models/showcase-entries.const';
 
 export const routes: Routes = [
   {
-    path: 'button',
-    loadChildren: () => import('./zzz-test-components/button-test/button-test.routes').then(m => m.buttonTestRoutes)
+    path: '',
+    title: 'Aesy components',
+    loadComponent: () => import('./showcase/pages/home/home.component').then(m => m.HomeComponent)
   },
-  {
-    path: 'form-controls',
-    loadChildren: () => import('./zzz-test-components/form-controls/form-controls-test.routes').then(m => m.formControlsTestRoutes)
-  },
-  {
-    path: 'table',
-    loadChildren: () => import('./zzz-test-components/table/table-test.routes').then(m => m.tableTestRoutes)
-  },
+  ...SHOWCASE_ENTRIES.map(entry => ({
+    path: `components/${entry.slug}`,
+    title: `${entry.name} · Aesy components`,
+    loadComponent: entry.loadPage
+  })),
   {
     path: 'myotherstuff',
     loadComponent: () => import('./zzz-test-components/myotherstuff/myotherstuff.component').then(m => m.MyotherstuffComponent)
-  }
+  },
+  { path: '**', redirectTo: '' }
 ];

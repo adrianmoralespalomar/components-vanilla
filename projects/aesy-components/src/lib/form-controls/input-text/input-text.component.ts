@@ -4,15 +4,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
+import { IconPosition } from '../shared/models/icon-position.type';
+import { InputTextType } from './models/input-text-type.type';
 
 let nextInputId = 0;
 
-type InputTextType = 'text' | 'password' | 'email';
-
-type IconPosition = 'left' | 'right';
-
 @Component({
-  selector: 'app-input-text',
+  selector: 'aesy-input-text',
   templateUrl: './input-text.component.html',
   styleUrls: ['./input-text.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,7 +60,7 @@ export class InputTextComponent implements ControlValueAccessor {
   /** Fuerza la actualización visual cuando cambia el estado interno del FormControl. */
   private readonly formStateVersion = signal(0);
   private readonly formValue = signal<string>('');
-  private readonly generatedId = `app-input-text-${nextInputId++}`;
+  private readonly generatedId = `aesy-input-text-${nextInputId++}`;
   private readonly injector = inject(Injector);
   private ngControl: NgControl | null = null;
   protected readonly showPassword = signal<boolean>(false);

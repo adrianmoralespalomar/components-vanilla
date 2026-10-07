@@ -1,7 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { ButtonComponent } from '../../button/button.component';
 import { SelectComponent } from '../../form-controls/select/select.component';
-import { Row } from '../models/row.type';
 import { FIRST_PAGE_SVG_ICON_PATH_DEFAULT, LAST_PAGE_SVG_ICON_PATH_DEFAULT, NEXT_PAGE_SVG_ICON_PATH_DEFAULT, PREVIOUS_PAGE_SVG_ICON_PATH_DEFAULT } from './constants/svg-icon-default.constant';
 import { PaginationMeta } from './models/pagination-meta.interface';
 
@@ -11,7 +10,7 @@ import { PaginationMeta } from './models/pagination-meta.interface';
   templateUrl: './table-pagination.component.html',
   styleUrls: ['./table-pagination.component.css']
 })
-export class TablePaginationComponent<T extends Row = Row> {
+export class TablePaginationComponent {
   readonly paginationMetaConfig = input.required<PaginationMeta>();
   readonly pageChanged = output<number>();
   readonly rowsPerPageChanged = output<number>();

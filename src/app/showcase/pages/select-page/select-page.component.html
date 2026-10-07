@@ -1,0 +1,86 @@
+<app-doc-page slug="select">
+  <p class="demo-note" docPageNotes>Esta versión no incluye búsqueda ni filtrado de opciones dentro del desplegable.</p>
+
+  <app-doc-section sectionId="basico" heading="Básico" description="Selección simple con [(value)], sin Angular Forms. El output selectValueChanged avisa de cada cambio." [snippet]="SNIPPETS.basic">
+    <div class="demo-narrow demo-stack">
+      <aesy-select label="País" placeholder="Selecciona un país" [options]="COUNTRY_OPTIONS" [(value)]="basicCountry" (selectValueChanged)="onBasicSelectValueChanged($event)" />
+      <app-value-preview [value]="basicCountry()" />
+      <app-value-preview label="selectValueChanged" [value]="lastChangedValue()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="multiple" heading="Selección múltiple" description="Con [multiple]=&quot;true&quot; el valor es un array y las opciones elegidas aparecen como etiquetas que se pueden quitar." [snippet]="SNIPPETS.multiple">
+    <div class="demo-narrow demo-stack">
+      <aesy-select label="Tecnologías" [multiple]="true" [options]="DEMO_OPTIONS.skills" [(value)]="multipleSkills" />
+      <app-value-preview [value]="multipleSkills()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="limpiar" heading="Botón limpiar" description="clearable añade un botón para vaciar la selección, tanto en simple (null) como en múltiple ([])." [snippet]="SNIPPETS.clearable">
+    <div class="demo-narrow demo-stack">
+      <aesy-select label="País" [clearable]="true" [options]="COUNTRY_OPTIONS" [(value)]="clearableCountry" />
+      <app-value-preview [value]="clearableCountry()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="opciones-deshabilitadas" heading="Opciones deshabilitadas" description="Marca disabled: true en una SelectOption para que se vea pero no se pueda elegir." [snippet]="SNIPPETS.disabledOptions">
+    <div class="demo-narrow">
+      <aesy-select label="País de envío" [options]="DEMO_OPTIONS.countriesWithDisabled" [(value)]="disabledOptionsCountry" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="icono-seleccion" heading="Icono de seleccionado" description="showSelectedIcon muestra un check junto a las opciones elegidas en el desplegable." [snippet]="SNIPPETS.selectedIcon">
+    <div class="demo-narrow">
+      <aesy-select label="Tecnologías" [multiple]="true" [showSelectedIcon]="true" [options]="DEMO_OPTIONS.skills" [(value)]="selectedIconSkills" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="valores-objeto" heading="Valores objeto" description="El value de una opción puede ser un objeto. La comparación es profunda: un objeto nuevo con los mismos datos aparece seleccionado." [snippet]="SNIPPETS.complexValues">
+    <div class="demo-narrow demo-stack">
+      <aesy-select label="Envío" [options]="DEMO_OPTIONS.shippingMethods" [(value)]="shippingMethod" />
+      <app-value-preview [value]="shippingMethod()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly mantiene el aspecto pero impide cambiar el valor." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-select label="Deshabilitado" [disabled]="true" [options]="COUNTRY_OPTIONS" [value]="'ES'" />
+      <aesy-select label="Solo lectura" [readonly]="true" [options]="COUNTRY_OPTIONS" [value]="'IT'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="alineacion" heading="Alineación del texto" description="textAlign coloca el texto seleccionado a la izquierda, al centro o a la derecha." [snippet]="SNIPPETS.alignment">
+    <div class="demo-grid">
+      <aesy-select label="Izquierda" [options]="COUNTRY_OPTIONS" [(value)]="alignedCountry" />
+      <aesy-select label="Centrado" textAlign="center" [options]="COUNTRY_OPTIONS" [(value)]="alignedCountry" />
+      <aesy-select label="Derecha" textAlign="right" [options]="COUNTRY_OPTIONS" [(value)]="alignedCountry" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista bajo el campo. Sin Angular Forms, invalid y errorMessage muestran el error a mano." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-grid">
+      <aesy-select label="País" helpText="Lo usamos para calcular los gastos de envío." [options]="COUNTRY_OPTIONS" />
+      <aesy-select label="País" errorMessage="Este país no tiene envío disponible." [invalid]="true" [options]="COUNTRY_OPTIONS" [value]="'DE'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con formControlName detecta Validators.required (asterisco incluido) y muestra el message de los validadores propios." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="profileForm">
+      <div class="demo-grid">
+        <aesy-select label="País" formControlName="country" [clearable]="true" [options]="COUNTRY_OPTIONS" />
+        <aesy-select label="Tecnologías" formControlName="skills" [multiple]="true" [clearable]="true" [options]="DEMO_OPTIONS.skills" />
+      </div>
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onMarkFormAsTouchedButtonClicked()" />
+        <aesy-button type="tertiary" label="Reiniciar" (buttonClick)="onResetFormButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="profileFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables propias con prefijo --aesy-select- (declaradas sobre aesy-select, porque se copian al overlay) más las comunes --aesy-form-controls- de :root." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

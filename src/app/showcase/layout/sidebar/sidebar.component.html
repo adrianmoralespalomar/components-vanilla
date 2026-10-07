@@ -1,0 +1,42 @@
+<div class="sidebar-top">
+  <a class="sidebar-brand" routerLink="/" (click)="onNavigationLinkClicked()">
+    <span class="sidebar-brand-mark" aria-hidden="true"></span>
+    <span class="sidebar-brand-name">aesy components</span>
+  </a>
+  <button type="button" class="sidebar-menu-toggle" aria-controls="sidebar-navigation" [attr.aria-expanded]="isMenuOpen()" (click)="onMenuToggleButtonClicked()">
+    {{ isMenuOpen() ? 'Cerrar' : 'Menú' }}
+  </button>
+</div>
+
+<nav id="sidebar-navigation" class="sidebar-navigation" aria-label="Navegación del showcase" [class.sidebar-navigation-open]="isMenuOpen()">
+  <a class="sidebar-link" routerLink="/" routerLinkActive="sidebar-link-active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }" (click)="onNavigationLinkClicked()">Inicio</a>
+
+  <p class="sidebar-group-title">Componentes</p>
+
+  @for (entry of SHOWCASE_ENTRIES; track entry.slug) {
+    <a class="sidebar-link" routerLinkActive="sidebar-link-active" ariaCurrentWhenActive="page" #entryLinkActive="routerLinkActive" [routerLink]="['/components', entry.slug]" (click)="onNavigationLinkClicked()">
+      {{ entry.name }}
+    </a>
+
+    @if (entryLinkActive.isActive && (exampleSections().length || referenceSections().length)) {
+      <div class="sidebar-toc" [attr.aria-label]="'Índice de ' + entry.name" role="group">
+        @if (exampleSections().length) {
+          <p class="sidebar-toc-title">Ejemplos</p>
+          @for (section of exampleSections(); track section.id) {
+            <a class="sidebar-toc-link" queryParamsHandling="preserve" [class.sidebar-toc-link-active]="section.id === activeSectionId()" [routerLink]="['/components', entry.slug]" [fragment]="section.id" (click)="onNavigationLinkClicked()">
+              {{ section.title }}
+            </a>
+          }
+        }
+        @if (referenceSections().length) {
+          <p class="sidebar-toc-title">Referencia</p>
+          @for (section of referenceSections(); track section.id) {
+            <a class="sidebar-toc-link" queryParamsHandling="preserve" [class.sidebar-toc-link-active]="section.id === activeSectionId()" [routerLink]="['/components', entry.slug]" [fragment]="section.id" (click)="onNavigationLinkClicked()">
+              {{ section.title }}
+            </a>
+          }
+        }
+      </div>
+    }
+  }
+</nav>

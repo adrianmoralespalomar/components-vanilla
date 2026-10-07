@@ -4,12 +4,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/for
 import { areValuesEqual } from '../shared/utils/are-values-equal';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
-import { RadioButtonOption } from './models/radio-button-options.interface';
+import { RadioButtonOption } from './models/radio-button-option.interface';
 
 let nextRadioButtonId = 0;
 
 @Component({
-  selector: 'app-radio-button',
+  selector: 'aesy-radio-button',
   standalone: true,
   templateUrl: './radio-button.component.html',
   styleUrl: './radio-button.component.css',
@@ -49,7 +49,7 @@ export class RadioButtonComponent implements ControlValueAccessor {
   /** Fuerza la actualización visual cuando cambia el estado interno del FormControl.*/
   private readonly formStateVersion = signal(0);
   private readonly formValue = signal<string>('');
-  private readonly generatedId = `radio-button-${++nextRadioButtonId}`;
+  private readonly generatedId = `aesy-radio-button-${++nextRadioButtonId}`;
   private readonly injector = inject(Injector);
   // #endregion INTERNAL STATE
 

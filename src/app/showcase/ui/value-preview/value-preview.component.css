@@ -1,0 +1,20 @@
+:host {
+  align-items: baseline;
+  background: var(--showcase-background);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 10px 14px;
+}
+
+.value-preview-label {
+  color: var(--showcase-text-subtle);
+  font-size: 13px;
+}
+
+.value-preview-value {
+  font-family: var(--showcase-font-mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

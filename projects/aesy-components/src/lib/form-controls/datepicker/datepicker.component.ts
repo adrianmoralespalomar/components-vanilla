@@ -16,7 +16,7 @@ import { hasRequiredValidator } from '../shared/utils/has-required-validator';
 let nextDatepickerId = 0;
 
 @Component({
-  selector: 'app-datepicker',
+  selector: 'aesy-datepicker',
   standalone: true,
   imports: [],
   templateUrl: './datepicker.component.html',
@@ -94,7 +94,7 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   private readonly formValue = signal<Date | null>(null);
 
-  private readonly generatedId = `app-datepicker-${nextDatepickerId++}`;
+  private readonly generatedId = `aesy-datepicker-${nextDatepickerId++}`;
 
   private readonly injector = inject(Injector);
 

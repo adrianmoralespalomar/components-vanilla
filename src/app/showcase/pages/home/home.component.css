@@ -1,0 +1,243 @@
+:host {
+  display: block;
+  margin: 0 auto;
+  max-width: 1160px;
+  padding-bottom: 96px;
+}
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 40px 0 16px;
+
+  .home-badge {
+    align-self: flex-start;
+    background: var(--showcase-surface);
+    border: 1px solid var(--showcase-border);
+    border-radius: 999px;
+    font-family: var(--showcase-font-mono);
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+
+  .home-title {
+    font-family: var(--showcase-font-display);
+    font-size: clamp(44px, 7vw, 76px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin: 0;
+    max-width: 860px;
+  }
+
+  .home-lead {
+    color: var(--showcase-text-muted);
+    font-size: 19px;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 640px;
+  }
+
+  .home-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .home-primary-link {
+    align-items: center;
+    background: var(--showcase-accent);
+    border-radius: 10px;
+    color: #ffffff;
+    display: inline-flex;
+    font-weight: 500;
+    min-height: 44px;
+    padding: 0 20px;
+    text-decoration: none;
+
+    &:hover {
+      background: #2a2ad6;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--showcase-text);
+      outline-offset: 2px;
+    }
+  }
+
+  .home-import {
+    align-items: center;
+    background: var(--showcase-code-background);
+    border-radius: 10px;
+    color: var(--showcase-code-text);
+    display: inline-flex;
+    font-size: 13px;
+    min-height: 44px;
+    overflow-x: auto;
+    padding: 0 16px;
+    white-space: nowrap;
+  }
+}
+
+.home-components {
+  padding-top: 48px;
+  scroll-margin-top: 24px;
+
+  .home-section-title {
+    font-family: var(--showcase-font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+  }
+}
+
+.home-grid {
+  display: grid;
+  gap: 20px;
+  /* Rellena el hueco que deja una tarjeta ancha con la siguiente */
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+}
+
+.home-card {
+  background: var(--showcase-surface);
+  border: 1px solid var(--showcase-border);
+  border-radius: var(--showcase-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 24px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover {
+    border-color: var(--showcase-border-strong);
+    box-shadow: 0 8px 24px -16px rgb(18 20 26 / 25%);
+  }
+
+  &.home-card-wide {
+    grid-column: 1 / -1;
+  }
+
+  .home-card-header {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+
+  .home-card-title {
+    font-family: var(--showcase-font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .home-card-selector {
+    background: var(--showcase-chip);
+    border-radius: 6px;
+    font-size: 12px;
+    padding: 2px 7px;
+  }
+
+  .home-card-description {
+    color: var(--showcase-text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .home-card-demo {
+    border-top: 1px dashed var(--showcase-border);
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 4px;
+    min-width: 0;
+    padding: 20px 0 8px;
+  }
+
+  .home-card-link {
+    align-items: center;
+    align-self: flex-start;
+    border-radius: 8px;
+    color: var(--showcase-accent);
+    display: inline-flex;
+    font-size: 15px;
+    font-weight: 500;
+    gap: 6px;
+    min-height: 44px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--showcase-accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.home-new-component {
+  background: var(--showcase-code-background);
+  border-radius: 20px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 56px;
+  padding: 40px;
+
+  .home-new-component-title {
+    font-family: var(--showcase-font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .home-steps {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+      flex-direction: column;
+      font-size: 16px;
+      gap: 8px;
+      line-height: 1.55;
+    }
+
+    code {
+      background: rgb(255 255 255 / 10%);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+  }
+
+  .home-step-number {
+    color: var(--showcase-accent-on-dark);
+    font-family: var(--showcase-font-mono);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-new-component {
+    padding: 28px 20px;
+  }
+}

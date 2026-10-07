@@ -5,7 +5,8 @@ export function hasRequiredValidator(control: AbstractControl | null): boolean {
     return false;
   }
 
-  if (control.hasValidator(Validators.required)) {
+  // requiredTrue es el "obligatorio" de los checkbox (p. ej. aceptar condiciones)
+  if (control.hasValidator(Validators.required) || control.hasValidator(Validators.requiredTrue)) {
     return true;
   }
 

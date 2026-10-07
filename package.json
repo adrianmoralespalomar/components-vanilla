@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build aesy-components && ng build",
-    "debugapp": "concurrently \"ng build aesy-components --watch\" \"wait-on dist/aesy-components/package.json && ng serve\"",
+    "debugapp": "node -e \"require('fs').rmSync('dist/aesy-components', { recursive: true, force: true })\" && concurrently \"ng build aesy-components --watch\" \"wait-on dist/aesy-components/package.json && ng serve\"",
     "generate-lib": "ng build aesy-components"
   },
   "private": true,

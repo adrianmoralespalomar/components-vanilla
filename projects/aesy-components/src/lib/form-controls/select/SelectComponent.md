@@ -21,9 +21,10 @@ La arquitectura está alineada con los componentes `InputText` y `Textarea`.
 - Estado `disabled`.
 - Estado `readonly`.
 - Opción `clearable`.
+- Icono junto a las opciones seleccionadas (`showSelectedIcon`).
+- Alineación del texto seleccionado (`textAlign`).
 - Placeholder.
 - Label, help text y mensajes de error.
-- Tamaños `small`, `medium` y `large`.
 - ID interno basado en `${id}-select`.
 - Dropdown propio; no utiliza el `<select>` nativo.
 - Navegación básica mediante teclado.
@@ -47,13 +48,14 @@ El componente **no incluye búsqueda/filtering de opciones** en esta versión.
 | `label`        | `string`                         |                      `''` | Texto del label.                                                                       |
 | `placeholder`  | `string`                         | `'Selecciona una opción'` | Texto mostrado cuando no hay selección.                                                |
 | `clearable`    | `boolean`                        |                   `false` | Permite limpiar la selección.                                                          |
+| `showSelectedIcon` | `boolean`                    |                   `false` | Muestra un check junto a las opciones seleccionadas en el desplegable.                 |
+| `textAlign`    | `'left' \| 'center' \| 'right'`  |                  `'left'` | Alineación del texto seleccionado.                                                     |
 | `readonly`     | `boolean`                        |                   `false` | Impide modificar la selección.                                                         |
 | `disabled`     | `boolean`                        |                   `false` | Deshabilita el componente cuando no está ligado a Forms.                               |
 | `required`     | `boolean \| null`                |                    `null` | Indica si el campo es obligatorio. Con `null`, se detecta automáticamente desde Forms. |
 | `invalid`      | `boolean`                        |                   `false` | Permite establecer manualmente el estado inválido sin Angular Forms.                   |
 | `errorMessage` | `string \| null`                 |                    `null` | Mensaje de error explícito. Sobrescribe el mensaje automático.                         |
 | `helpText`     | `string \| null`                 |                    `null` | Texto de ayuda.                                                                        |
-| `size`         | `'small' \| 'medium' \| 'large'` |                `'medium'` | Tamaño visual del componente.                                                          |
 | `id`           | `string \| null`                 |                    `null` | ID proporcionado por el consumidor.                                                    |
 | `name`         | `string \| null`                 |                    `null` | Nombre del control.                                                                    |
 
@@ -75,6 +77,16 @@ T | null;
 
 ```ts
 T[]
+```
+
+### Outputs
+
+| Output               | Tipo                   | Descripción                                   |
+| -------------------- | ---------------------- | --------------------------------------------- |
+| `selectValueChanged` | `any \| any[] \| null` | Se emite cada vez que cambia la selección.    |
+
+```html
+<aesy-select [options]="countries" (selectValueChanged)="onCountrySelected($event)" />
 ```
 
 ---
@@ -360,30 +372,6 @@ Una opción `disabled`:
 - No puede seleccionarse.
 - No participa en la navegación mediante teclado.
 - Se muestra visualmente como deshabilitada.
-
----
-
-## Tamaños
-
-El componente admite tres tamaños:
-
-```html
-<aesy-select size="small" [options]="countries" />
-```
-
-```html
-<aesy-select size="medium" [options]="countries" />
-```
-
-```html
-<aesy-select size="large" [options]="countries" />
-```
-
-Valores disponibles:
-
-```ts
-'small' | 'medium' | 'large';
-```
 
 ---
 

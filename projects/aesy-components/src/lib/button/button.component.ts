@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ButtonType } from './models/button-type.type';
 
 @Component({
   selector: 'aesy-button',
@@ -7,9 +8,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ButtonComponent {
+  /** Nombre accesible. Imprescindible si el botón solo tiene icono; con `label` no hace falta. */
+  readonly ariaLabel = input<string | null>(null);
   readonly disabled = input<boolean | undefined>(false);
   readonly label = input<string | null | undefined>(null);
   readonly iconSvg = input<string | null | undefined>(null);
-  readonly type = input<'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warning' | 'danger'>('primary');
+  readonly type = input<ButtonType>('primary');
   buttonClick = output<PointerEvent>();
 }

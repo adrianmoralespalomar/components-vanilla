@@ -1,19 +1,94 @@
 @import '../dist/aesy-components/theme/public-theme.css';
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  padding: 1rem;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+
+:root {
+  --showcase-accent: #3b3bf0;
+  --showcase-accent-on-dark: #9ca3ff;
+  --showcase-accent-soft: #ececfe;
+  --showcase-background: #f5f6f8;
+  --showcase-border: #e1e4ea;
+  --showcase-border-soft: #eef0f4;
+  --showcase-border-strong: #c9ceda;
+  --showcase-chip: #e8eaf0;
+  --showcase-code-accent: #4b3fb8;
+  --showcase-code-background: #12141a;
+  --showcase-code-text: #d5d9e3;
+  --showcase-hover: #eceef3;
+  --showcase-surface: #ffffff;
+  --showcase-text: #12141a;
+  --showcase-text-muted: #4a5060;
+  --showcase-text-subtle: #5a6070;
+
+  --showcase-font-body: 'DM Sans', system-ui, sans-serif;
+  --showcase-font-display: 'Bricolage Grotesque', 'DM Sans', system-ui, sans-serif;
+  --showcase-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --showcase-radius: 16px;
+  --showcase-sidebar-width: 272px;
 }
 
-.container-formcontrol-test {
-  display: flex;
-  gap: 1rem;
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--showcase-background);
+  color: var(--showcase-text);
+  font-family: var(--showcase-font-body);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: var(--showcase-font-mono);
+  font-size: 0.92em;
+}
+
+/* Utilidades para maquetar las demos dentro de cada sección */
+.demo-row {
   align-items: center;
-  border: 2px solid black;
-  padding: 1rem;
-  margin: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.demo-row-spacious {
+  gap: 32px;
+}
+
+.demo-indent {
+  padding-left: 28px;
+}
+
+.demo-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.demo-narrow {
+  max-width: 420px;
+  width: 100%;
+}
+
+.demo-caption {
+  color: var(--showcase-text-subtle);
+  font-size: 13px;
+  margin: 0;
+}
+
+.demo-note {
+  background: #fff6e0;
+  border: 1px solid #f0d58a;
+  border-radius: 12px;
+  color: #5a4300;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+  padding: 14px 16px;
 }

@@ -1,0 +1,45 @@
+<app-doc-page slug="table">
+  <app-doc-section sectionId="datos-locales" heading="Datos locales" description="Con serverSide: false la tabla filtra, ordena y pagina en memoria por su cuenta. Esta tiene cabecera fija, la columna Nombre fijada y los filtros guardados en la URL." [snippet]="SNIPPETS.local">
+    <aesy-table class="local-table" [data]="PEOPLE" [config]="CONFIGS.localPeople" [paginationMetaConfig]="LOCAL_PAGINATION" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="datos-asincronos" heading="Datos que cambian" description="En local la tabla reacciona a cada cambio de data (una carga asíncrona, altas, bajas…) y mantiene los filtros, el orden y la página activos. Aquí los datos llegan 1,5 s después de pintarse la tabla." [snippet]="SNIPPETS.asyncData">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Añadir persona" [disabled]="isLoadingAsyncPeople()" (buttonClick)="onAddAsyncPersonButtonClicked()" />
+      <aesy-button type="tertiary" label="Quitar la primera" [disabled]="isLoadingAsyncPeople() || !asyncPeople().length" (buttonClick)="onRemoveFirstAsyncPersonButtonClicked()" />
+      <aesy-button label="Volver a cargar" [disabled]="isLoadingAsyncPeople()" (buttonClick)="onReloadAsyncPeopleButtonClicked()" />
+    </div>
+    <aesy-table [data]="asyncPeople()" [config]="CONFIGS.asyncPeople" [paginationMetaConfig]="ASYNC_PAGINATION" />
+    <p class="demo-caption" aria-live="polite">{{ isLoadingAsyncPeople() ? 'Cargando personas…' : asyncPeople().length + ' personas en data' }}</p>
+  </app-doc-section>
+
+  <app-doc-section sectionId="seleccion" heading="Selección de filas" description="selectable añade una casilla por fila. key identifica cada fila (la selección se mantiene aunque data traiga objetos nuevos), selectedValues marca las que empiezan seleccionadas y selectionChange devuelve las elegidas." [snippet]="SNIPPETS.selectable">
+    <aesy-table [data]="CITIES" [config]="CONFIGS.selectableCities" [paginationMetaConfig]="CITIES_PAGINATION" (selectionChange)="onCitiesSelectionChanged($event)" />
+    <app-value-preview label="selectionChange" [value]="selectedCities()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="arrastrar" heading="Columnas y filas reordenables" description="draggableColumns permite mover columnas arrastrando la cabecera y draggableRows mueve filas. En local la tabla reordena sola (si no hay filtro ni orden activos) y avisa con rowOrderChange." [snippet]="SNIPPETS.draggable">
+    <aesy-table [data]="PEOPLE" [config]="CONFIGS.draggablePeople" [paginationMetaConfig]="DRAGGABLE_PAGINATION" (rowOrderChange)="onDraggablePeopleRowOrderChanged($event)" />
+    <app-value-preview label="rowOrderChange" [value]="lastRowOrderChange()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="datos-api" heading="Datos desde una API" description="Con serverSide: true la tabla solo pinta lo que le pasas y te pide cada página, filtro u orden por requestData. Esta demo consulta dummyjson.com. Prueba a seleccionar filas en varias páginas: selectionChange las devuelve todas." [snippet]="SNIPPETS.serverSide">
+    @if (productsLoadError(); as loadError) {
+      <p class="demo-note">{{ loadError }}</p>
+    }
+    <aesy-table [data]="products()" [config]="CONFIGS.serverProducts" [paginationMetaConfig]="productsPagination()" (requestData)="onProductsTableDataRequested($event)" (selectionChange)="onProductsSelectionChanged($event)" />
+    <p class="demo-caption" aria-live="polite">{{ isLoadingProducts() ? 'Cargando productos…' : productsPagination().total + ' productos en total' }}</p>
+    <app-value-preview label="selectionChange" [value]="selectedProductTitles()" />
+    <app-value-preview label="Último requestData" [value]="lastProductsRequestData()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="paginacion" heading="Paginación personalizada" description="PaginationMeta controla los textos, los botones de primera y última página, el indicador de página y el selector de filas por página." [snippet]="SNIPPETS.pagination">
+    <aesy-table [data]="PEOPLE" [config]="CONFIGS.customPagination" [paginationMetaConfig]="CUSTOM_PAGINATION" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables con prefijo --aesy-table- para alto del contenedor, fondos de cabecera y filas, bordes, celdas y texto. Los filtros de cabecera se ajustan con las variables de los form controls." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

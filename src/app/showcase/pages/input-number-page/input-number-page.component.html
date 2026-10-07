@@ -1,0 +1,79 @@
+<app-doc-page slug="input-number">
+  <app-doc-section sectionId="basico" heading="Básico" description="Uso sin Angular Forms con [(value)]. Mientras escribes se formatea según el idioma, pero el valor siempre es un number." [snippet]="SNIPPETS.basic">
+    <div class="demo-narrow demo-stack">
+      <aesy-input-number label="Importe" [(value)]="amount" />
+      <app-value-preview [value]="amount()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="decimales" heading="Decimales y redondeo" description="maxFractionDigits limita los decimales; roundingMode decide si se redondean o se truncan, y minFractionDigits fuerza un mínimo." [snippet]="SNIPPETS.decimals">
+    <div class="demo-grid">
+      <aesy-input-number label="Redondeado" roundingMode="round" [maxFractionDigits]="2" [value]="price()" />
+      <aesy-input-number label="Truncado" roundingMode="truncate" [maxFractionDigits]="2" [value]="price()" />
+      <aesy-input-number label="Siempre 2 decimales" [minFractionDigits]="2" [maxFractionDigits]="2" [value]="15" />
+    </div>
+    <p class="demo-caption">Valor de partida: 12.789</p>
+  </app-doc-section>
+
+  <app-doc-section sectionId="idioma" heading="Idioma" description="locale cambia los separadores de miles y decimales. useGrouping=&quot;false&quot; quita el de miles." [snippet]="SNIPPETS.locale">
+    <div class="demo-grid">
+      <aesy-input-number label="es-ES" locale="es-ES" [(value)]="localeAmount" />
+      <aesy-input-number label="en-US" locale="en-US" [(value)]="localeAmount" />
+      <aesy-input-number label="Sin separador de miles" [useGrouping]="false" [(value)]="localeAmount" />
+    </div>
+    <app-value-preview [value]="localeAmount()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="prefijo-y-sufijo" heading="Prefijo y sufijo" description="prefix y suffix añaden texto fijo antes o después del número, como una moneda o un porcentaje." [snippet]="SNIPPETS.affixes">
+    <div class="demo-grid">
+      <aesy-input-number label="Precio" prefix="€" [minFractionDigits]="2" [(value)]="price" />
+      <aesy-input-number label="Descuento" suffix="%" [maxFractionDigits]="0" [(value)]="discount" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="botones" heading="Botones de incremento" description="showButtons añade + y −; step marca el salto y min/max los límites." [snippet]="SNIPPETS.buttons">
+    <div class="demo-narrow demo-stack">
+      <aesy-input-number label="Unidades (0 a 10)" [showButtons]="true" [min]="0" [max]="10" [step]="1" [maxFractionDigits]="0" [(value)]="units" />
+      <app-value-preview [value]="units()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="sin-negativos" heading="Sin negativos" description="allowNegative=&quot;false&quot; ignora el signo menos." [snippet]="SNIPPETS.negatives">
+    <div class="demo-narrow">
+      <aesy-input-number label="Stock" [allowNegative]="false" [(value)]="stock" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="alineacion" heading="Alineación" description="textAlign coloca el número a la izquierda, al centro o a la derecha. A la derecha es lo habitual para importes." [snippet]="SNIPPETS.alignment">
+    <div class="demo-grid">
+      <aesy-input-number label="Izquierda" [(value)]="amount" />
+      <aesy-input-number label="Centrado" textAlign="center" [(value)]="amount" />
+      <aesy-input-number label="Derecha" textAlign="right" [(value)]="amount" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly mantiene el aspecto pero impide editar." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-input-number label="Deshabilitado" [disabled]="true" [value]="1234.56" />
+      <aesy-input-number label="Solo lectura" [readonly]="true" [value]="1234.56" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con formControlName muestra los mensajes de required, min y max al tocar el campo." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="orderForm">
+      <div class="demo-narrow">
+        <aesy-input-number label="Cantidad (1 a 99)" formControlName="quantity" [maxFractionDigits]="0" />
+      </div>
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateOrderButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="orderFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables con prefijo --aesy-input-number- para el prefijo, el sufijo y los botones, más las comunes --aesy-form-controls-." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

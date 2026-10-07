@@ -1,0 +1,64 @@
+<app-doc-page slug="datepicker">
+  <app-doc-section sectionId="basico" heading="Básico" description="Uso sin Angular Forms con [(value)]. Por defecto emite un Date y muestra el formato DD/MM/YYYY." [snippet]="SNIPPETS.basic">
+    <div class="demo-narrow demo-stack">
+      <aesy-datepicker label="Fecha de entrega" [clearable]="true" [(value)]="deliveryDate" />
+      <app-value-preview [value]="deliveryDate()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="formato-y-salida" heading="Formato y salida como texto" description="format cambia cómo se ve la fecha y, con emitType=&quot;string&quot;, también el texto que recibes." [snippet]="SNIPPETS.stringOutput">
+    <div class="demo-narrow demo-stack">
+      <aesy-datepicker label="Fecha (YYYY-MM-DD)" format="YYYY-MM-DD" emitType="string" [clearable]="true" [(value)]="isoDate" />
+      <app-value-preview [value]="isoDate()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="rango" heading="Rango de fechas" description="minDate y maxDate limitan los días que se pueden elegir; el resto aparece deshabilitado en el calendario." [snippet]="SNIPPETS.range">
+    <div class="demo-narrow demo-stack">
+      <aesy-datepicker label="Cita en las próximas dos semanas" [minDate]="TODAY" [maxDate]="BOOKING_WINDOW_END" [clearable]="true" [(value)]="appointmentDate" />
+      <app-value-preview [value]="appointmentDate()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="idioma" heading="Idioma y primer día de la semana" description="locale traduce meses y días; firstDayOfWeek empieza las semanas en lunes o en domingo." [snippet]="SNIPPETS.locale">
+    <div class="demo-narrow">
+      <aesy-datepicker label="Date (en-GB)" locale="en-GB" format="MM/DD/YYYY" firstDayOfWeek="sunday" [(value)]="englishDate" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ancho-calendario" heading="Ancho del calendario" description="calendarWidth=&quot;full&quot; hace que el calendario ocupe todo el ancho del campo." [snippet]="SNIPPETS.fullWidth">
+    <aesy-datepicker label="Calendario a todo el ancho" calendarWidth="full" [(value)]="fullWidthDate" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly mantiene el aspecto pero no abre el calendario." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-datepicker label="Deshabilitado" [disabled]="true" [value]="TODAY" />
+      <aesy-datepicker label="Solo lectura" [readonly]="true" [value]="TODAY" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista; sin Angular Forms, invalid y errorMessage muestran un error." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-grid">
+      <aesy-datepicker label="Fecha de nacimiento" helpText="La usamos para felicitarte." />
+      <aesy-datepicker label="Fecha de caducidad" errorMessage="La tarjeta está caducada." [invalid]="true" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con formControlName detecta Validators.required y muestra el mensaje al tocar el campo." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="bookingForm">
+      <div class="demo-narrow">
+        <aesy-datepicker label="Entrada" formControlName="checkIn" [clearable]="true" />
+      </div>
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateBookingButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="bookingFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables con prefijo --aesy-datepicker- para el calendario (día seleccionado, hoy, hover, días deshabilitados y de otros meses) más las comunes --aesy-form-controls-." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

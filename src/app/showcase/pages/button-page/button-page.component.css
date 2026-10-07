@@ -1,0 +1,38 @@
+.playground {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+
+  .playground-stage {
+    align-items: center;
+    background: var(--showcase-background);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    min-height: 180px;
+    padding: 24px;
+  }
+
+  .playground-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.variant-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+
+  .variant-item {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .variant-name {
+    font-size: 12.5px;
+  }
+}

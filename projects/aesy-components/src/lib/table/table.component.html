@@ -37,7 +37,7 @@
                 @if (col.type === 'select') {
                   <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
                 } @else {
-                  <app-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
+                  <aesy-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
                 }
               }
             </div>

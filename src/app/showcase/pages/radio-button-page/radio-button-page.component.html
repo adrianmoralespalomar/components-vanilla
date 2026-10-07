@@ -1,0 +1,45 @@
+<app-doc-page slug="radio-button">
+  <app-doc-section sectionId="basico" heading="Básico" description="Grupo vertical con [(value)], sin Angular Forms." [snippet]="SNIPPETS.basic">
+    <aesy-radio-button label="Plan de facturación" [options]="PLAN_OPTIONS" [(value)]="plan" />
+    <app-value-preview [value]="plan()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="horizontal" heading="Horizontal" description="orientation=&quot;horizontal&quot; coloca las opciones en fila." [snippet]="SNIPPETS.horizontal">
+    <aesy-radio-button label="Plan de facturación" orientation="horizontal" [options]="PLAN_OPTIONS" [(value)]="horizontalPlan" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="valores-objeto" heading="Valores objeto" description="El value de cada opción puede ser un objeto; se compara en profundidad." [snippet]="SNIPPETS.objectValues">
+    <aesy-radio-button label="País" orientation="horizontal" [options]="COUNTRY_OPTIONS" [(value)]="country" />
+    <app-value-preview [value]="country()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled apaga el grupo; readonly mantiene el aspecto pero no deja cambiar de opción." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-radio-button label="Deshabilitado" [disabled]="true" [options]="PLAN_OPTIONS" [value]="'yearly'" />
+      <aesy-radio-button label="Solo lectura" [readonly]="true" [options]="PLAN_OPTIONS" [value]="'yearly'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista; sin Angular Forms, invalid y errorMessage muestran un error." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-grid">
+      <aesy-radio-button label="Plan" helpText="Puedes cambiarlo cuando quieras." [options]="PLAN_OPTIONS" />
+      <aesy-radio-button label="Plan" errorMessage="Elige un plan para continuar." [invalid]="true" [options]="PLAN_OPTIONS" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Con formControlName detecta Validators.required y muestra el error al validar." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="subscriptionForm">
+      <aesy-radio-button label="Plan" orientation="horizontal" formControlName="plan" [options]="PLAN_OPTIONS" />
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateSubscriptionButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="subscriptionFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables con prefijo --aesy-radio-button- para el color marcado, el tamaño y la separación, más las comunes --aesy-form-controls-." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

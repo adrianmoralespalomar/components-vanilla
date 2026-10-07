@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  margin: 0 auto;
+  max-width: 1040px;
+  padding-bottom: 120px;
+}
+
+.doc-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+
+  .doc-page-meta {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .doc-page-selector {
+    background: var(--showcase-chip);
+    border-radius: 6px;
+    font-family: var(--showcase-font-mono);
+    font-size: 13px;
+    padding: 4px 8px;
+  }
+
+  .doc-page-import {
+    color: var(--showcase-text-subtle);
+    font-family: var(--showcase-font-mono);
+    font-size: 13px;
+  }
+
+  .doc-page-title {
+    font-family: var(--showcase-font-display);
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .doc-page-description {
+    color: var(--showcase-text-muted);
+    font-size: 19px;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 700px;
+  }
+}

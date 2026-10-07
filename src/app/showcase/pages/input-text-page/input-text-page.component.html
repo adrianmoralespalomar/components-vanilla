@@ -1,0 +1,71 @@
+<app-doc-page slug="input-text">
+  <app-doc-section sectionId="basico" heading="Básico" description="Uso sin Angular Forms con [(value)]." [snippet]="SNIPPETS.basic">
+    <div class="demo-narrow demo-stack">
+      <aesy-input-text label="Nombre" placeholder="Escribe tu nombre" [(value)]="fullName" />
+      <app-value-preview [value]="fullName()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="tipos" heading="Tipos" description="type admite text, email y password." [snippet]="SNIPPETS.types">
+    <div class="demo-grid">
+      <aesy-input-text label="Texto" type="text" placeholder="Cualquier texto" />
+      <aesy-input-text label="Correo" type="email" placeholder="nombre@dominio.com" />
+      <aesy-input-text label="Contraseña" type="password" [value]="'secreto'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="contador" heading="Contador de caracteres" description="showCharCount muestra cuántos caracteres llevas. Con allowTypeInvalidValue se puede pasar del límite para que se vea el error." [snippet]="SNIPPETS.charCount">
+    <div class="demo-grid">
+      <aesy-input-text label="Titular (máx. 40)" [maxlength]="40" [showCharCount]="true" [(value)]="headline" />
+      <aesy-input-text label="Titular (máx. 20)" [maxlength]="20" [showCharCount]="true" [allowTypeInvalidValue]="true" [formControl]="headlineControl" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="icono" heading="Icono" description="icon recibe un texto o carácter y iconPosition lo coloca a la izquierda o a la derecha." [snippet]="SNIPPETS.icon">
+    <div class="demo-grid">
+      <aesy-input-text label="Usuario" icon="@" placeholder="tu_usuario" [(value)]="username" />
+      <aesy-input-text label="Importe" icon="€" iconPosition="right" textAlign="right" [(value)]="amount" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="alineacion" heading="Alineación" description="textAlign coloca el texto a la izquierda, al centro o a la derecha." [snippet]="SNIPPETS.alignment">
+    <div class="demo-grid">
+      <aesy-input-text label="Izquierda" [(value)]="alignedCode" />
+      <aesy-input-text label="Centrado" textAlign="center" [(value)]="alignedCode" />
+      <aesy-input-text label="Derecha" textAlign="right" [(value)]="alignedCode" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estados" heading="Deshabilitado y solo lectura" description="disabled lo apaga visualmente; readonly deja seleccionar y copiar pero no editar." [snippet]="SNIPPETS.states">
+    <div class="demo-grid">
+      <aesy-input-text label="Deshabilitado" [disabled]="true" [value]="'No editable'" />
+      <aesy-input-text label="Solo lectura" [readonly]="true" [value]="'Se puede copiar'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="ayuda-y-errores" heading="Ayuda y errores" description="helpText añade una pista; sin Angular Forms, invalid y errorMessage muestran un error." [snippet]="SNIPPETS.helpAndErrors">
+    <div class="demo-grid">
+      <aesy-input-text label="Usuario" helpText="Entre 3 y 20 caracteres, sin espacios." />
+      <aesy-input-text label="Usuario" errorMessage="Ese usuario ya existe." [invalid]="true" [value]="'admin'" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="reactive-forms" heading="Reactive Forms" description="Detecta Validators.required, traduce los errores estándar (email, minlength…) y muestra el message de los validadores propios. Prueba a escribir admin." [snippet]="SNIPPETS.reactiveForms">
+    <form class="demo-stack" [formGroup]="signUpForm">
+      <div class="demo-grid">
+        <aesy-input-text label="Correo" type="email" formControlName="email" />
+        <aesy-input-text label="Usuario" formControlName="username" />
+      </div>
+      <div class="demo-row">
+        <aesy-button type="secondary" label="Validar" (buttonClick)="onValidateSignUpButtonClicked()" />
+      </div>
+      <app-value-preview label="form.value" [value]="signUpFormValue()" />
+    </form>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="No tiene variables propias: usa las comunes --aesy-form-controls- de :root, que también puedes acotar a un campo concreto." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

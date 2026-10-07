@@ -1,0 +1,31 @@
+<header class="doc-section-header">
+  <h2 class="doc-section-title">
+    <a class="doc-section-anchor" [routerLink]="[]" [fragment]="sectionId()" queryParamsHandling="preserve">{{ heading() }}</a>
+  </h2>
+  @if (description()) {
+    <p class="doc-section-description">{{ description() }}</p>
+  }
+</header>
+
+<div [class]="variant() === 'card' ? 'doc-section-card' : 'doc-section-plain'">
+  <div class="doc-section-content">
+    <ng-content />
+  </div>
+
+  @if (snippetBlocks().length) {
+    @if (variant() === 'card') {
+      <div class="doc-section-toolbar">
+        <button type="button" class="doc-section-code-toggle" [attr.aria-expanded]="isCodeVisible()" (click)="onToggleCodeButtonClicked()">
+          {{ isCodeVisible() ? 'Ocultar código' : 'Ver código' }}
+        </button>
+      </div>
+    }
+    @if (variant() === 'plain' || isCodeVisible()) {
+      <div class="doc-section-code">
+        @for (block of snippetBlocks(); track block.language) {
+          <app-code-block [code]="block.code" [language]="block.language" />
+        }
+      </div>
+    }
+  }
+</div>

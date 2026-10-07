@@ -1,0 +1,66 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.api-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .api-table-heading {
+    font-family: var(--showcase-font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .api-table-scroll {
+    background: var(--showcase-surface);
+    border: 1px solid var(--showcase-border);
+    border-radius: var(--showcase-radius);
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    min-width: 680px;
+    width: 100%;
+  }
+
+  th {
+    border-bottom: 1px solid var(--showcase-border);
+    color: var(--showcase-text-subtle);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    border-bottom: 1px solid var(--showcase-border-soft);
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 12px 16px;
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .api-name {
+    font-family: var(--showcase-font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .api-type {
+    color: var(--showcase-code-accent);
+    font-family: var(--showcase-font-mono);
+    font-size: 12.5px;
+  }
+}

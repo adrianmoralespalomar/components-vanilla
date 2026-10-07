@@ -3,11 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
+import { IconPosition } from '../shared/models/icon-position.type';
 import { formatNumberInput } from './utils/format-number-input';
 import { formatNumberValue } from './utils/format-number-value';
 
 @Component({
-  selector: 'app-input-number',
+  selector: 'aesy-input-number',
   templateUrl: './input-number.component.html',
   styleUrl: './input-number.component.css',
   providers: [
@@ -111,7 +112,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   readonly helpText = input<string | null>(null);
 
   readonly icon = input<string | null>(null);
-  readonly iconPosition = input<'left' | 'right'>('left');
+  readonly iconPosition = input<IconPosition>('left');
 
   readonly id = input<string | null>(null);
 
@@ -152,7 +153,7 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
    */
   private readonly formStateVersion = signal(0);
 
-  readonly generatedId = `app-input-number-${Math.random().toString(36).substring(2, 11)}`;
+  readonly generatedId = `aesy-input-number-${Math.random().toString(36).substring(2, 11)}`;
 
   private onChange: (value: number | null) => void = () => {};
   private onTouched: () => void = () => {};

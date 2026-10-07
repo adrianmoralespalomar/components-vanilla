@@ -1,0 +1,63 @@
+<app-doc-page slug="button">
+  <app-doc-section sectionId="playground" heading="Playground" description="Cambia las propiedades y mira el resultado y el código al momento. Los controles son también componentes de la librería.">
+    <div class="playground">
+      <div class="playground-stage">
+        <aesy-button [type]="playgroundType()" [label]="playgroundLabel()" [disabled]="isPlaygroundDisabled()" (buttonClick)="onPlaygroundButtonClicked()" />
+      </div>
+      <div class="playground-controls">
+        <aesy-select label="type" [options]="TYPE_OPTIONS" [(value)]="playgroundType" />
+        <aesy-input-text label="label" [(value)]="playgroundLabel" />
+        <aesy-checkbox label="disabled" [(value)]="isPlaygroundDisabled" />
+      </div>
+    </div>
+    <app-value-preview label="Último evento" [value]="lastPlaygroundEvent()" />
+    <app-code-block [code]="playgroundCode()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="variantes" heading="Variantes" description="El input type elige la variante. Cada una tiene su propio juego de colores para los estados normal, hover y deshabilitado." [snippet]="SNIPPETS.variants">
+    <div class="variant-grid">
+      @for (variant of VARIANT_DOCS; track variant.type) {
+        <div class="variant-item">
+          <aesy-button [type]="variant.type" [label]="variant.type" />
+          <code class="variant-name">type="{{ variant.type }}"</code>
+          <p class="demo-caption">{{ variant.usage }}</p>
+        </div>
+      }
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="deshabilitado" heading="Deshabilitado" description="Con [disabled] el botón deja de emitir buttonClick y usa los colores de estado deshabilitado de su variante." [snippet]="SNIPPETS.disabled">
+    <div class="demo-row">
+      @for (variant of VARIANT_DOCS; track variant.type) {
+        <aesy-button [type]="variant.type" [label]="variant.type" [disabled]="true" />
+      }
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="icono" heading="Solo icono" description="iconSvg recibe el atributo d de un path dibujado en un viewBox de 20×20. Si también hay label, se muestra solo el texto." [snippet]="SNIPPETS.icon">
+    <div class="demo-row">
+      <aesy-button type="secondary" ariaLabel="Añadir" [iconSvg]="ICON_PATHS.add" />
+      <aesy-button type="success" ariaLabel="Confirmar" [iconSvg]="ICON_PATHS.check" />
+      <aesy-button type="danger" ariaLabel="Cerrar" [iconSvg]="ICON_PATHS.close" />
+      <aesy-button label="Con label: el icono no se ve" [iconSvg]="ICON_PATHS.add" />
+    </div>
+    <p class="demo-caption">
+      Un botón solo con icono no tiene texto que leer: pon siempre ariaLabel para que los lectores de pantalla anuncien qué hace ("botón, Añadir" en lugar de solo "botón").
+    </p>
+  </app-doc-section>
+
+  <app-doc-section sectionId="eventos" heading="Eventos" description="buttonClick emite el PointerEvent original, así puedes leer la posición, el tipo de puntero o detener la propagación." [snippet]="SNIPPETS.events">
+    <div class="demo-row">
+      <aesy-button type="info" label="Haz clic aquí" (buttonClick)="onEventsDemoButtonClicked($event)" />
+    </div>
+    <app-value-preview label="PointerEvent" [value]="lastClickSummary()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Todo el aspecto sale de variables CSS con prefijo --aesy-button-: fondo, texto y borde por variante (con sus estados -hover y -disabled), radio, grosor del borde, tamaño de texto y espaciado." [snippet]="SNIPPETS.theming" />
+
+  <app-doc-section sectionId="ejemplo-completo" heading="Ejemplo completo" group="reference" variant="plain" [snippet]="SNIPPETS.usage" />
+
+  <app-doc-section sectionId="api" heading="API" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

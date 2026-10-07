@@ -1,0 +1,15 @@
+@if (entry(); as currentEntry) {
+  <header class="doc-page-header">
+    <div class="doc-page-meta">
+      <code class="doc-page-selector">&lt;{{ currentEntry.selector }}&gt;</code>
+      <span class="doc-page-import">import from 'aesy-components'</span>
+    </div>
+    <h1 class="doc-page-title">{{ currentEntry.name }}</h1>
+    <p class="doc-page-description">{{ currentEntry.description }}</p>
+    <ng-content select="[docPageNotes]" />
+  </header>
+}
+
+<div class="doc-page-sections">
+  <ng-content />
+</div>

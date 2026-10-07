@@ -23,6 +23,7 @@
       [readonly]="readonly()"
       [disabled]="isDisabled"
       [style.resize]="resize()"
+      [style.min-height]="minHeightFromRows"
       [attr.aria-invalid]="isInvalid"
       [attr.aria-required]="isRequired"
       [attr.aria-describedby]="showError ? textareaId + '-error' : helpText() ? textareaId + '-help' : null"
