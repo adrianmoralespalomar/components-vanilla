@@ -3,7 +3,7 @@ import { ComponentApi } from '../../../models/component-api.interface';
 export const DIALOG_API: ComponentApi = {
   inputs: [
     { name: 'title', type: 'string', defaultValue: "''", description: 'Título de la cabecera y nombre accesible del diálogo. Para HTML propio, proyecta un elemento con aesyDialogTitle.' },
-    { name: 'size', type: "DialogSize ('small' | 'medium' | 'large' | 'fullscreen')", defaultValue: "'medium'", description: 'Ancho del diálogo.' },
+    { name: 'size', type: "DialogSize ('small' | 'medium' | 'large' | 'extra-large' | 'fullscreen')", defaultValue: "'medium'", description: 'Ancho del diálogo. extra-large ocupa casi toda la pantalla.' },
     { name: 'role', type: "DialogRole ('dialog' | 'alertdialog')", defaultValue: "'dialog'", description: 'alertdialog para avisos que exigen respuesta.' },
     { name: 'closeOnBackdropClick', type: 'boolean', defaultValue: 'true', description: 'Cerrar al pulsar fuera del panel.' },
     { name: 'closeOnEscape', type: 'boolean', defaultValue: 'true', description: 'Cerrar con Escape.' },

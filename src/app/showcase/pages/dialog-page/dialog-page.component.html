@@ -13,7 +13,7 @@
     <app-value-preview label="closed" [value]="basicDialogResult()" />
   </app-doc-section>
 
-  <app-doc-section sectionId="tamanos" heading="Tamaños" description="size elige el ancho: small, medium (por defecto), large o fullscreen. En pantallas pequeñas nunca se sale de la ventana y, si el contenido no cabe, el cuerpo hace scroll." [snippet]="SNIPPETS.sizes">
+  <app-doc-section sectionId="tamanos" heading="Tamaños" description="size elige el ancho: small, medium (por defecto), large, extra-large (casi toda la pantalla, dejando ver el fondo alrededor) o fullscreen. En pantallas pequeñas nunca se sale de la ventana y, si el contenido no cabe, el cuerpo hace scroll." [snippet]="SNIPPETS.sizes">
     <div class="demo-row">
       @for (sizeOption of SIZE_OPTIONS; track sizeOption) {
         <aesy-button [label]="sizeOption" (buttonClick)="onSizeButtonClicked(sizeOption)" />

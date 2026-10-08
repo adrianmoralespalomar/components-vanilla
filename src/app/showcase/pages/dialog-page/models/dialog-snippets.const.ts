@@ -36,12 +36,15 @@ export class ArticleComponent {
     html: `<aesy-dialog size="small">…</aesy-dialog>
 <aesy-dialog>…</aesy-dialog> <!-- medium -->
 <aesy-dialog size="large">…</aesy-dialog>
+<aesy-dialog size="extra-large">…</aesy-dialog> <!-- casi toda la pantalla -->
 <aesy-dialog size="fullscreen">…</aesy-dialog>`,
     css: `/* Los anchos se cambian con variables */
 :root {
   --aesy-dialog-width-small: 22rem;
   --aesy-dialog-width-medium: 34rem;
   --aesy-dialog-width-large: 56rem;
+  --aesy-dialog-width-extra-large: calc(100vw - 6rem);
+  --aesy-dialog-height-extra-large: calc(100dvh - 6rem);
 }`
   },
   form: {
@@ -156,6 +159,8 @@ aesy-dialog.brand-dialog {
   --aesy-dialog-width-small: 24rem;
   --aesy-dialog-width-medium: 32rem;
   --aesy-dialog-width-large: 48rem;
+  --aesy-dialog-width-extra-large: calc(100vw - 4rem);
+  --aesy-dialog-height-extra-large: calc(100dvh - 4rem);
   --aesy-dialog-close-button-color: #6b7280;
   --aesy-dialog-close-button-background-hover: #f3f4f6;
   --aesy-dialog-actions-border: 1px solid #f3f4f6;

@@ -10,7 +10,7 @@ Selectores: `aesy-dialog` y `aesy-dialog-actions`. Servicio: `DialogService`.
 ## Características
 
 - El navegador se encarga de lo difícil: capa superior (sin `z-index`), foco atrapado, resto de la página inerte y cierre con Escape.
-- Cuatro tamaños (`small`, `medium`, `large`, `fullscreen`); el cuerpo hace scroll y los botones quedan fijos al pie.
+- Cinco tamaños (`small`, `medium`, `large`, `extra-large` y `fullscreen`); el cuerpo hace scroll y los botones quedan fijos al pie.
 - Resultado al cerrar: `close(result)` → `closed` (plantilla) o `afterClosed()` (servicio).
 - Cierre configurable: fondo, Escape y aspa; `role="alertdialog"` para avisos que exigen respuesta.
 - Bloquea el scroll de la página mientras está abierto y devuelve el foco al elemento que lo abrió.
@@ -117,10 +117,11 @@ El servicio crea un `aesy-dialog` en el `body`, mete tu componente dentro y, al 
 <aesy-dialog size="small">…</aesy-dialog>
 <aesy-dialog>…</aesy-dialog> <!-- medium -->
 <aesy-dialog size="large">…</aesy-dialog>
+<aesy-dialog size="extra-large">…</aesy-dialog> <!-- casi toda la pantalla -->
 <aesy-dialog size="fullscreen">…</aesy-dialog>
 ```
 
-Nunca se sale de la ventana (máximo `100vw - 2rem` × `100dvh - 2rem`, salvo `fullscreen`). Los anchos se cambian con `--aesy-dialog-width-small`, `-medium` y `-large`.
+Nunca se sale de la ventana (máximo `100vw - 2rem` × `100dvh - 2rem`, salvo `fullscreen`). `extra-large` ocupa casi toda la pantalla (ancho y alto de la ventana menos `4rem`) dejando ver el fondo alrededor, y su contenido se estira a todo el alto. Los anchos se cambian con `--aesy-dialog-width-small`, `-medium`, `-large` y `-extra-large`, y el alto del extra-large con `--aesy-dialog-height-extra-large`.
 
 ---
 
@@ -159,7 +160,7 @@ Nunca se sale de la ventana (máximo `100vw - 2rem` × `100dvh - 2rem`, salvo `f
 | Input | Tipo | Default | Descripción |
 |---|---|---|---|
 | `title` | `string` | `''` | Título y nombre accesible. |
-| `size` | `DialogSize` | `'medium'` | `'small' \| 'medium' \| 'large' \| 'fullscreen'`. |
+| `size` | `DialogSize` | `'medium'` | `'small' \| 'medium' \| 'large' \| 'extra-large' \| 'fullscreen'`. |
 | `role` | `DialogRole` | `'dialog'` | `'dialog' \| 'alertdialog'`. |
 | `closeOnBackdropClick` | `boolean` | `true` | Cerrar al pulsar el fondo. |
 | `closeOnEscape` | `boolean` | `true` | Cerrar con Escape. |
@@ -202,7 +203,7 @@ Nunca se sale de la ventana (máximo `100vw - 2rem` × `100dvh - 2rem`, salvo `f
 ## Tipos y tokens
 
 ```ts
-export type DialogSize = 'small' | 'medium' | 'large' | 'fullscreen';
+export type DialogSize = 'small' | 'medium' | 'large' | 'extra-large' | 'fullscreen';
 export type DialogRole = 'dialog' | 'alertdialog';
 export const AESY_DIALOG_DATA: InjectionToken<unknown>;
 ```
@@ -226,6 +227,8 @@ Como en el acordeón y el stepper, se leen con su valor por defecto y se heredan
 | `--aesy-dialog-body-font-size` | `0.9375rem` |
 | `--aesy-dialog-padding` | `1.5rem` |
 | `--aesy-dialog-width-small` / `-medium` / `-large` | `24rem` / `32rem` / `48rem` |
+| `--aesy-dialog-width-extra-large` | `calc(100vw - 4rem)` |
+| `--aesy-dialog-height-extra-large` | `calc(100dvh - 4rem)` |
 | `--aesy-dialog-close-button-color` | `#6b7280` |
 | `--aesy-dialog-close-button-background-hover` | `#f3f4f6` |
 | `--aesy-dialog-actions-border` | `1px solid #f3f4f6` |

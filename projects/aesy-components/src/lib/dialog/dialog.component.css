@@ -60,6 +60,12 @@
     width: var(--aesy-dialog-width-large, 48rem);
   }
 
+  /* Casi toda la pantalla, dejando ver el fondo alrededor */
+  &[data-size='extra-large'] {
+    height: var(--aesy-dialog-height-extra-large, calc(100dvh - 4rem));
+    width: var(--aesy-dialog-width-extra-large, calc(100vw - 4rem));
+  }
+
   &[data-size='fullscreen'] {
     border-radius: 0;
     height: 100dvh;
@@ -76,6 +82,7 @@
   max-height: inherit;
   outline: none;
 
+  .dialog[data-size='extra-large'] &,
   .dialog[data-size='fullscreen'] & {
     height: 100%;
   }

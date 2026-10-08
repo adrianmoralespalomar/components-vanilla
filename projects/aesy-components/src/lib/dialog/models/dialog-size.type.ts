@@ -1,1 +1,1 @@
-export type DialogSize = 'small' | 'medium' | 'large' | 'fullscreen';
+export type DialogSize = 'small' | 'medium' | 'large' | 'extra-large' | 'fullscreen';
