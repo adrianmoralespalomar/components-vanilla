@@ -28,10 +28,9 @@
   }
 
   .sidebar-brand-mark {
-    background: var(--showcase-accent);
-    border-radius: 8px;
-    height: 26px;
-    width: 26px;
+    display: block;
+    height: 30px;
+    width: 30px;
   }
 
   .sidebar-brand-name {
@@ -39,6 +38,7 @@
     font-size: 19px;
     font-weight: 700;
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
   .sidebar-menu-toggle {
