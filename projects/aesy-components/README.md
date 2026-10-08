@@ -6,6 +6,7 @@ Librería de componentes para Angular 22: standalone, `OnPush`, basada en signal
 
 | Componente | Selector | Documentación |
 |---|---|---|
+| Accordion | `aesy-accordion`, `aesy-accordion-item` | [AccordionComponent.md](src/lib/accordion/AccordionComponent.md) |
 | Button | `aesy-button` | [ButtonComponent.md](src/lib/button/ButtonComponent.md) |
 | Checkbox | `aesy-checkbox` | [CheckboxComponent.md](src/lib/form-controls/checkbox/CheckboxComponent.md) |
 | Datepicker | `aesy-datepicker` | [DatepickerComponent.md](src/lib/form-controls/datepicker/DatepickerComponent.md) |
@@ -94,7 +95,7 @@ Todos los controles de formulario funcionan de dos formas:
 
 ### Tipos exportados
 
-Además de los componentes, la librería exporta sus tipos públicos: `ButtonType`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData` y `RowOrderChange`.
+Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData` y `RowOrderChange`.
 
 ## Desarrollo
 

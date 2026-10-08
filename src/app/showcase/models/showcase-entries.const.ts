@@ -6,6 +6,13 @@ import { ShowcaseEntry } from './showcase-entry.interface';
  */
 export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
   {
+    slug: 'accordion',
+    name: 'Accordion',
+    selector: 'aesy-accordion',
+    description: 'Paneles desplegables con uno o varios abiertos, tres apariencias, contenido diferido y navegación por teclado.',
+    loadPage: () => import('../pages/accordion-page/accordion-page.component').then(m => m.AccordionPageComponent)
+  },
+  {
     slug: 'button',
     name: 'Button',
     selector: 'aesy-button',

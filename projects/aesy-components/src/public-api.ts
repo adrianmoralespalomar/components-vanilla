@@ -1,6 +1,13 @@
 /*
  * Public API Surface of aesy-components
  */
+export * from './lib/accordion/accordion-item/accordion-item-content.directive';
+export * from './lib/accordion/accordion-item/accordion-item.component';
+export * from './lib/accordion/accordion.component';
+export * from './lib/accordion/models/accordion-appearance.type';
+export * from './lib/accordion/models/accordion-heading-level.type';
+export * from './lib/accordion/models/accordion-toggle-position.type';
+
 export * from './lib/button/button.component';
 export * from './lib/button/models/button-type.type';
 

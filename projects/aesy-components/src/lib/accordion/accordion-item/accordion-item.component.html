@@ -1,0 +1,36 @@
+<div class="accordion-item-heading" role="heading" [attr.aria-level]="currentHeadingLevel()">
+  <button
+    #headerButton
+    type="button"
+    class="accordion-item-header"
+    [class.accordion-item-header-toggle-before]="currentTogglePosition() === 'before'"
+    [id]="headerId"
+    [attr.aria-controls]="panelId"
+    [attr.aria-expanded]="expanded()"
+    [disabled]="disabled()"
+    (click)="onHeaderButtonClicked()">
+    <span class="accordion-item-titles">
+      <span class="accordion-item-title">{{ label() }}<ng-content select="[aesyAccordionTitle]" /></span>
+      <span class="accordion-item-description">{{ description() }}<ng-content select="[aesyAccordionDescription]" /></span>
+    </span>
+    @if (!isToggleHidden()) {
+      <svg class="accordion-item-toggle-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path [attr.d]="currentToggleIconSvg()" />
+      </svg>
+    }
+  </button>
+</div>
+
+<div class="accordion-item-panel" role="region" [class.accordion-item-panel-expanded]="expanded()" [id]="panelId" [attr.aria-labelledby]="headerId" [attr.inert]="expanded() ? null : ''">
+  <div class="accordion-item-panel-content">
+    <div class="accordion-item-body">
+      <ng-content />
+      @if (lazyContent(); as lazyContentDirective) {
+        @if (hasBeenExpanded()) {
+          <ng-container [ngTemplateOutlet]="lazyContentDirective.templateRef" />
+        }
+      }
+    </div>
+    <div class="accordion-item-actions"><ng-content select="[aesyAccordionActions]" /></div>
+  </div>
+</div>

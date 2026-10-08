@@ -1,0 +1,20 @@
+/*
+ * Las variables --aesy-accordion-* no se declaran en :host: se leen con su valor por defecto (var(--x, defecto)).
+ * Así se heredan y puedes sobrescribirlas en aesy-accordion, en un aesy-accordion-item concreto o en cualquier contenedor.
+ */
+:host {
+  color: var(--aesy-accordion-text-color, #374151);
+  display: flex;
+  flex-direction: column;
+}
+
+:host([data-appearance='joined']) {
+  background: var(--aesy-accordion-background, #ffffff);
+  border: var(--aesy-accordion-border-width, 1px) solid var(--aesy-accordion-border-color, #e5e7eb);
+  border-radius: var(--aesy-accordion-border-radius, 0.5rem);
+  overflow: hidden;
+}
+
+:host([data-appearance='separated']) {
+  gap: var(--aesy-accordion-gap, 0.75rem);
+}

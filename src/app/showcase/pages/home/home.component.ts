@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
+  AccordionComponent,
+  AccordionItemComponent,
   ButtonComponent,
   CheckboxComponent,
   DatepickerComponent,
@@ -27,6 +29,8 @@ import { HOME_TABLE_CONFIG } from './models/home-table-config.const';
 @Component({
   selector: 'app-home',
   imports: [
+    AccordionComponent,
+    AccordionItemComponent,
     ButtonComponent,
     CheckboxComponent,
     DatepickerComponent,

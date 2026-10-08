@@ -1,0 +1,152 @@
+/* Variables --aesy-accordion-*: ver la nota de accordion.component.css (se leen con valor por defecto y se heredan). */
+:host {
+  color: var(--aesy-accordion-text-color, #374151);
+  display: block;
+}
+
+:host([data-appearance='separated']) {
+  background: var(--aesy-accordion-background, #ffffff);
+  border: var(--aesy-accordion-border-width, 1px) solid var(--aesy-accordion-border-color, #e5e7eb);
+  border-radius: var(--aesy-accordion-border-radius, 0.5rem);
+  overflow: hidden;
+}
+
+:host([data-appearance='joined']:not(:first-of-type)) {
+  border-top: var(--aesy-accordion-border-width, 1px) solid var(--aesy-accordion-border-color, #e5e7eb);
+}
+
+:host([data-appearance='flat']) {
+  border-bottom: var(--aesy-accordion-border-width, 1px) solid var(--aesy-accordion-border-color, #e5e7eb);
+}
+
+.accordion-item-header {
+  align-items: center;
+  background: var(--aesy-accordion-header-background, transparent);
+  border: 0;
+  box-sizing: border-box;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: var(--aesy-accordion-header-gap, 0.75rem);
+  margin: 0;
+  min-height: var(--aesy-accordion-header-min-height, 3.25rem);
+  padding: var(--aesy-accordion-header-padding-y, 0.75rem) var(--aesy-accordion-padding-x, 1rem);
+  text-align: start;
+  transition: background var(--aesy-accordion-transition-duration, 0.2s);
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    background: var(--aesy-accordion-header-background-hover, #f9fafb);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--aesy-accordion-focus-color, #3b82f6);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    color: var(--aesy-accordion-disabled-text-color, #9ca3af);
+    cursor: not-allowed;
+  }
+
+  &[aria-expanded='true'] {
+    background: var(--aesy-accordion-header-background-expanded, transparent);
+
+    .accordion-item-toggle-icon {
+      transform: rotate(var(--aesy-accordion-toggle-icon-rotation-expanded, 180deg));
+    }
+  }
+
+  .accordion-item-titles {
+    align-items: baseline;
+    column-gap: 1rem;
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    min-width: 0;
+    row-gap: 0.125rem;
+  }
+
+  .accordion-item-title {
+    align-items: center;
+    display: inline-flex;
+    font-size: var(--aesy-accordion-title-font-size, 0.9375rem);
+    font-weight: var(--aesy-accordion-title-font-weight, 600);
+    gap: 0.5rem;
+  }
+
+  .accordion-item-description {
+    color: var(--aesy-accordion-description-color, #6b7280);
+    font-size: var(--aesy-accordion-description-font-size, 0.875rem);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .accordion-item-toggle-icon {
+    color: var(--aesy-accordion-toggle-icon-color, #6b7280);
+    fill: currentColor;
+    flex-shrink: 0;
+    height: var(--aesy-accordion-toggle-icon-size, 1.25rem);
+    transition: transform var(--aesy-accordion-transition-duration, 0.2s) ease;
+    width: var(--aesy-accordion-toggle-icon-size, 1.25rem);
+  }
+}
+
+.accordion-item-header-toggle-before .accordion-item-toggle-icon {
+  order: -1;
+}
+
+/* La altura se anima con grid-template-rows (0fr → 1fr), sin medir el contenido */
+.accordion-item-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows var(--aesy-accordion-transition-duration, 0.2s) ease,
+    visibility 0s linear var(--aesy-accordion-transition-duration, 0.2s);
+  visibility: hidden;
+
+  .accordion-item-panel-content {
+    min-height: 0;
+    overflow: clip;
+    /* Margen para que no se recorten los anillos de foco del contenido */
+    overflow-clip-margin: 4px;
+  }
+
+  .accordion-item-body {
+    color: var(--aesy-accordion-body-text-color, inherit);
+    font-size: var(--aesy-accordion-body-font-size, 0.875rem);
+    line-height: 1.6;
+    padding: 0 var(--aesy-accordion-padding-x, 1rem) var(--aesy-accordion-body-padding-bottom, 1rem);
+  }
+
+  .accordion-item-actions {
+    border-top: var(--aesy-accordion-border-width, 1px) solid var(--aesy-accordion-border-color, #e5e7eb);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aesy-accordion-actions-gap, 0.5rem);
+    justify-content: var(--aesy-accordion-actions-justify-content, flex-end);
+    padding: 0.75rem var(--aesy-accordion-padding-x, 1rem);
+
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+.accordion-item-panel-expanded {
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--aesy-accordion-transition-duration, 0.2s) ease,
+    visibility 0s;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-item-panel,
+  .accordion-item-header .accordion-item-toggle-icon {
+    transition: none;
+  }
+}

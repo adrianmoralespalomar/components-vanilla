@@ -24,6 +24,13 @@
 
         <div class="home-card-demo">
           @switch (entry.slug) {
+            @case ('accordion') {
+              <aesy-accordion>
+                <aesy-accordion-item label="¿Cuánto tarda el envío?" [expanded]="true">Entre 2 y 3 días laborables a la península.</aesy-accordion-item>
+                <aesy-accordion-item label="¿Puedo devolver un producto?">Sí, tienes 30 días desde la entrega.</aesy-accordion-item>
+                <aesy-accordion-item label="¿Qué métodos de pago aceptáis?">Tarjeta, transferencia y Bizum.</aesy-accordion-item>
+              </aesy-accordion>
+            }
             @case ('button') {
               <div class="demo-row">
                 <aesy-button label="Primary" (buttonClick)="onPreviewButtonClicked('primary')" />

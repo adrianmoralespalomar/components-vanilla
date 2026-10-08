@@ -1,0 +1,159 @@
+<app-doc-page slug="accordion">
+  <app-doc-section sectionId="basico" heading="Básico" description="aesy-accordion agrupa varios aesy-accordion-item. Por defecto solo puede haber uno abierto: al abrir otro, el anterior se cierra." [snippet]="SNIPPETS.basic">
+    <aesy-accordion>
+      @for (faqItem of FAQ_ITEMS; track faqItem.question; let isFirst = $first) {
+        <aesy-accordion-item [label]="faqItem.question" [expanded]="isFirst">
+          {{ faqItem.answer }}
+        </aesy-accordion-item>
+      }
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="varios-abiertos" heading="Varios abiertos" description="Con multi se pueden abrir varios a la vez. openAll() y closeAll() abren o cierran todos (openAll solo funciona con multi y se salta los deshabilitados)." [snippet]="SNIPPETS.multi">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Abrir todos" (buttonClick)="faqAccordion.openAll()" />
+      <aesy-button label="Cerrar todos" (buttonClick)="faqAccordion.closeAll()" />
+    </div>
+    <aesy-accordion #faqAccordion [multi]="true">
+      @for (faqItem of FAQ_ITEMS; track faqItem.question) {
+        <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
+      }
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="apariencia" heading="Apariencia" description="appearance cambia el aspecto del grupo: joined (un bloque con separadores), separated (cada ítem es una tarjeta) o flat (solo separadores, sin borde exterior)." [snippet]="SNIPPETS.appearance">
+    <aesy-radio-button label="appearance" orientation="horizontal" [options]="APPEARANCE_OPTIONS" [(value)]="selectedAppearance" />
+    <aesy-accordion [appearance]="selectedAppearance()">
+      @for (faqItem of FAQ_ITEMS; track faqItem.question; let isFirst = $first) {
+        <aesy-accordion-item [label]="faqItem.question" [expanded]="isFirst">{{ faqItem.answer }}</aesy-accordion-item>
+      }
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="contenido-personalizado" heading="Contenido personalizado" description="Además de label y description, puedes proyectar tu propio título con aesyAccordionTitle, una descripción con aesyAccordionDescription y una fila de acciones al pie con aesyAccordionActions." [snippet]="SNIPPETS.customContent">
+    <aesy-accordion>
+      <aesy-accordion-item description="Calle Mayor 12, Madrid" [expanded]="true">
+        <span class="accordion-demo-title" aesyAccordionTitle>
+          Dirección de envío
+          <span class="accordion-demo-badge">Principal</span>
+        </span>
+        <p class="accordion-demo-paragraph">Calle Mayor 12, 3.º B · 28013 Madrid · España</p>
+        <aesy-button type="tertiary" label="Eliminar" aesyAccordionActions />
+        <aesy-button type="secondary" label="Editar" aesyAccordionActions />
+      </aesy-accordion-item>
+      <aesy-accordion-item label="Método de pago">
+        <span aesyAccordionDescription>Visa terminada en <strong>4242</strong></span>
+        <p class="accordion-demo-paragraph">Caduca en 08/2028. Se usará en todos los pedidos salvo que elijas otro al pagar.</p>
+        <aesy-button type="secondary" label="Cambiar tarjeta" aesyAccordionActions />
+      </aesy-accordion-item>
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estado-controlado" heading="Estado controlado y eventos" description="expanded es un model: enlázalo con [(expanded)] para abrir o cerrar desde fuera y saber en qué estado está. opened y closed avisan de cada cambio (no en la carga inicial)." [snippet]="SNIPPETS.controlled">
+    <aesy-checkbox label="Detalles del pedido abiertos" [(value)]="isOrderDetailsExpanded" />
+    <aesy-accordion [multi]="true">
+      <aesy-accordion-item label="Detalles del pedido" description="Pedido #10482" [(expanded)]="isOrderDetailsExpanded" (opened)="onOrderDetailsOpened()" (closed)="onOrderDetailsClosed()">
+        3 artículos · 84,90 € · Entrega estimada el jueves.
+      </aesy-accordion-item>
+      <aesy-accordion-item label="Historial de envío" (opened)="onShippingHistoryOpened()" (closed)="onShippingHistoryClosed()">
+        Recogido por el transportista · En reparto · Entregado.
+      </aesy-accordion-item>
+    </aesy-accordion>
+    <app-value-preview label="expanded" [value]="isOrderDetailsExpanded()" />
+    <app-value-preview label="Últimos eventos" [value]="eventsLog()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="deshabilitado" heading="Deshabilitado" description="Un ítem con disabled no se puede abrir ni cerrar desde la cabecera y el teclado lo salta, pero sí cambia por código o con [(expanded)]." [snippet]="SNIPPETS.disabled">
+    <aesy-accordion>
+      <aesy-accordion-item label="Plan Básico" description="Tu plan actual">Incluye 1 usuario y 5 GB de almacenamiento.</aesy-accordion-item>
+      <aesy-accordion-item label="Plan Equipo" description="Solo para administradores" [disabled]="true">Incluye 10 usuarios y 100 GB.</aesy-accordion-item>
+      <aesy-accordion-item label="Plan Empresa">Usuarios ilimitados y soporte prioritario.</aesy-accordion-item>
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="icono" heading="Icono de abrir y cerrar" description="togglePosition lo pone delante o detrás, hideToggle lo oculta y toggleIconSvg cambia el dibujo (path en viewBox 20×20). Con la variable --aesy-accordion-toggle-icon-rotation-expanded eliges cuánto gira al abrir: un + que gira 45° se convierte en ×." [snippet]="SNIPPETS.toggleIcon">
+    <div class="demo-grid">
+      <div class="demo-stack">
+        <p class="demo-caption">togglePosition="before"</p>
+        <aesy-accordion togglePosition="before" [toggleIconSvg]="ICON_PATHS.arrowRight" class="accordion-demo-arrow">
+          @for (faqItem of SHORT_FAQ_ITEMS; track faqItem.question) {
+            <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
+          }
+        </aesy-accordion>
+      </div>
+      <div class="demo-stack">
+        <p class="demo-caption">Icono + que gira 45°</p>
+        <aesy-accordion class="accordion-demo-plus" [toggleIconSvg]="ICON_PATHS.plus">
+          @for (faqItem of SHORT_FAQ_ITEMS; track faqItem.question) {
+            <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
+          }
+        </aesy-accordion>
+      </div>
+      <div class="demo-stack">
+        <p class="demo-caption">hideToggle</p>
+        <aesy-accordion [hideToggle]="true">
+          @for (faqItem of SHORT_FAQ_ITEMS; track faqItem.question) {
+            <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
+          }
+        </aesy-accordion>
+      </div>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="carga-diferida" heading="Carga diferida" description="El contenido dentro de un ng-template con aesyAccordionContent no se crea hasta que el ítem se abre por primera vez, y después se conserva. Úsalo para contenido pesado: tablas, gráficos o componentes que piden datos al iniciarse." [snippet]="SNIPPETS.lazy">
+    <aesy-accordion>
+      <aesy-accordion-item label="Equipo" description="12 personas" (opened)="onLazyTeamItemOpened()">
+        <ng-template aesyAccordionContent>
+          <aesy-table [data]="PEOPLE" [config]="LAZY_TABLE_CONFIG" [paginationMetaConfig]="LAZY_TABLE_PAGINATION" />
+        </ng-template>
+      </aesy-accordion-item>
+    </aesy-accordion>
+    <app-value-preview label="Tabla creada" [value]="lazyTableCreatedAt() ?? 'todavía no: abre el ítem'" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="item-suelto" heading="Ítem suelto" description="aesy-accordion-item funciona también sin acordeón, como un panel desplegable independiente con aspecto de tarjeta." [snippet]="SNIPPETS.standalone">
+    <aesy-accordion-item label="Opciones avanzadas" description="Solo si sabes lo que haces">
+      <div class="demo-stack">
+        <aesy-checkbox label="Activar modo depuración" />
+        <aesy-checkbox label="Enviar estadísticas de uso" />
+      </div>
+    </aesy-accordion-item>
+  </app-doc-section>
+
+  <app-doc-section sectionId="anidados" heading="Anidados" description="Un acordeón dentro de otro es independiente: cada uno gestiona solo sus propios ítems, también al navegar con el teclado." [snippet]="SNIPPETS.nested">
+    <aesy-accordion>
+      <aesy-accordion-item label="Frontend" [expanded]="true">
+        <aesy-accordion appearance="flat" [headingLevel]="4">
+          <aesy-accordion-item label="Angular">Componentes standalone, signals y control flow.</aesy-accordion-item>
+          <aesy-accordion-item label="CSS">Variables, nesting y container queries.</aesy-accordion-item>
+        </aesy-accordion>
+      </aesy-accordion-item>
+      <aesy-accordion-item label="Backend">Node, bases de datos y APIs REST.</aesy-accordion-item>
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="accesibilidad" heading="Teclado y accesibilidad" group="reference" variant="plain">
+    <ul class="accordion-a11y-list">
+      <li>Cada cabecera es un <code>button</code> con <code>aria-expanded</code> y <code>aria-controls</code>, dentro de un elemento con <code>role="heading"</code>. Ajusta su nivel con <code>headingLevel</code> (por defecto 3) para que encaje en la jerarquía de tu página.</li>
+      <li>El panel es un <code>role="region"</code> etiquetado por su cabecera. Cerrado, queda <code>inert</code>: su contenido no recibe el foco ni lo leen los lectores de pantalla.</li>
+      <li><kbd>Enter</kbd> o <kbd>Espacio</kbd> abren y cierran. <kbd>↓</kbd> y <kbd>↑</kbd> pasan a la cabecera siguiente o anterior (en bucle), <kbd>Inicio</kbd> y <kbd>Fin</kbd> van a la primera y la última. Los ítems deshabilitados se saltan.</li>
+      <li>Con <code>prefers-reduced-motion</code> no hay animación.</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" description="Las variables --aesy-accordion-* se heredan: decláralas en el acordeón, en un ítem concreto o en cualquier contenedor (incluido :root para toda la aplicación)." [snippet]="SNIPPETS.theming">
+    <aesy-accordion class="accordion-demo-themed" appearance="separated">
+      @for (faqItem of FAQ_ITEMS; track faqItem.question; let isFirst = $first) {
+        <aesy-accordion-item [label]="faqItem.question" [expanded]="isFirst">{{ faqItem.answer }}</aesy-accordion-item>
+      }
+    </aesy-accordion>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-accordion" heading="API · aesy-accordion" group="reference" variant="plain">
+    <app-api-reference [api]="ACCORDION_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-accordion-item" heading="API · aesy-accordion-item" group="reference" variant="plain">
+    <app-api-reference [api]="ACCORDION_ITEM_API" />
+  </app-doc-section>
+</app-doc-page>

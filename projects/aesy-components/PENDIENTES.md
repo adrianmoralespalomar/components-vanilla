@@ -21,7 +21,7 @@ Lista de problemas y mejoras detectados en `aesy-components`. Marca cada punto a
 - [ ] Añadir fichero `LICENSE`.
 - [ ] Comprobar si el nombre `aesy-components` está libre en npm (`npm view aesy-components`); si no, usar un scope (`@usuario/aesy-components`).
 - [ ] Revisar el rango de `peerDependencies` (`^22.1.0`) si se quiere usar en proyectos con otras versiones de Angular.
-- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario.
+- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario y el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido).
 - [ ] Revisar textos fijos en español dentro de los componentes (mensajes de validación por defecto, placeholders, paginación) por si se quiere internacionalizar.
 
 ## Hecho
