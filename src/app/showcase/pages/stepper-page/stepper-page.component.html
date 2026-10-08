@@ -1,0 +1,229 @@
+<app-doc-page slug="stepper">
+  <app-doc-section sectionId="horizontal" heading="Horizontal" description="aesy-stepper muestra los pasos en una fila y debajo el contenido del actual. aesyStepperNext y aesyStepperPrevious convierten cualquier botón en avanzar o retroceder; también puedes pulsar las cabeceras. En pantallas estrechas solo se ve el texto del paso actual." [snippet]="SNIPPETS.horizontal">
+    <aesy-stepper>
+      <aesy-step label="Carrito">
+        <p class="stepper-demo-paragraph">3 artículos · 84,90 €</p>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Envío">
+        <p class="stepper-demo-paragraph">Envío estándar a Calle Mayor 12, Madrid.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Pago">
+        <p class="stepper-demo-paragraph">Visa terminada en 4242.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="success" label="Pagar" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Confirmación">
+        <p class="stepper-demo-paragraph">¡Pedido realizado! Te llegará el jueves.</p>
+      </aesy-step>
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="vertical" heading="Vertical" description="Con orientation=&quot;vertical&quot; cada paso se despliega bajo su cabecera, como un acordeón en el que solo puede estar abierto el paso actual. Es el mismo componente con la misma API: cambia la orientación y verás que el contenido y el paso actual se conservan." [snippet]="SNIPPETS.vertical">
+    <aesy-radio-button label="orientation" orientation="horizontal" [options]="ORIENTATION_OPTIONS" [(value)]="selectedOrientation" />
+    <aesy-stepper [orientation]="selectedOrientation()">
+      <aesy-step label="Elige un plan">
+        <p class="stepper-demo-paragraph">Básico, Equipo o Empresa. Podrás cambiarlo cuando quieras.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Invita a tu equipo" [optional]="true">
+        <p class="stepper-demo-paragraph">Añade los correos de tus compañeros o sáltate este paso.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Empieza a trabajar">
+        <p class="stepper-demo-paragraph">Todo listo. Ya puedes crear tu primer proyecto.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+        </div>
+      </aesy-step>
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="lineal-formularios" heading="Lineal con formularios" description="Con linear no se puede pasar al siguiente paso hasta completar el actual. Pasa el formulario del paso a stepControl: al intentar avanzar con errores se marcan sus campos, la cabecera se pone en rojo y muestra errorMessage. reset() vuelve al inicio y vacía los formularios." [snippet]="SNIPPETS.linearForms">
+    <aesy-checkbox label="linear" [(value)]="isCheckoutLinear" />
+    <aesy-stepper #checkoutStepper [linear]="isCheckoutLinear()">
+      <aesy-step label="Tus datos" errorMessage="Revisa tus datos" [stepControl]="personalDataForm">
+        <form class="demo-stack demo-narrow" [formGroup]="personalDataForm">
+          <aesy-input-text label="Nombre" formControlName="fullName" />
+          <aesy-input-text label="Correo" type="email" formControlName="email" />
+        </form>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Dirección" errorMessage="Falta la dirección" [stepControl]="addressForm">
+        <form class="demo-stack demo-narrow" [formGroup]="addressForm">
+          <aesy-input-text label="Ciudad" formControlName="city" />
+          <aesy-input-text label="Código postal" formControlName="postalCode" />
+        </form>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Resumen">
+        <app-value-preview label="Tus datos" [value]="personalDataFormValue()" />
+        <app-value-preview label="Dirección" [value]="addressFormValue()" />
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="tertiary" label="Empezar de nuevo" (buttonClick)="checkoutStepper.reset()" />
+        </div>
+      </aesy-step>
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="etiqueta-abajo" heading="Etiqueta debajo" description="En horizontal, labelPosition=&quot;bottom&quot; pone el texto bajo el icono. Ocupa menos ancho por paso y deja ver todas las etiquetas aunque haya muchos pasos." [snippet]="SNIPPETS.labelBottom">
+    <aesy-stepper labelPosition="bottom">
+      @for (stepLabel of LABEL_BOTTOM_STEPS; track stepLabel; let isFirst = $first; let isLast = $last) {
+        <aesy-step [label]="stepLabel">
+          <p class="stepper-demo-paragraph">Contenido del paso «{{ stepLabel }}».</p>
+          <div class="stepper-demo-actions">
+            @if (!isFirst) {
+              <aesy-button label="Atrás" aesyStepperPrevious />
+            }
+            @if (!isLast) {
+              <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+            }
+          </div>
+        </aesy-step>
+      }
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="opcional-no-editable" heading="Opcional y no editable" description="Un paso optional muestra «Opcional» y no bloquea el modo lineal. Uno con editable en false, una vez completado, ya no se puede volver a abrir." [snippet]="SNIPPETS.optionalNotEditable">
+    <aesy-stepper [linear]="true">
+      <aesy-step label="Crear cuenta" [editable]="false">
+        <p class="stepper-demo-paragraph">Al avanzar, la cuenta queda creada y este paso ya no se puede reabrir.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Crear cuenta" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Foto de perfil" [optional]="true">
+        <p class="stepper-demo-paragraph">Puedes subirla más tarde.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Listo">
+        <p class="stepper-demo-paragraph">Prueba a volver al primer paso: está bloqueado.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+        </div>
+      </aesy-step>
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estado-controlado" heading="Estado controlado y eventos" description="selectedIndex es un model: con [(selectedIndex)] sabes y cambias el paso actual desde fuera. selectionChange avisa de cada cambio con el índice anterior y el nuevo. Con una referencia al stepper tienes next(), previous(), goToStep() y reset()." [snippet]="SNIPPETS.controlled">
+    <div class="demo-row">
+      <aesy-button label="Ir al último paso" (buttonClick)="onGoToLastStepButtonClicked()" />
+      <aesy-button type="tertiary" label="Reiniciar" (buttonClick)="controlledStepper.reset()" />
+    </div>
+    <aesy-stepper #controlledStepper [(selectedIndex)]="controlledStepIndex" (selectionChange)="onControlledStepperSelectionChanged($event)">
+      @for (stepLabel of CONTROLLED_STEPS; track stepLabel) {
+        <aesy-step [label]="stepLabel">
+          <p class="stepper-demo-paragraph">Estás en «{{ stepLabel }}».</p>
+          <div class="stepper-demo-actions">
+            <aesy-button label="Atrás" aesyStepperPrevious />
+            <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+          </div>
+        </aesy-step>
+      }
+    </aesy-stepper>
+    <app-value-preview label="selectedIndex" [value]="controlledStepIndex()" />
+    <app-value-preview label="Últimos selectionChange" [value]="selectionChangesLog()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="contenido-personalizado" heading="Etiquetas e iconos personalizados" description="Proyecta tu propia etiqueta con aesyStepLabel (se añade detrás de label) y cambia los iconos de completado y error con completedIconSvg y errorIconSvg (path en viewBox 20×20)." [snippet]="SNIPPETS.customContent">
+    <aesy-stepper [completedIconSvg]="ICON_PATHS.star">
+      <aesy-step>
+        <span class="stepper-demo-label" aesyStepLabel>
+          Pedido
+          <span class="stepper-demo-badge">3</span>
+        </span>
+        <p class="stepper-demo-paragraph">Al completar este paso verás una estrella en lugar del check.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step>
+        <span class="stepper-demo-label" aesyStepLabel>
+          <svg class="stepper-demo-label-icon" viewBox="0 0 20 20" aria-hidden="true"><path [attr.d]="ICON_PATHS.truck" /></svg>
+          Envío exprés
+        </span>
+        <p class="stepper-demo-paragraph">Llega mañana antes de las 14:00.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+        </div>
+      </aesy-step>
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="carga-diferida" heading="Carga diferida" description="El contenido dentro de un ng-template con aesyStepContent no se crea hasta que el paso se selecciona por primera vez, y después se conserva. Ideal para pasos con tablas o que piden datos al iniciarse." [snippet]="SNIPPETS.lazy">
+    <aesy-stepper (selectionChange)="onLazyStepperSelectionChanged($event)">
+      <aesy-step label="Proyecto">
+        <p class="stepper-demo-paragraph">El siguiente paso tiene una tabla que todavía no existe.</p>
+        <div class="stepper-demo-actions">
+          <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+        </div>
+      </aesy-step>
+      <aesy-step label="Equipo">
+        <ng-template aesyStepContent>
+          <aesy-table [data]="PEOPLE" [config]="LAZY_TABLE_CONFIG" [paginationMetaConfig]="LAZY_TABLE_PAGINATION" />
+        </ng-template>
+        <div class="stepper-demo-actions">
+          <aesy-button label="Atrás" aesyStepperPrevious />
+        </div>
+      </aesy-step>
+    </aesy-stepper>
+    <app-value-preview label="Tabla creada" [value]="lazyTableCreatedAt() ?? 'todavía no: ve al paso Equipo'" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="accesibilidad" heading="Teclado y accesibilidad" group="reference" variant="plain">
+    <ul class="stepper-a11y-list">
+      <li>Las cabeceras forman un <code>role="tablist"</code> con <code>aria-orientation</code>: cada una es un <code>role="tab"</code> con <code>aria-selected</code> y <code>aria-controls</code>, y cada contenido un <code>role="tabpanel"</code> etiquetado por su cabecera.</li>
+      <li>Solo la cabecera del paso actual está en el orden de tabulación. <kbd>←</kbd> <kbd>→</kbd> (en vertical, <kbd>↑</kbd> <kbd>↓</kbd>) mueven el foco entre cabeceras, <kbd>Inicio</kbd> y <kbd>Fin</kbd> van a la primera y la última, y <kbd>Enter</kbd> o <kbd>Espacio</kbd> seleccionan.</li>
+      <li>Los pasos a los que aún no se puede ir llevan <code>aria-disabled</code>: siguen recibiendo el foco para que el lector de pantalla los anuncie.</li>
+      <li>Los pasos completados añaden «(completado)» al nombre accesible. En vertical, los pasos cerrados quedan <code>inert</code>.</li>
+      <li>Con <code>prefers-reduced-motion</code> no hay animaciones.</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" description="Las variables --aesy-stepper-* se heredan: decláralas en el stepper o en cualquier contenedor (incluido :root para toda la aplicación)." [snippet]="SNIPPETS.theming">
+    <aesy-stepper class="stepper-demo-themed" labelPosition="bottom">
+      @for (stepLabel of CONTROLLED_STEPS; track stepLabel; let isFirst = $first; let isLast = $last) {
+        <aesy-step [label]="stepLabel">
+          <div class="stepper-demo-actions">
+            @if (!isFirst) {
+              <aesy-button label="Atrás" aesyStepperPrevious />
+            }
+            @if (!isLast) {
+              <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+            }
+          </div>
+        </aesy-step>
+      }
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-stepper" heading="API · aesy-stepper" group="reference" variant="plain">
+    <app-api-reference [api]="STEPPER_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-step" heading="API · aesy-step" group="reference" variant="plain">
+    <app-api-reference [api]="STEP_API" />
+  </app-doc-section>
+</app-doc-page>

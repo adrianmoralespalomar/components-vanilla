@@ -21,11 +21,12 @@ Lista de problemas y mejoras detectados en `aesy-components`. Marca cada punto a
 - [ ] Añadir fichero `LICENSE`.
 - [ ] Comprobar si el nombre `aesy-components` está libre en npm (`npm view aesy-components`); si no, usar un scope (`@usuario/aesy-components`).
 - [ ] Revisar el rango de `peerDependencies` (`^22.1.0`) si se quiere usar en proyectos con otras versiones de Angular.
-- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario y el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido).
+- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario, el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido) y el stepper (modo lineal con `stepControl`, opcional/no editable, `reset`, orientación, teclado).
 - [ ] Revisar textos fijos en español dentro de los componentes (mensajes de validación por defecto, placeholders, paginación) por si se quiere internacionalizar.
 
 ## Hecho
 
+- [x] Controles de formulario con `formControlName`: se suscribían a los eventos del control en `ngOnInit`, cuando Angular aún no lo ha asignado, así que un `markAllAsTouched()` o un `reset()` hecho desde fuera no se reflejaba hasta interactuar con el campo. Ahora se inicializan en `ngAfterContentInit` (los 7 controles). Con `[formControl]` ya funcionaba.
 - [x] Selectores unificados con `aesy-`: `aesy-datepicker`, `aesy-input-number`, `aesy-input-text`, `aesy-radio-button`, `aesy-textarea` (también los ids generados y los `.md`). **Cambio incompatible** para quien usara los antiguos `app-*`.
 - [x] Variables CSS del checkbox renombradas de `--checkbox-*` a `--aesy-checkbox-*`. **Cambio incompatible** para quien las sobrescribiera.
 - [x] Tipos exportados en `public-api.ts`: `ButtonType`, `InputTextType`, `IconPosition` (compartido por input-text e input-number), `TextareaResize`, `RadioButtonOption` (fichero renombrado a `radio-button-option.interface.ts`), `RowOrderChange<T>` y `PaginationMetaRowsPerPage`.

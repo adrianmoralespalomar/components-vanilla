@@ -1,0 +1,63 @@
+.stepper-demo-paragraph {
+  margin: 0 0 16px;
+}
+
+.stepper-demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.stepper-demo-label {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+
+  .stepper-demo-badge {
+    background: var(--showcase-accent-soft);
+    border-radius: 999px;
+    color: var(--showcase-accent);
+    font-size: 11px;
+    padding: 1px 7px;
+  }
+
+  .stepper-demo-label-icon {
+    fill: currentColor;
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.stepper-demo-themed {
+  --aesy-stepper-connector-color: #e4d8fd;
+  --aesy-stepper-connector-color-completed: #7c3aed;
+  --aesy-stepper-connector-width: 2px;
+  --aesy-stepper-focus-color: #7c3aed;
+  --aesy-stepper-header-background-hover: #f5efff;
+  --aesy-stepper-icon-background: #f1e9ff;
+  --aesy-stepper-icon-background-active: #7c3aed;
+  --aesy-stepper-icon-background-completed: #c084fc;
+  --aesy-stepper-icon-color: #7c3aed;
+  --aesy-stepper-icon-size: 2.25rem;
+  --aesy-stepper-label-color-active: #3b1d6e;
+}
+
+.stepper-a11y-list {
+  color: var(--showcase-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 20px;
+
+  kbd {
+    background: var(--showcase-surface);
+    border: 1px solid var(--showcase-border-strong);
+    border-radius: 6px;
+    font-family: var(--showcase-font-mono);
+    font-size: 12px;
+    padding: 1px 6px;
+  }
+}

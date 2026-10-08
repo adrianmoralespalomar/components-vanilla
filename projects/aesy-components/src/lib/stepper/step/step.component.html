@@ -1,0 +1,10 @@
+<ng-template #labelTemplate>{{ label() }}<ng-content select="[aesyStepLabel]" /></ng-template>
+
+<ng-template #contentTemplate>
+  <ng-content />
+  @if (lazyContent(); as lazyContentDirective) {
+    @if (hasBeenSelected()) {
+      <ng-container [ngTemplateOutlet]="lazyContentDirective.templateRef" />
+    }
+  }
+</ng-template>

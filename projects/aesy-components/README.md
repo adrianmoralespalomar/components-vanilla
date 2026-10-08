@@ -14,6 +14,7 @@ Librería de componentes para Angular 22: standalone, `OnPush`, basada en signal
 | Input text | `aesy-input-text` | [InputTextComponent.md](src/lib/form-controls/input-text/InputTextComponent.md) |
 | Radio button | `aesy-radio-button` | [RadioButtonComponent.md](src/lib/form-controls/radio-button/RadioButtonComponent.md) |
 | Select | `aesy-select` | [SelectComponent.md](src/lib/form-controls/select/SelectComponent.md) |
+| Stepper | `aesy-stepper`, `aesy-step` | [StepperComponent.md](src/lib/stepper/StepperComponent.md) |
 | Table | `aesy-table` | [TableComponent.md](src/lib/table/TableComponent.md) |
 | Textarea | `aesy-textarea` | [TextareaComponent.md](src/lib/form-controls/textarea/TextareaComponent.md) |
 
@@ -95,7 +96,7 @@ Todos los controles de formulario funcionan de dos formas:
 
 ### Tipos exportados
 
-Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData` y `RowOrderChange`.
+Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData`, `RowOrderChange`, `StepperOrientation`, `StepperLabelPosition` y `StepperSelectionChange`.
 
 ## Desarrollo
 

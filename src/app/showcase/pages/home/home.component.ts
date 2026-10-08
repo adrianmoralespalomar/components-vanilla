@@ -13,6 +13,10 @@ import {
   RadioButtonOption,
   SelectComponent,
   SelectOption,
+  StepComponent,
+  StepperComponent,
+  StepperNextDirective,
+  StepperPreviousDirective,
   TableComponent,
   TableConfig,
   TextareaComponent
@@ -39,6 +43,10 @@ import { HOME_TABLE_CONFIG } from './models/home-table-config.const';
     RadioButtonComponent,
     RouterLink,
     SelectComponent,
+    StepComponent,
+    StepperComponent,
+    StepperNextDirective,
+    StepperPreviousDirective,
     TableComponent,
     TextareaComponent,
     ValuePreviewComponent

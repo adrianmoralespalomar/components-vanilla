@@ -1,0 +1,264 @@
+/*
+ * Igual que en el acordeón, las variables --aesy-stepper-* no se declaran en :host: se leen con su valor por defecto
+ * (var(--x, defecto)), así que se heredan y puedes declararlas en el stepper o en cualquier contenedor.
+ */
+:host {
+  color: var(--aesy-stepper-text-color, #374151);
+  container-type: inline-size;
+  display: block;
+}
+
+.stepper-header {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--aesy-stepper-header-border-radius, 0.5rem);
+  box-sizing: border-box;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font: inherit;
+  gap: var(--aesy-stepper-header-gap, 0.75rem);
+  margin: 0;
+  padding: var(--aesy-stepper-header-padding, 0.5rem);
+  text-align: start;
+  transition: background var(--aesy-stepper-transition-duration, 0.25s);
+
+  &:hover:not([aria-disabled='true']) {
+    background: var(--aesy-stepper-header-background-hover, #f9fafb);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--aesy-stepper-focus-color, #3b82f6);
+    outline-offset: -2px;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  .stepper-header-icon {
+    align-items: center;
+    background: var(--aesy-stepper-icon-background, #e5e7eb);
+    border-radius: 50%;
+    color: var(--aesy-stepper-icon-color, #4b5563);
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    height: var(--aesy-stepper-icon-size, 2rem);
+    justify-content: center;
+    transition:
+      background var(--aesy-stepper-transition-duration, 0.25s),
+      color var(--aesy-stepper-transition-duration, 0.25s);
+    width: var(--aesy-stepper-icon-size, 2rem);
+
+    svg {
+      fill: currentColor;
+      height: 55%;
+      width: 55%;
+    }
+  }
+
+  .stepper-header-texts {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .stepper-header-label {
+    color: var(--aesy-stepper-label-color, #6b7280);
+    font-size: var(--aesy-stepper-label-font-size, 0.875rem);
+    font-weight: 500;
+  }
+
+  .stepper-header-optional {
+    color: var(--aesy-stepper-optional-color, #9ca3af);
+    font-size: 0.75rem;
+  }
+
+  .stepper-header-error-message {
+    color: var(--aesy-stepper-error-color, #dc2626);
+    font-size: 0.75rem;
+  }
+}
+
+.stepper-header-completed {
+  .stepper-header-icon {
+    background: var(--aesy-stepper-icon-background-completed, #3b82f6);
+    color: var(--aesy-stepper-icon-color-active, #ffffff);
+  }
+
+  .stepper-header-label {
+    color: var(--aesy-stepper-label-color-completed, #374151);
+  }
+}
+
+.stepper-header-selected {
+  .stepper-header-icon {
+    background: var(--aesy-stepper-icon-background-active, #3b82f6);
+    color: var(--aesy-stepper-icon-color-active, #ffffff);
+  }
+
+  .stepper-header-label {
+    color: var(--aesy-stepper-label-color-active, #111827);
+    font-weight: 600;
+  }
+}
+
+.stepper-header-error {
+  .stepper-header-icon {
+    background: var(--aesy-stepper-error-color, #dc2626);
+    color: var(--aesy-stepper-icon-color-active, #ffffff);
+  }
+
+  .stepper-header-label {
+    color: var(--aesy-stepper-error-color, #dc2626);
+  }
+}
+
+.stepper-visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* HORIZONTAL */
+.stepper-horizontal {
+  .stepper-header-list {
+    align-items: center;
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+  }
+
+  .stepper-connector {
+    background: var(--aesy-stepper-connector-color, #e5e7eb);
+    flex: 1 1 1.5rem;
+    height: var(--aesy-stepper-connector-width, 1px);
+    min-width: 1.5rem;
+    transition: background var(--aesy-stepper-transition-duration, 0.25s);
+  }
+
+  .stepper-connector-completed {
+    background: var(--aesy-stepper-connector-color-completed, #3b82f6);
+  }
+
+  .stepper-panel {
+    animation: stepper-panel-enter var(--aesy-stepper-transition-duration, 0.25s) ease;
+    padding: var(--aesy-stepper-panel-padding, 1.5rem 0.5rem 0.5rem);
+  }
+}
+
+.stepper-label-bottom {
+  .stepper-header-list {
+    align-items: flex-start;
+  }
+
+  .stepper-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+
+    .stepper-header-texts {
+      align-items: center;
+    }
+  }
+
+  /* A la altura del centro de los iconos */
+  .stepper-connector {
+    margin-top: calc(var(--aesy-stepper-header-padding, 0.5rem) + var(--aesy-stepper-icon-size, 2rem) / 2);
+  }
+}
+
+/* En pantallas estrechas solo se ve el texto del paso actual y todo se compacta */
+@container (max-width: 560px) {
+  .stepper-horizontal:not(.stepper-label-bottom) {
+    .stepper-header {
+      padding: 0.25rem;
+
+      &:not(.stepper-header-selected) .stepper-header-texts {
+        display: none;
+      }
+    }
+
+    .stepper-connector {
+      min-width: 0.5rem;
+    }
+  }
+}
+
+@keyframes stepper-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* VERTICAL */
+.stepper-vertical {
+  display: flex;
+  flex-direction: column;
+
+  .stepper-header {
+    width: 100%;
+  }
+
+  /* La línea que une los pasos va por el centro de los iconos y el contenido se alinea con las etiquetas */
+  .stepper-vertical-body {
+    border-left: var(--aesy-stepper-connector-width, 1px) solid var(--aesy-stepper-connector-color, #e5e7eb);
+    margin-left: calc(var(--aesy-stepper-header-padding, 0.5rem) + var(--aesy-stepper-icon-size, 2rem) / 2);
+    min-height: var(--aesy-stepper-vertical-gap, 1rem);
+    padding-left: calc(var(--aesy-stepper-icon-size, 2rem) / 2 + var(--aesy-stepper-header-gap, 0.75rem));
+    transition: border-color var(--aesy-stepper-transition-duration, 0.25s);
+  }
+
+  .stepper-vertical-body-completed {
+    border-left-color: var(--aesy-stepper-connector-color-completed, #3b82f6);
+  }
+
+  .stepper-vertical-body-last {
+    border-left-color: transparent;
+  }
+
+  .stepper-vertical-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows var(--aesy-stepper-transition-duration, 0.25s) ease,
+      visibility 0s linear var(--aesy-stepper-transition-duration, 0.25s);
+    visibility: hidden;
+
+    .stepper-vertical-panel-content {
+      min-height: 0;
+      overflow: clip;
+      overflow-clip-margin: 4px;
+    }
+
+    .stepper-vertical-panel-body {
+      padding: var(--aesy-stepper-vertical-panel-padding, 0.25rem 0 1.5rem);
+    }
+  }
+
+  .stepper-vertical-panel-expanded {
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows var(--aesy-stepper-transition-duration, 0.25s) ease,
+      visibility 0s;
+    visibility: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepper-horizontal .stepper-panel {
+    animation: none;
+  }
+
+  .stepper-vertical .stepper-vertical-panel {
+    transition: none;
+  }
+}

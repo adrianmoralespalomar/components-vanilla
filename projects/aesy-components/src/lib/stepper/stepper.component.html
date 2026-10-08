@@ -1,0 +1,81 @@
+<ng-template #stepHeaderButton let-step let-index="index">
+  <button
+    #headerButton
+    type="button"
+    role="tab"
+    class="stepper-header"
+    [class.stepper-header-completed]="step.isCompleted()"
+    [class.stepper-header-error]="step.hasError()"
+    [class.stepper-header-selected]="index === selectedIndex()"
+    [id]="getHeaderId(index)"
+    [attr.aria-controls]="getPanelId(index)"
+    [attr.aria-disabled]="!canSelectStep(index)"
+    [attr.aria-selected]="index === selectedIndex()"
+    [attr.tabindex]="index === selectedIndex() ? 0 : -1"
+    (click)="onHeaderButtonClicked(index)"
+    (keydown)="onHeaderKeydown($event, index)">
+    <span class="stepper-header-icon" aria-hidden="true">
+      @if (step.hasError()) {
+        <svg viewBox="0 0 20 20" focusable="false"><path [attr.d]="currentErrorIconSvg()" /></svg>
+      } @else if (step.isCompleted() && index !== selectedIndex()) {
+        <svg viewBox="0 0 20 20" focusable="false"><path [attr.d]="currentCompletedIconSvg()" /></svg>
+      } @else {
+        {{ index + 1 }}
+      }
+    </span>
+    <span class="stepper-header-texts">
+      <span class="stepper-header-label"><ng-container [ngTemplateOutlet]="step.labelTemplate()" /></span>
+      @if (step.hasError() && step.errorMessage()) {
+        <span class="stepper-header-error-message">{{ step.errorMessage() }}</span>
+      } @else if (step.optional()) {
+        <span class="stepper-header-optional">{{ optionalLabel() }}</span>
+      }
+      @if (step.isCompleted() && !step.hasError()) {
+        <span class="stepper-visually-hidden">(completado)</span>
+      }
+    </span>
+  </button>
+</ng-template>
+
+@if (orientation() === 'horizontal') {
+  <div class="stepper-horizontal" [class.stepper-label-bottom]="labelPosition() === 'bottom'">
+    <div class="stepper-header-list" role="tablist" aria-orientation="horizontal">
+      @for (step of steps(); track step; let index = $index; let isLast = $last) {
+        <ng-container [ngTemplateOutlet]="stepHeaderButton" [ngTemplateOutletContext]="{ $implicit: step, index }" />
+        @if (!isLast) {
+          <span class="stepper-connector" aria-hidden="true" [class.stepper-connector-completed]="step.isCompleted()"></span>
+        }
+      }
+    </div>
+
+    @for (step of steps(); track step; let index = $index) {
+      <div class="stepper-panel" role="tabpanel" [id]="getPanelId(index)" [attr.aria-labelledby]="getHeaderId(index)" [hidden]="index !== selectedIndex()">
+        <ng-container [ngTemplateOutlet]="step.contentTemplate()" />
+      </div>
+    }
+  </div>
+} @else {
+  <!-- En vertical cada paso se despliega bajo su cabecera, con la misma animación que el acordeón -->
+  <div class="stepper-vertical" role="tablist" aria-orientation="vertical">
+    @for (step of steps(); track step; let index = $index; let isLast = $last) {
+      <div class="stepper-vertical-step">
+        <ng-container [ngTemplateOutlet]="stepHeaderButton" [ngTemplateOutletContext]="{ $implicit: step, index }" />
+        <div class="stepper-vertical-body" [class.stepper-vertical-body-completed]="step.isCompleted()" [class.stepper-vertical-body-last]="isLast">
+          <div
+            class="stepper-panel stepper-vertical-panel"
+            role="tabpanel"
+            [class.stepper-vertical-panel-expanded]="index === selectedIndex()"
+            [id]="getPanelId(index)"
+            [attr.aria-labelledby]="getHeaderId(index)"
+            [attr.inert]="index === selectedIndex() ? null : ''">
+            <div class="stepper-vertical-panel-content">
+              <div class="stepper-vertical-panel-body">
+                <ng-container [ngTemplateOutlet]="step.contentTemplate()" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

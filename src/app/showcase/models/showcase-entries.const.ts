@@ -62,6 +62,14 @@ export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
     loadPage: () => import('../pages/select-page/select-page.component').then(m => m.SelectPageComponent)
   },
   {
+    slug: 'stepper',
+    name: 'Stepper',
+    selector: 'aesy-stepper',
+    description: 'Asistente por pasos en horizontal o vertical, con modo lineal, validación por formulario, pasos opcionales y carga diferida.',
+    isPreviewWide: true,
+    loadPage: () => import('../pages/stepper-page/stepper-page.component').then(m => m.StepperPageComponent)
+  },
+  {
     slug: 'table',
     name: 'Table',
     selector: 'aesy-table',

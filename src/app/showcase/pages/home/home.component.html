@@ -64,6 +64,29 @@
               <aesy-select label="País" placeholder="Selecciona un país" [clearable]="true" [options]="COUNTRY_OPTIONS" [(value)]="country" />
               <app-value-preview [value]="country()" />
             }
+            @case ('stepper') {
+              <aesy-stepper>
+                <aesy-step label="Carrito">
+                  <p class="demo-caption">3 artículos · 84,90 €</p>
+                  <div class="demo-row">
+                    <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+                  </div>
+                </aesy-step>
+                <aesy-step label="Envío">
+                  <p class="demo-caption">Envío estándar a Calle Mayor 12, Madrid.</p>
+                  <div class="demo-row">
+                    <aesy-button label="Atrás" aesyStepperPrevious />
+                    <aesy-button type="secondary" label="Siguiente" aesyStepperNext />
+                  </div>
+                </aesy-step>
+                <aesy-step label="Pago">
+                  <p class="demo-caption">Visa terminada en 4242.</p>
+                  <div class="demo-row">
+                    <aesy-button label="Atrás" aesyStepperPrevious />
+                  </div>
+                </aesy-step>
+              </aesy-stepper>
+            }
             @case ('table') {
               <aesy-table [data]="PEOPLE" [config]="HOME_TABLE_CONFIG" [paginationMetaConfig]="HOME_TABLE_PAGINATION" />
             }

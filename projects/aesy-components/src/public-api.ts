@@ -31,3 +31,12 @@ export * from './lib/table/models/table-config.interface';
 export * from './lib/table/table-pagination/models/pagination-meta-rows-per-page.interface';
 export * from './lib/table/table-pagination/models/pagination-meta.interface';
 export * from './lib/table/table.component';
+
+export * from './lib/stepper/directives/step-content.directive';
+export * from './lib/stepper/directives/stepper-next.directive';
+export * from './lib/stepper/directives/stepper-previous.directive';
+export * from './lib/stepper/models/stepper-label-position.type';
+export * from './lib/stepper/models/stepper-orientation.type';
+export * from './lib/stepper/models/stepper-selection-change.interface';
+export * from './lib/stepper/step/step.component';
+export * from './lib/stepper/stepper.component';
