@@ -1,0 +1,82 @@
+<app-doc-page slug="toast">
+  <app-doc-section sectionId="tipos" heading="Tipos" description="ToastService no necesita nada en la plantilla: inyéctalo y llama a success(), info(), warning(), error() o show() para el neutro. Cada tipo tiene su icono y su color." [snippet]="SNIPPETS.types">
+    <div class="demo-row">
+      @for (typeDemo of TYPE_DEMOS; track typeDemo.type) {
+        <aesy-button [type]="typeDemo.buttonType" [label]="typeDemo.type" (buttonClick)="onTypeButtonClicked(typeDemo)" />
+      }
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="titulo-y-accion" heading="Título y acción" description="title añade una línea en negrita y action un botón (por ejemplo, Deshacer). Cada llamada devuelve un ToastRef: onAction() avisa si se pulsa la acción y afterDismissed() emite el motivo del cierre." [snippet]="SNIPPETS.action">
+    <div class="demo-row">
+      <aesy-button type="danger" label="Archivar conversación" (buttonClick)="onArchiveConversationButtonClicked()" />
+    </div>
+    <app-value-preview label="Eventos del ToastRef" [value]="toastEventsLog()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="duracion" heading="Duración y barra de progreso" description="duration en milisegundos (por defecto 5000); con 0 no se cierra solo. La barra muestra el tiempo que queda y, como la cuenta atrás, se para con el ratón encima o el foco dentro. showProgress la oculta." [snippet]="SNIPPETS.duration">
+    <div class="demo-row">
+      <aesy-button label="2 segundos" (buttonClick)="onShortToastButtonClicked()" />
+      <aesy-button label="10 segundos" (buttonClick)="onLongToastButtonClicked()" />
+      <aesy-button label="Sin cierre automático" (buttonClick)="onStickyToastButtonClicked()" />
+      <aesy-button label="Sin barra" (buttonClick)="onNoProgressToastButtonClicked()" />
+      <aesy-button type="tertiary" label="Cerrar todos" (buttonClick)="onDismissAllButtonClicked()" />
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="cerrar-por-codigo" heading="Cerrar por código" description="Guarda el ToastRef para cerrarlo cuando termine una tarea: un toast sin duración ni aspa que se cierra con dismiss()." [snippet]="SNIPPETS.manualDismiss">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Subir archivo" [disabled]="isUploading()" (buttonClick)="onUploadFileButtonClicked()" />
+    </div>
+    <p class="demo-caption">La «subida» tarda 3 segundos; al terminar se cierra su toast y aparece otro de éxito.</p>
+  </app-doc-section>
+
+  <app-doc-section sectionId="configuracion-global" heading="Configuración global" description="La posición, la duración por defecto y el máximo visible son globales: configúralos al arrancar con provideAesyToastConfig() o en caliente con configure(). Al superar maxVisible se cierra el más antiguo. Esta página restaura los valores al salir." [snippet]="SNIPPETS.globalConfig">
+    <div class="demo-stack">
+      <aesy-radio-button label="position" orientation="horizontal" [options]="POSITION_OPTIONS" [value]="toastConfig().position" (valueChange)="onPositionChanged($event)" />
+      <aesy-radio-button label="maxVisible" orientation="horizontal" [options]="MAX_VISIBLE_OPTIONS" [value]="toastConfig().maxVisible" (valueChange)="onMaxVisibleChanged($event)" />
+      <div class="demo-row">
+        <aesy-button type="secondary" [label]="'Lanzar ' + BURST_COUNT + ' seguidos'" (buttonClick)="onBurstButtonClicked()" />
+      </div>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="sobre-dialogo" heading="Con un diálogo abierto" description="El contenedor de toasts es un popover del navegador: si hay un diálogo modal abierto, el toast se coloca por encima de su fondo en lugar de quedar tapado." [snippet]="SNIPPETS.overDialog">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Abrir diálogo" (buttonClick)="onOpenDialogButtonClicked()" />
+    </div>
+    <aesy-dialog #savingDialog title="Guardar borrador" size="small" [(open)]="isDialogOpen">
+      <p class="toast-demo-paragraph">Pulsa Guardar: el toast aparece por encima del diálogo.</p>
+      <aesy-dialog-actions>
+        <aesy-button label="Cerrar" (buttonClick)="savingDialog.close()" />
+        <aesy-button type="secondary" label="Guardar" (buttonClick)="onSaveDraftButtonClicked()" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+  </app-doc-section>
+
+  <app-doc-section sectionId="accesibilidad" heading="Accesibilidad" group="reference" variant="plain">
+    <ul class="toast-a11y-list">
+      <li>El contenedor es una región <code>aria-live="polite"</code> con nombre («Notificaciones»): los lectores de pantalla leen cada toast nuevo sin interrumpir lo que estén diciendo. Se crea al arrancar la aplicación, antes del primer toast, para que el primero también se anuncie.</li>
+      <li>La cuenta atrás se pausa con el ratón encima o el foco dentro, para que dé tiempo a leerlo o a pulsar la acción (WCAG 2.2.1).</li>
+      <li>El aspa tiene nombre accesible (<code>closeButtonAriaLabel</code>). Para mensajes importantes usa <code>duration: 0</code>: no desaparecen solos.</li>
+      <li>Con un diálogo modal abierto el toast se ve por encima, pero no se puede pulsar (el navegador deja inerte todo lo que está fuera del diálogo); se cierra solo al acabar su tiempo.</li>
+      <li>Con <code>prefers-reduced-motion</code> no hay animaciones de entrada y salida.</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" description="Cada tipo tiene sus propias variables de fondo, borde, texto e icono (--aesy-toast-success-background…). Ponlas en :root para cambiar todos los toasts, o en una clase global y pásala con cssClass para cambiar solo algunos. Elige un tema y lanza toasts para verlo." [snippet]="SNIPPETS.theming">
+    <div class="demo-stack">
+      <aesy-radio-button label="Tema (cssClass)" orientation="horizontal" [options]="THEME_OPTIONS" [(value)]="selectedThemeCssClass" />
+      <div class="demo-row">
+        @for (typeDemo of TYPE_DEMOS; track typeDemo.type) {
+          <aesy-button [type]="typeDemo.buttonType" [label]="typeDemo.type" (buttonClick)="onThemedToastButtonClicked(typeDemo)" />
+        }
+        <aesy-button type="tertiary" label="Con título y acción" (buttonClick)="onThemedToastWithActionButtonClicked()" />
+      </div>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api" heading="API · ToastService" group="reference" variant="plain">
+    <app-api-reference [api]="API" />
+  </app-doc-section>
+</app-doc-page>

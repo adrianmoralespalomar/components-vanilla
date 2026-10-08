@@ -34,6 +34,13 @@ export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
     loadPage: () => import('../pages/datepicker-page/datepicker-page.component').then(m => m.DatepickerPageComponent)
   },
   {
+    slug: 'dialog',
+    name: 'Dialog',
+    selector: 'aesy-dialog',
+    description: 'Diálogo modal sobre el <dialog> nativo: en plantilla con [(open)] o desde código con DialogService, con tamaños, resultado y cierre configurable.',
+    loadPage: () => import('../pages/dialog-page/dialog-page.component').then(m => m.DialogPageComponent)
+  },
+  {
     slug: 'input-number',
     name: 'Input number',
     selector: 'aesy-input-number',
@@ -76,6 +83,13 @@ export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
     description: 'Tabla genérica con filtros, ordenación, selección, columnas y filas reordenables y paginación local o por API.',
     isPreviewWide: true,
     loadPage: () => import('../pages/table-page/table-page.component').then(m => m.TablePageComponent)
+  },
+  {
+    slug: 'toast',
+    name: 'Toast',
+    selector: 'ToastService',
+    description: 'Notificaciones temporales desde código: cinco tipos, título, acción, pausa al pasar el ratón, posición y máximo visible.',
+    loadPage: () => import('../pages/toast-page/toast-page.component').then(m => m.ToastPageComponent)
   },
   {
     slug: 'textarea',

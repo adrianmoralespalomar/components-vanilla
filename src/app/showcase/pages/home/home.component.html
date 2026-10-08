@@ -18,7 +18,7 @@
       <article class="home-card" [class.home-card-wide]="entry.isPreviewWide">
         <header class="home-card-header">
           <h3 class="home-card-title">{{ entry.name }}</h3>
-          <code class="home-card-selector">&lt;{{ entry.selector }}&gt;</code>
+          <code class="home-card-selector">{{ entry.selector | showcaseSelector }}</code>
         </header>
         <p class="home-card-description">{{ entry.description }}</p>
 
@@ -48,6 +48,18 @@
             }
             @case ('datepicker') {
               <aesy-datepicker label="Fecha de entrega" [clearable]="true" [(value)]="deliveryDate" />
+            }
+            @case ('dialog') {
+              <div class="demo-row">
+                <aesy-button type="secondary" label="Abrir diálogo" (buttonClick)="onOpenHomeDialogButtonClicked()" />
+              </div>
+              <aesy-dialog #homeDialog title="Publicar artículo" size="small" [(open)]="isHomeDialogOpen">
+                <p>El artículo será visible para todos los lectores.</p>
+                <aesy-dialog-actions>
+                  <aesy-button label="Cancelar" (buttonClick)="homeDialog.close()" />
+                  <aesy-button type="secondary" label="Publicar" (buttonClick)="homeDialog.close()" />
+                </aesy-dialog-actions>
+              </aesy-dialog>
             }
             @case ('input-number') {
               <aesy-input-number label="Importe" suffix="€" [minFractionDigits]="2" [(value)]="amount" />
@@ -89,6 +101,12 @@
             }
             @case ('table') {
               <aesy-table [data]="PEOPLE" [config]="HOME_TABLE_CONFIG" [paginationMetaConfig]="HOME_TABLE_PAGINATION" />
+            }
+            @case ('toast') {
+              <div class="demo-row">
+                <aesy-button type="success" label="success" (buttonClick)="onHomeSuccessToastButtonClicked()" />
+                <aesy-button type="danger" label="error" (buttonClick)="onHomeErrorToastButtonClicked()" />
+              </div>
             }
             @case ('textarea') {
               <aesy-textarea label="Comentarios" placeholder="Cuéntanos algo…" [rows]="3" [maxlength]="200" [showCharCount]="true" [(value)]="comments" />

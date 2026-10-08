@@ -10,12 +10,14 @@ Librería de componentes para Angular 22: standalone, `OnPush`, basada en signal
 | Button | `aesy-button` | [ButtonComponent.md](src/lib/button/ButtonComponent.md) |
 | Checkbox | `aesy-checkbox` | [CheckboxComponent.md](src/lib/form-controls/checkbox/CheckboxComponent.md) |
 | Datepicker | `aesy-datepicker` | [DatepickerComponent.md](src/lib/form-controls/datepicker/DatepickerComponent.md) |
+| Dialog | `aesy-dialog`, `aesy-dialog-actions`, `DialogService` | [DialogComponent.md](src/lib/dialog/DialogComponent.md) |
 | Input number | `aesy-input-number` | [InputNumberComponent.md](src/lib/form-controls/input-number/InputNumberComponent.md) |
 | Input text | `aesy-input-text` | [InputTextComponent.md](src/lib/form-controls/input-text/InputTextComponent.md) |
 | Radio button | `aesy-radio-button` | [RadioButtonComponent.md](src/lib/form-controls/radio-button/RadioButtonComponent.md) |
 | Select | `aesy-select` | [SelectComponent.md](src/lib/form-controls/select/SelectComponent.md) |
 | Stepper | `aesy-stepper`, `aesy-step` | [StepperComponent.md](src/lib/stepper/StepperComponent.md) |
 | Table | `aesy-table` | [TableComponent.md](src/lib/table/TableComponent.md) |
+| Toast | `ToastService` | [ToastService.md](src/lib/toast/ToastService.md) |
 | Textarea | `aesy-textarea` | [TextareaComponent.md](src/lib/form-controls/textarea/TextareaComponent.md) |
 
 Para verlos funcionando, con todos sus casos de uso, arranca el showcase del repositorio con `npm run debugapp`.
@@ -96,7 +98,7 @@ Todos los controles de formulario funcionan de dos formas:
 
 ### Tipos exportados
 
-Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData`, `RowOrderChange`, `StepperOrientation`, `StepperLabelPosition` y `StepperSelectionChange`.
+Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `DialogConfig`, `DialogRef`, `DialogRole`, `DialogSize`, `AESY_DIALOG_DATA`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn`, `TableSelectableConfig`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData`, `RowOrderChange`, `StepperOrientation`, `StepperLabelPosition`, `StepperSelectionChange`, `ToastOptions`, `ToastRef`, `ToastType`, `ToastPosition`, `ToastDismissReason`, `ToastGlobalConfig` y `provideAesyToastConfig`.
 
 ## Desarrollo
 

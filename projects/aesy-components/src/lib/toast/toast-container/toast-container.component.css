@@ -1,0 +1,244 @@
+/*
+ * Variables --aesy-toast-*: se leen con su valor por defecto y se heredan, así que se sobrescriben en :root
+ * (el contenedor cuelga del body).
+ */
+:host {
+  display: contents;
+}
+
+/* Quita los estilos que el navegador da a un [popover] y lo coloca según la posición */
+.toast-container {
+  background: transparent;
+  border: 0;
+  box-sizing: border-box;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aesy-toast-gap, 0.75rem);
+  height: auto;
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+  padding: var(--aesy-toast-offset, 1rem);
+  pointer-events: none;
+  position: fixed;
+  width: min(calc(var(--aesy-toast-width, 22rem) + 2 * var(--aesy-toast-offset, 1rem)), 100vw);
+
+  &[data-position^='top'] {
+    --aesy-toast-enter-offset: -0.75rem;
+    top: 0;
+  }
+
+  &[data-position^='bottom'] {
+    bottom: 0;
+  }
+
+  &[data-position$='left'] {
+    left: 0;
+  }
+
+  &[data-position$='right'] {
+    right: 0;
+  }
+
+  &[data-position$='center'] {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/*
+ * Cada tipo resuelve sus colores en variables internas (--aesy-toast-type-*): primero la variable del tipo
+ * (--aesy-toast-success-background…), después la general (--aesy-toast-background…) y por último el valor por defecto.
+ */
+.toast {
+  align-items: flex-start;
+  animation: toast-enter var(--aesy-toast-transition-duration, 0.25s) ease;
+  background: var(--aesy-toast-type-background);
+  border: 1px solid var(--aesy-toast-type-border-color);
+  border-radius: var(--aesy-toast-border-radius, 0.75rem);
+  box-shadow: var(--aesy-toast-shadow, 0 12px 32px -12px rgb(17 24 39 / 0.3));
+  box-sizing: border-box;
+  color: var(--aesy-toast-type-text-color);
+  display: flex;
+  font-size: var(--aesy-toast-font-size, 0.875rem);
+  gap: 0.75rem;
+  line-height: 1.45;
+  overflow: hidden;
+  padding: 0.875rem 0.875rem 0.875rem 1rem;
+  pointer-events: auto;
+  position: relative;
+
+  &[data-type='neutral'] {
+    --aesy-toast-type-color: var(--aesy-toast-neutral-color, #4b5563);
+    --aesy-toast-type-background: var(--aesy-toast-neutral-background, var(--aesy-toast-background, #ffffff));
+    --aesy-toast-type-border-color: var(--aesy-toast-neutral-border-color, var(--aesy-toast-border-color, #e5e7eb));
+    --aesy-toast-type-text-color: var(--aesy-toast-neutral-text-color, var(--aesy-toast-text-color, #374151));
+    --aesy-toast-type-title-color: var(--aesy-toast-neutral-text-color, var(--aesy-toast-title-color, #111827));
+  }
+
+  &[data-type='success'] {
+    --aesy-toast-type-color: var(--aesy-toast-success-color, #16a34a);
+    --aesy-toast-type-background: var(--aesy-toast-success-background, var(--aesy-toast-background, #ffffff));
+    --aesy-toast-type-border-color: var(--aesy-toast-success-border-color, var(--aesy-toast-border-color, #e5e7eb));
+    --aesy-toast-type-text-color: var(--aesy-toast-success-text-color, var(--aesy-toast-text-color, #374151));
+    --aesy-toast-type-title-color: var(--aesy-toast-success-text-color, var(--aesy-toast-title-color, #111827));
+  }
+
+  &[data-type='info'] {
+    --aesy-toast-type-color: var(--aesy-toast-info-color, #2563eb);
+    --aesy-toast-type-background: var(--aesy-toast-info-background, var(--aesy-toast-background, #ffffff));
+    --aesy-toast-type-border-color: var(--aesy-toast-info-border-color, var(--aesy-toast-border-color, #e5e7eb));
+    --aesy-toast-type-text-color: var(--aesy-toast-info-text-color, var(--aesy-toast-text-color, #374151));
+    --aesy-toast-type-title-color: var(--aesy-toast-info-text-color, var(--aesy-toast-title-color, #111827));
+  }
+
+  &[data-type='warning'] {
+    --aesy-toast-type-color: var(--aesy-toast-warning-color, #d97706);
+    --aesy-toast-type-background: var(--aesy-toast-warning-background, var(--aesy-toast-background, #ffffff));
+    --aesy-toast-type-border-color: var(--aesy-toast-warning-border-color, var(--aesy-toast-border-color, #e5e7eb));
+    --aesy-toast-type-text-color: var(--aesy-toast-warning-text-color, var(--aesy-toast-text-color, #374151));
+    --aesy-toast-type-title-color: var(--aesy-toast-warning-text-color, var(--aesy-toast-title-color, #111827));
+  }
+
+  &[data-type='error'] {
+    --aesy-toast-type-color: var(--aesy-toast-error-color, #dc2626);
+    --aesy-toast-type-background: var(--aesy-toast-error-background, var(--aesy-toast-background, #ffffff));
+    --aesy-toast-type-border-color: var(--aesy-toast-error-border-color, var(--aesy-toast-border-color, #e5e7eb));
+    --aesy-toast-type-text-color: var(--aesy-toast-error-text-color, var(--aesy-toast-text-color, #374151));
+    --aesy-toast-type-title-color: var(--aesy-toast-error-text-color, var(--aesy-toast-title-color, #111827));
+  }
+
+  .toast-icon {
+    color: var(--aesy-toast-type-color);
+    fill: currentColor;
+    /* Los iconos llevan el símbolo recortado dentro de la forma (check dentro del círculo…) */
+    fill-rule: evenodd;
+    flex-shrink: 0;
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+
+  .toast-texts {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toast-title {
+    color: var(--aesy-toast-type-title-color);
+    font-weight: 600;
+    margin: 0 0 0.125rem;
+  }
+
+  .toast-message {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Los botones parten del color del texto, así funcionan igual sobre fondo claro que sobre un fondo de color */
+  .toast-action-button {
+    background: transparent;
+    border: 0;
+    border-radius: 0.375rem;
+    color: var(--aesy-toast-action-color, var(--aesy-toast-type-color));
+    cursor: pointer;
+    flex-shrink: 0;
+    font: inherit;
+    font-weight: 600;
+    margin: -0.25rem 0;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .toast-close-button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0.375rem;
+    color: var(--aesy-toast-close-button-color, currentColor);
+    cursor: pointer;
+    display: inline-flex;
+    flex-shrink: 0;
+    margin: -0.25rem -0.25rem 0 0;
+    opacity: 0.6;
+    padding: 0.25rem;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    svg {
+      fill: currentColor;
+      height: 1rem;
+      width: 1rem;
+    }
+  }
+
+  .toast-action-button,
+  .toast-close-button {
+    &:hover {
+      background: var(--aesy-toast-button-background-hover, color-mix(in srgb, currentColor 12%, transparent));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--aesy-toast-focus-color, currentColor);
+    }
+  }
+
+  /* La barra se para con el ratón encima o el foco dentro, igual que la cuenta atrás */
+  .toast-progress {
+    animation: toast-progress linear forwards;
+    background: var(--aesy-toast-progress-color, var(--aesy-toast-type-color));
+    bottom: 0;
+    height: 3px;
+    left: 0;
+    opacity: 0.55;
+    position: absolute;
+    transform-origin: left;
+    width: 100%;
+  }
+
+  &:hover .toast-progress,
+  &:focus-within .toast-progress {
+    animation-play-state: paused;
+  }
+}
+
+.toast-leaving {
+  animation: toast-leave 0.2s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--aesy-toast-enter-offset, 0.75rem)) scale(0.98);
+  }
+}
+
+@keyframes toast-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast-leaving {
+    animation: none;
+  }
+
+  .toast-leaving {
+    opacity: 0;
+  }
+}

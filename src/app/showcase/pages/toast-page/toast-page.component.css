@@ -1,0 +1,13 @@
+.toast-demo-paragraph {
+  margin: 0;
+}
+
+.toast-a11y-list {
+  color: var(--showcase-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 20px;
+}

@@ -1,0 +1,16 @@
+:host {
+  border-top: var(--aesy-dialog-actions-border, 1px solid #f3f4f6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aesy-dialog-actions-gap, 0.5rem);
+  justify-content: var(--aesy-dialog-actions-justify-content, flex-end);
+  padding: 1rem var(--aesy-dialog-padding, 1.5rem);
+}
+
+/* Dentro del cuerpo (componente abierto con DialogService): se pega al pie del área con scroll, como en aesy-dialog */
+:host-context(.aesy-dialog-body) {
+  background: var(--aesy-dialog-background, #ffffff);
+  bottom: calc(-1 * var(--aesy-dialog-padding, 1.5rem));
+  margin: 1.25rem calc(-1 * var(--aesy-dialog-padding, 1.5rem)) calc(-1 * var(--aesy-dialog-padding, 1.5rem));
+  position: sticky;
+}

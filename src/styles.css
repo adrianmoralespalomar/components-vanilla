@@ -92,3 +92,63 @@ code {
   margin: 0;
   padding: 14px 16px;
 }
+
+/*
+ * Temas de ejemplo para los toasts (página Toast > Personalización). Van aquí porque el contenedor de toasts
+ * cuelga del body: se aplican con la opción cssClass de cada toast.
+ */
+.toast-theme-filled {
+  --aesy-toast-border-color: transparent;
+  --aesy-toast-error-background: #dc2626;
+  --aesy-toast-error-color: #ffffff;
+  --aesy-toast-info-background: #2563eb;
+  --aesy-toast-info-color: #ffffff;
+  --aesy-toast-neutral-background: #374151;
+  --aesy-toast-neutral-color: #ffffff;
+  --aesy-toast-success-background: #16a34a;
+  --aesy-toast-success-color: #ffffff;
+  --aesy-toast-text-color: #ffffff;
+  --aesy-toast-title-color: #ffffff;
+  --aesy-toast-warning-background: #d97706;
+  --aesy-toast-warning-color: #ffffff;
+}
+
+.toast-theme-soft {
+  --aesy-toast-error-background: #fef2f2;
+  --aesy-toast-error-border-color: #fecaca;
+  --aesy-toast-error-text-color: #7f1d1d;
+  --aesy-toast-info-background: #eff6ff;
+  --aesy-toast-info-border-color: #bfdbfe;
+  --aesy-toast-info-text-color: #1e3a8a;
+  --aesy-toast-success-background: #f0fdf4;
+  --aesy-toast-success-border-color: #bbf7d0;
+  --aesy-toast-success-text-color: #14532d;
+  --aesy-toast-warning-background: #fffbeb;
+  --aesy-toast-warning-border-color: #fde68a;
+  --aesy-toast-warning-text-color: #78350f;
+}
+
+.toast-theme-dark {
+  --aesy-toast-background: #111827;
+  --aesy-toast-border-color: #1f2937;
+  --aesy-toast-error-color: #f87171;
+  --aesy-toast-info-color: #60a5fa;
+  --aesy-toast-neutral-color: #9ca3af;
+  --aesy-toast-success-color: #4ade80;
+  --aesy-toast-text-color: #d1d5db;
+  --aesy-toast-title-color: #ffffff;
+  --aesy-toast-warning-color: #fbbf24;
+}
+
+.toast-theme-brand {
+  --aesy-toast-border-radius: 16px;
+  --aesy-toast-neutral-background: #f5efff;
+  --aesy-toast-neutral-border-color: #e4d8fd;
+  --aesy-toast-neutral-color: #7c3aed;
+  --aesy-toast-neutral-text-color: #3b1d6e;
+  --aesy-toast-shadow: 0 16px 40px -16px rgb(124 58 237 / 0.45);
+  --aesy-toast-success-background: linear-gradient(135deg, #a855f7, #6d28d9);
+  --aesy-toast-success-border-color: transparent;
+  --aesy-toast-success-color: #ffffff;
+  --aesy-toast-success-text-color: #ffffff;
+}

@@ -7,6 +7,11 @@ Lista de problemas y mejoras detectados en `aesy-components`. Marca cada punto a
 - [ ] **Tabla con `draggableRows` en local:** solo reordena los datos originales si no hay filtro ni orden activos (está documentado). Valorar resolverlo o desactivar el arrastre mientras haya filtro u orden.
 - [ ] **Tabla sin "seleccionar todo":** con `selectable` solo hay casilla por fila. Añadir una casilla en la cabecera (con estado indeterminado) que seleccione las filas visibles o todas.
 
+## Diálogo y toasts
+
+- [ ] Toasts con un diálogo modal abierto: se ven por encima, pero no se pueden pulsar (el navegador deja inerte todo lo que está fuera del diálogo) y los que ya estaban reinician su animación al recolocarse delante. Valorar mostrar el contenedor dentro del diálogo abierto.
+- [ ] Revisar textos fijos en español (`'Cerrar'`, `'Cerrar notificación'`, `'Notificaciones'`) junto con el resto de i18n.
+
 ## Documentación
 
 - [ ] Los `.md` de los componentes no se incluyen en el paquete de npm (solo se copian el tema y el README), así que los enlaces del README a ellos solo funcionan en el repositorio. Valorar añadirlos a `assets` en `ng-package.json` o enlazar a un showcase publicado.
@@ -21,7 +26,7 @@ Lista de problemas y mejoras detectados en `aesy-components`. Marca cada punto a
 - [ ] Añadir fichero `LICENSE`.
 - [ ] Comprobar si el nombre `aesy-components` está libre en npm (`npm view aesy-components`); si no, usar un scope (`@usuario/aesy-components`).
 - [ ] Revisar el rango de `peerDependencies` (`^22.1.0`) si se quiere usar en proyectos con otras versiones de Angular.
-- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario, el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido) y el stepper (modo lineal con `stepControl`, opcional/no editable, `reset`, orientación, teclado).
+- [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario, el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido) el stepper (modo lineal con `stepControl`, opcional/no editable, `reset`, orientación, teclado), el diálogo (`open`/`close(result)`, Escape y fondo, `DialogService` y `afterClosed`) y los toasts (temporizador con pausa, `maxVisible`, `onAction`/`afterDismissed`).
 - [ ] Revisar textos fijos en español dentro de los componentes (mensajes de validación por defecto, placeholders, paginación) por si se quiere internacionalizar.
 
 ## Hecho

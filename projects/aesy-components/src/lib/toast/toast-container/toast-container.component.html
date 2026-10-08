@@ -1,0 +1,32 @@
+<section #containerElement class="toast-container" popover="manual" aria-live="polite" aria-relevant="additions" [attr.aria-label]="config().containerAriaLabel" [attr.data-position]="config().position">
+  @for (toast of displayedToasts(); track toast.id) {
+    <div
+      class="toast"
+      [class]="toast.cssClass"
+      [class.toast-leaving]="toast.isLeaving"
+      [attr.data-type]="toast.type"
+      (mouseenter)="onToastPointerEntered(toast.id)"
+      (mouseleave)="onToastPointerLeft($event, toast.id)"
+      (focusin)="onToastFocusEntered(toast.id)"
+      (focusout)="onToastFocusLeft($event, toast.id)">
+      <svg class="toast-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="ICON_PATHS[toast.type]" /></svg>
+      <div class="toast-texts">
+        @if (toast.title) {
+          <p class="toast-title">{{ toast.title }}</p>
+        }
+        <p class="toast-message">{{ toast.message }}</p>
+      </div>
+      @if (toast.action; as toastAction) {
+        <button type="button" class="toast-action-button" (click)="onToastActionButtonClicked(toast.id)">{{ toastAction.label }}</button>
+      }
+      @if (toast.isDismissible) {
+        <button type="button" class="toast-close-button" [attr.aria-label]="config().closeButtonAriaLabel" (click)="onToastCloseButtonClicked(toast.id)">
+          <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="ICON_PATHS.close" /></svg>
+        </button>
+      }
+      @if (toast.showProgress && toast.duration > 0) {
+        <span class="toast-progress" aria-hidden="true" [style.animation-duration.ms]="toast.duration"></span>
+      }
+    </div>
+  }
+</section>

@@ -1,0 +1,108 @@
+<app-doc-page slug="dialog">
+  <app-doc-section sectionId="basico" heading="Básico" description="aesy-dialog usa el &lt;dialog&gt; nativo: el navegador lo pone por encima de todo, atrapa el foco, deja inerte el resto de la página y lo cierra con Escape. Ábrelo con [(open)] y ciérralo con close(resultado): el resultado llega en closed." [snippet]="SNIPPETS.basic">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Abrir diálogo" (buttonClick)="onOpenBasicDialogButtonClicked()" />
+    </div>
+    <aesy-dialog #basicDialog title="Publicar artículo" [(open)]="isBasicDialogOpen" (closed)="onBasicDialogClosed($event)">
+      <p class="dialog-demo-paragraph">El artículo será visible para todos los lectores. Podrás despublicarlo cuando quieras.</p>
+      <aesy-dialog-actions>
+        <aesy-button label="Cancelar" (buttonClick)="basicDialog.close('cancelado')" />
+        <aesy-button type="secondary" label="Publicar" (buttonClick)="basicDialog.close('publicado')" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+    <app-value-preview label="closed" [value]="basicDialogResult()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="tamanos" heading="Tamaños" description="size elige el ancho: small, medium (por defecto), large o fullscreen. En pantallas pequeñas nunca se sale de la ventana y, si el contenido no cabe, el cuerpo hace scroll." [snippet]="SNIPPETS.sizes">
+    <div class="demo-row">
+      @for (sizeOption of SIZE_OPTIONS; track sizeOption) {
+        <aesy-button [label]="sizeOption" (buttonClick)="onSizeButtonClicked(sizeOption)" />
+      }
+    </div>
+    <aesy-dialog #sizedDialog [title]="'Tamaño ' + selectedSize()" [size]="selectedSize()" [(open)]="isSizedDialogOpen">
+      <p class="dialog-demo-paragraph">Este diálogo usa el tamaño {{ selectedSize() }}.</p>
+      <aesy-dialog-actions>
+        <aesy-button type="secondary" label="Entendido" (buttonClick)="sizedDialog.close()" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+  </app-doc-section>
+
+  <app-doc-section sectionId="formulario" heading="Con formulario" description="Cualquier contenido vale, también formularios reactivos. Aquí Guardar solo cierra si el formulario es válido y devuelve sus valores como resultado." [snippet]="SNIPPETS.form">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Editar perfil" (buttonClick)="onOpenProfileDialogButtonClicked()" />
+    </div>
+    <aesy-dialog #profileDialog title="Editar perfil" size="small" [(open)]="isProfileDialogOpen" (closed)="onProfileDialogClosed($event)">
+      <form class="demo-stack" [formGroup]="profileForm">
+        <aesy-input-text label="Nombre" formControlName="fullName" />
+        <aesy-input-text label="Correo" type="email" formControlName="email" />
+      </form>
+      <aesy-dialog-actions>
+        <aesy-button label="Cancelar" (buttonClick)="profileDialog.close()" />
+        <aesy-button type="secondary" label="Guardar" (buttonClick)="onSaveProfileButtonClicked(profileDialog)" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+    <app-value-preview label="Perfil guardado" [value]="savedProfile()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="desde-codigo" heading="Desde código (DialogService)" description="DialogService.open(Componente, config) crea el diálogo con tu componente dentro, sin tocar la plantilla. El componente recibe los datos con inject(AESY_DIALOG_DATA) y se cierra con inject(DialogRef).close(resultado). afterClosed() emite ese resultado." [snippet]="SNIPPETS.service">
+    <div class="demo-row">
+      <aesy-button type="danger" label="Eliminar proyecto" (buttonClick)="onDeleteProjectButtonClicked()" />
+    </div>
+    <app-value-preview label="afterClosed" [value]="deleteProjectResult()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="cierre" heading="Cierre obligatorio" description="closeOnBackdropClick, closeOnEscape y showCloseButton en false obligan a usar los botones. Con role=&quot;alertdialog&quot; los lectores de pantalla lo anuncian como un aviso que exige respuesta." [snippet]="SNIPPETS.forcedChoice">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Revisar términos" (buttonClick)="onOpenTermsDialogButtonClicked()" />
+    </div>
+    <aesy-dialog
+      #termsDialog
+      title="Nuevos términos de uso"
+      role="alertdialog"
+      [closeOnBackdropClick]="false"
+      [closeOnEscape]="false"
+      [showCloseButton]="false"
+      [(open)]="isTermsDialogOpen"
+      (closed)="onTermsDialogClosed($event)">
+      @for (paragraph of LONG_CONTENT_PARAGRAPHS; track paragraph) {
+        <p class="dialog-demo-paragraph">{{ paragraph }}</p>
+      }
+      <aesy-dialog-actions>
+        <aesy-button label="Rechazar" (buttonClick)="termsDialog.close('rechazados')" />
+        <aesy-button type="secondary" label="Aceptar" (buttonClick)="termsDialog.close('aceptados')" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+    <app-value-preview label="Términos" [value]="termsResult()" />
+    <p class="demo-caption">El texto es largo a propósito: el cuerpo hace scroll y los botones se quedan fijos al pie.</p>
+  </app-doc-section>
+
+  <app-doc-section sectionId="accesibilidad" heading="Teclado y accesibilidad" group="reference" variant="plain">
+    <ul class="dialog-a11y-list">
+      <li>Es un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code>: el resto de la página queda inerte (ni foco ni lectores de pantalla) y el foco no puede salir del diálogo con <kbd>Tab</kbd>.</li>
+      <li>Al abrirse, el foco va al elemento con <code>autofocus</code> si lo hay o, si no, al propio panel. Al cerrarse vuelve al elemento que lo abrió.</li>
+      <li>Su nombre accesible es el <code>title</code> (o <code>ariaLabel</code> si no hay título). El aspa de cerrar usa <code>closeButtonAriaLabel</code>.</li>
+      <li><kbd>Escape</kbd> lo cierra salvo con <code>closeOnEscape</code> en false (el navegador puede ignorarlo si se pulsa dos veces seguidas).</li>
+      <li>Mientras está abierto, la página de fondo no hace scroll. Con <code>prefers-reduced-motion</code> no hay animación.</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" description="Las variables --aesy-dialog-* se heredan: decláralas en el diálogo, en un contenedor o en :root." [snippet]="SNIPPETS.theming">
+    <div class="demo-row">
+      <aesy-button type="secondary" label="Abrir diálogo con tema" (buttonClick)="onOpenThemedDialogButtonClicked()" />
+    </div>
+    <aesy-dialog #themedDialog class="dialog-demo-themed" title="Invitación enviada" size="small" [(open)]="isThemedDialogOpen">
+      <p class="dialog-demo-paragraph">Hemos enviado la invitación a tu equipo. La recibirán en unos minutos.</p>
+      <aesy-dialog-actions>
+        <aesy-button type="secondary" label="Genial" (buttonClick)="themedDialog.close()" />
+      </aesy-dialog-actions>
+    </aesy-dialog>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-dialog" heading="API · aesy-dialog" group="reference" variant="plain">
+    <app-api-reference [api]="DIALOG_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-dialog-service" heading="API · DialogService" group="reference" variant="plain">
+    <app-api-reference [api]="DIALOG_SERVICE_API" />
+  </app-doc-section>
+</app-doc-page>

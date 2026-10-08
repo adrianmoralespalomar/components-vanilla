@@ -11,6 +11,15 @@ export * from './lib/accordion/models/accordion-toggle-position.type';
 export * from './lib/button/button.component';
 export * from './lib/button/models/button-type.type';
 
+export * from './lib/dialog/dialog-actions/dialog-actions.component';
+export * from './lib/dialog/dialog-ref';
+export * from './lib/dialog/dialog.component';
+export * from './lib/dialog/dialog.service';
+export * from './lib/dialog/models/aesy-dialog-data.token';
+export * from './lib/dialog/models/dialog-config.interface';
+export * from './lib/dialog/models/dialog-role.type';
+export * from './lib/dialog/models/dialog-size.type';
+
 export * from './lib/form-controls/checkbox/checkbox.component';
 export * from './lib/form-controls/datepicker/datepicker.component';
 export * from './lib/form-controls/input-number/input-number.component';
@@ -40,3 +49,15 @@ export * from './lib/stepper/models/stepper-orientation.type';
 export * from './lib/stepper/models/stepper-selection-change.interface';
 export * from './lib/stepper/step/step.component';
 export * from './lib/stepper/stepper.component';
+
+export * from './lib/toast/models/aesy-toast-config.token';
+export * from './lib/toast/models/toast-action.interface';
+export * from './lib/toast/models/toast-dismiss-reason.type';
+export * from './lib/toast/models/toast-global-config.interface';
+export * from './lib/toast/models/toast-options.interface';
+export * from './lib/toast/models/toast-position.type';
+export * from './lib/toast/models/toast-shortcut-options.type';
+export * from './lib/toast/models/toast-type.type';
+export * from './lib/toast/provide-aesy-toast-config';
+export * from './lib/toast/toast-ref';
+export * from './lib/toast/toast.service';

@@ -30,7 +30,9 @@
   </div>
 </ng-template>
 
-<ng-container [ngTemplateOutlet]="propertiesTable" [ngTemplateOutletContext]="{ heading: 'Inputs', properties: api().inputs, hasDefault: true }" />
+@if (api().inputs?.length) {
+  <ng-container [ngTemplateOutlet]="propertiesTable" [ngTemplateOutletContext]="{ heading: 'Inputs', properties: api().inputs, hasDefault: true }" />
+}
 
 @if (api().models?.length) {
   <ng-container [ngTemplateOutlet]="propertiesTable" [ngTemplateOutletContext]="{ heading: 'Model (two-way binding)', properties: api().models, hasDefault: true }" />

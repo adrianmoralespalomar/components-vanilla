@@ -1,0 +1,7 @@
+<p>
+  Vas a eliminar <strong>{{ data.projectName }}</strong> y sus {{ data.tasksCount }} tareas. Esta acción no se puede deshacer.
+</p>
+<aesy-dialog-actions>
+  <aesy-button label="Cancelar" (buttonClick)="onCancelButtonClicked()" />
+  <aesy-button type="danger" label="Eliminar proyecto" (buttonClick)="onDeleteButtonClicked()" />
+</aesy-dialog-actions>

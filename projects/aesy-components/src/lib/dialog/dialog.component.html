@@ -1,0 +1,25 @@
+<dialog
+  #dialogElement
+  class="dialog"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-labelledby]="ariaLabel() ? null : titleId"
+  [attr.data-size]="size()"
+  [attr.role]="role() === 'alertdialog' ? 'alertdialog' : null"
+  (cancel)="onDialogCancelled($event)"
+  (close)="onDialogClosed()"
+  (click)="onDialogClicked($event)">
+  <div #panelElement class="dialog-panel" tabindex="-1">
+    <header class="dialog-header">
+      <h2 class="dialog-title" [id]="titleId">{{ title() }}<ng-content select="[aesyDialogTitle]" /></h2>
+      @if (showCloseButton()) {
+        <button type="button" class="dialog-close-button" [attr.aria-label]="closeButtonAriaLabel()" (click)="onCloseButtonClicked()">
+          <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="CLOSE_ICON_PATH" /></svg>
+        </button>
+      }
+    </header>
+    <div class="dialog-body aesy-dialog-body">
+      <ng-content />
+    </div>
+    <ng-content select="aesy-dialog-actions" />
+  </div>
+</dialog>
