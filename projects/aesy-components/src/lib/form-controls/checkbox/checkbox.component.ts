@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, OnInit, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
@@ -20,7 +20,7 @@ let nextCheckboxId = 0;
     }
   ]
 })
-export class CheckboxComponent implements ControlValueAccessor, OnInit {
+export class CheckboxComponent implements AfterContentInit, ControlValueAccessor {
   // #region INPUTS
   /** Estado disabled para uso sin Angular Forms. */
   readonly disabled = input<boolean>(false);
@@ -58,7 +58,8 @@ export class CheckboxComponent implements ControlValueAccessor, OnInit {
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null);
     this.control?.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.formStateVersion.update(version => version + 1));
   }

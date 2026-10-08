@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, output, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -31,7 +31,7 @@ let nextSelectId = 0;
     }
   ]
 })
-export class SelectComponent implements ControlValueAccessor {
+export class SelectComponent implements AfterContentInit, ControlValueAccessor {
   // #region INPUTS
 
   /** Muestra un botón para limpiar la selección. */
@@ -142,7 +142,8 @@ export class SelectComponent implements ControlValueAccessor {
 
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null, { self: true });
 
     const control = this.control;

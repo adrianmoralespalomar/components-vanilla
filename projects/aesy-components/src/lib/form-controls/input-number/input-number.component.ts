@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Injector, OnInit, forwardRef, inject, input, model, signal } from '@angular/core';
+import { AfterContentInit, Component, DestroyRef, Injector, forwardRef, inject, input, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
@@ -19,7 +19,7 @@ import { formatNumberValue } from './utils/format-number-value';
     }
   ]
 })
-export class InputNumberComponent implements ControlValueAccessor, OnInit {
+export class InputNumberComponent implements AfterContentInit, ControlValueAccessor {
   readonly label = input<string>('');
   readonly placeholder = input<string>('');
 
@@ -162,7 +162,8 @@ export class InputNumberComponent implements ControlValueAccessor, OnInit {
   // Lifecycle
   // ---------------------------------------------------------------------------
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null, { self: true });
 
     if (this.ngControl) {

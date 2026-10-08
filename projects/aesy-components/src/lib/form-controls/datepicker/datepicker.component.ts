@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -30,7 +30,7 @@ let nextDatepickerId = 0;
     }
   ]
 })
-export class DatepickerComponent implements ControlValueAccessor {
+export class DatepickerComponent implements AfterContentInit, ControlValueAccessor {
   // #region INPUTS
 
   readonly calendarWidth = input<'auto' | 'full'>('auto');
@@ -153,7 +153,8 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null, { self: true });
 
     const control = this.control;

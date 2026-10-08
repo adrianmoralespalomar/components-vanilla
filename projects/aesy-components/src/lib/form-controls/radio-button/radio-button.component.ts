@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { areValuesEqual } from '../shared/utils/are-values-equal';
@@ -22,7 +22,7 @@ let nextRadioButtonId = 0;
     }
   ]
 })
-export class RadioButtonComponent implements ControlValueAccessor {
+export class RadioButtonComponent implements AfterContentInit, ControlValueAccessor {
   // #region INPUTS
   readonly disabled = input<boolean>(false);
   readonly errorMessage = input<string | null>(null);
@@ -57,7 +57,8 @@ export class RadioButtonComponent implements ControlValueAccessor {
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null);
     const control = this.control;
 

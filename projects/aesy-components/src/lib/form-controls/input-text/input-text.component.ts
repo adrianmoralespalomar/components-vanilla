@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
@@ -22,7 +22,7 @@ let nextInputId = 0;
     }
   ]
 })
-export class InputTextComponent implements ControlValueAccessor {
+export class InputTextComponent implements AfterContentInit, ControlValueAccessor {
   // #region INPUTS
   /**
    * Si es false y existe maxlength, el navegador impedirá escribir más caracteres.
@@ -71,7 +71,8 @@ export class InputTextComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
+  /** En AfterContentInit y no en OnInit: con formControlName, Angular asigna el control después del ngOnInit del componente. */
+  ngAfterContentInit(): void {
     this.ngControl = this.injector.get(NgControl, null);
     const control = this.control;
     if (!control) return;
