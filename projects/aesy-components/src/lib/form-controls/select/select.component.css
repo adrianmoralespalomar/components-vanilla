@@ -13,6 +13,9 @@
   --aesy-select-dropdown-option-text-size: 0.875rem;
   --aesy-select-dropdown-option-line-height: 1.5;
   --aesy-select-dropdown-option-height: 2rem;
+  --aesy-select-dropdown-max-height: 16rem;
+  --aesy-select-dropdown-search-background: var(--aesy-form-controls-background);
+  --aesy-select-dropdown-search-height: 2rem;
 }
 
 section.aesy-select-container {
@@ -194,9 +197,47 @@ div.aesy-select-dropdown-container {
     0 2px 4px -2px rgb(0 0 0 / 0.1);
 
   box-sizing: border-box;
-  max-height: 16rem;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: var(--aesy-select-dropdown-max-height);
+  overflow: hidden;
   width: 100%;
+
+  /* Solo hace scroll la lista: el buscador se queda arriba */
+  & div.aesy-select-dropdown-options {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  & div.aesy-select-dropdown-search {
+    border-bottom: var(--aesy-form-controls-border);
+    flex: 0 0 auto;
+    padding: 0.5rem;
+
+    & input.aesy-select-dropdown-search-input {
+      background: var(--aesy-select-dropdown-search-background);
+      border: var(--aesy-form-controls-border);
+      border-radius: var(--aesy-form-controls-radius);
+      box-sizing: border-box;
+      color: var(--aesy-form-controls-text-color);
+      font: inherit;
+      font-size: var(--aesy-select-dropdown-option-text-size);
+      height: var(--aesy-select-dropdown-search-height);
+      outline: none;
+      padding: 0 0.625rem;
+      width: 100%;
+
+      &::placeholder {
+        color: var(--aesy-form-controls-text-color-placeholder);
+      }
+
+      &:focus {
+        border-color: var(--aesy-form-controls-border-color-focus);
+        box-shadow: 0 0 0 1px var(--aesy-form-controls-border-color-focus);
+      }
+    }
+  }
 }
 
 /* Cuando no hay opciones */

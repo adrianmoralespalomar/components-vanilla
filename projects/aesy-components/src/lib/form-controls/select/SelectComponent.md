@@ -27,15 +27,10 @@ La arquitectura está alineada con los componentes `InputText` y `Textarea`.
 - Label, help text y mensajes de error.
 - ID interno basado en `${id}-select`.
 - Dropdown propio; no utiliza el `<select>` nativo.
-- Navegación básica mediante teclado.
+- Búsqueda opcional dentro del desplegable (`searchable`), sin distinguir mayúsculas ni tildes.
+- Navegación mediante teclado; la opción resaltada se mantiene visible al moverse por listas largas.
 - Atributos ARIA básicos para accesibilidad.
 - Implementación con `OnPush` y Signals.
-
-## Alcance
-
-El componente **no incluye búsqueda/filtering de opciones** en esta versión.
-
----
 
 ## API
 
@@ -48,6 +43,9 @@ El componente **no incluye búsqueda/filtering de opciones** en esta versión.
 | `label`        | `string`                         |                      `''` | Texto del label.                                                                       |
 | `placeholder`  | `string`                         | `'Selecciona una opción'` | Texto mostrado cuando no hay selección.                                                |
 | `clearable`    | `boolean`                        |                   `false` | Permite limpiar la selección.                                                          |
+| `searchable`   | `boolean`                        |                   `false` | Muestra un campo arriba del desplegable que filtra las opciones por su texto.          |
+| `searchPlaceholder` | `string`                    |               `'Buscar…'` | Placeholder y nombre accesible del campo de búsqueda.                                  |
+| `noSearchResultsText` | `string`                  |        `'Sin resultados'` | Texto cuando la búsqueda no encuentra ninguna opción.                                  |
 | `showSelectedIcon` | `boolean`                    |                   `false` | Muestra un check junto a las opciones seleccionadas en el desplegable.                 |
 | `textAlign`    | `'left' \| 'center' \| 'right'`  |                  `'left'` | Alineación del texto seleccionado.                                                     |
 | `readonly`     | `boolean`                        |                   `false` | Impide modificar la selección.                                                         |
@@ -325,6 +323,36 @@ El botón de limpieza solamente está disponible cuando existe una selección y 
 
 ---
 
+## Búsqueda (`searchable`)
+
+Para listas largas, `searchable` añade un campo arriba del desplegable que filtra las opciones por su `label`, sin distinguir mayúsculas ni tildes: «espana» encuentra «España».
+
+```html
+<aesy-select label="País" [searchable]="true" [options]="countries" [(value)]="country" />
+
+<aesy-select
+  label="Tecnologías"
+  searchPlaceholder="Buscar tecnología…"
+  noSearchResultsText="Ninguna tecnología coincide"
+  [searchable]="true"
+  [multiple]="true"
+  [options]="skills"
+  [(value)]="selectedSkills" />
+```
+
+Comportamiento:
+
+- Al abrir, el foco va al campo de búsqueda.
+- Con el select cerrado, escribir sobre él lo abre y empieza a buscar con lo escrito.
+- Las flechas recorren las opciones filtradas y Enter elige la resaltada; Escape cierra y devuelve el foco al select.
+- En selección múltiple el desplegable sigue abierto y la búsqueda se mantiene mientras eliges.
+- Al cerrar, la búsqueda se vacía.
+- El filtrado es solo visual: el valor y las opciones (`options`) no cambian.
+
+Variables CSS del buscador (decláralas sobre `aesy-select`, porque se copian al overlay): `--aesy-select-dropdown-search-background` y `--aesy-select-dropdown-search-height`. La altura máxima del desplegable es `--aesy-select-dropdown-max-height` (`16rem`).
+
+---
+
 ## `disabled`
 
 ### Sin Forms
@@ -390,6 +418,8 @@ El dropdown proporciona navegación básica mediante teclado.
 
 Las opciones `disabled` se saltan durante la navegación.
 
+Con `searchable`, dentro del campo de búsqueda: `ArrowDown` / `ArrowUp` mueven el highlight por las opciones filtradas, `Enter` selecciona la destacada, `Escape` cierra y `Tab` cierra y continúa. Con el select cerrado, cualquier carácter lo abre y empieza la búsqueda.
+
 ---
 
 ## Accesibilidad
@@ -407,6 +437,7 @@ El componente utiliza:
 - `role="listbox"`.
 - `role="option"`.
 - `role="alert"` para errores.
+- Con `searchable`: el campo es un `role="combobox"` con `aria-controls` hacia la lista y `aria-activedescendant` hacia la opción resaltada; «sin resultados» se anuncia con `role="status"`.
 
 El `label` se asocia con el trigger mediante el ID del componente.
 
@@ -524,6 +555,8 @@ El dropdown:
 - Marca visualmente las opciones seleccionadas.
 - Soporta opciones deshabilitadas.
 - Muestra un estado vacío cuando no hay opciones.
+- Al abrirse, se desplaza hasta la opción seleccionada.
+- Con `searchable`, muestra un campo de búsqueda fijo arriba; solo hace scroll la lista.
 
 ---
 
@@ -588,11 +621,10 @@ La versión definitiva debería resolver la interacción de los tags sin botones
 - `readonly`.
 - Dropdown propio.
 - Accesibilidad básica.
+- Búsqueda de opciones (`searchable`).
 
 ### No se incluye todavía
 
-- Búsqueda de opciones.
-- Filtrado.
 - Async options.
 - Virtual scrolling.
 - Agrupación de opciones.

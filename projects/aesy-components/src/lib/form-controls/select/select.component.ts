@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, afterNextRender, forwardRef, inject, input, model, output, signal } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 import { areValuesEqual } from '../shared/utils/are-values-equal';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
+import { normalizeSearchText } from '../shared/utils/normalize-search-text';
 
 import { SelectOption } from './models/select-option.interface';
 
@@ -57,6 +58,9 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
 
   readonly name = input<string | null>(null);
 
+  /** Texto cuando la búsqueda no encuentra ninguna opción. */
+  readonly noSearchResultsText = input<string>('Sin resultados');
+
   readonly options = input<SelectOption[]>([]);
 
   readonly placeholder = input<string>('Selecciona una opción');
@@ -65,6 +69,12 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
 
   /** null = detectar automáticamente desde FormControl. */
   readonly required = input<boolean | null>(null);
+
+  /** Muestra un campo arriba del desplegable que filtra las opciones por su texto. */
+  readonly searchable = input<boolean>(false);
+
+  /** Placeholder y nombre accesible del campo de búsqueda. */
+  readonly searchPlaceholder = input<string>('Buscar…');
 
   readonly showSelectedIcon = input<boolean>(false);
 
@@ -93,9 +103,12 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
 
   private readonly injector = inject(Injector);
 
+  /** Índice dentro de `availableOptions` (las opciones filtradas si hay búsqueda). */
   protected highlightedIndex = signal<number>(-1);
 
   readonly isOpen = signal(false);
+
+  protected readonly searchText = signal<string>('');
 
   // #endregion INTERNAL STATE
 
@@ -314,12 +327,23 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
     return this.clearable() && this.hasValue && !this.isDisabled && !this.readonly();
   }
 
+  /** Opciones que se muestran: todas, o las que contienen el texto buscado (sin distinguir mayúsculas ni tildes). */
   get availableOptions(): SelectOption[] {
-    return this.options();
+    const normalizedSearchText = normalizeSearchText(this.searchText());
+    if (!this.searchable() || !normalizedSearchText) return this.options();
+    return this.options().filter(option => normalizeSearchText(option.label).includes(normalizedSearchText));
   }
 
   get currentHighlightedIndex(): number {
     return this.highlightedIndex();
+  }
+
+  get highlightedOptionId(): string | null {
+    return this.highlightedIndex() >= 0 ? this.getOptionId(this.highlightedIndex()) : null;
+  }
+
+  getOptionId(index: number): string {
+    return `${this.listboxId}-option-${index}`;
   }
 
   // #endregion GETTERS
@@ -352,6 +376,23 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
     this.openOverlay();
 
     this.isOpen.set(true);
+
+    afterNextRender(
+      () => {
+        // La opción seleccionada se ve al abrir aunque esté más abajo en la lista
+        this.scrollHighlightedOptionIntoView();
+        if (this.searchable()) this.focusSearchInput();
+      },
+      { injector: this.injector }
+    );
+  }
+
+  private focusSearchInput(): void {
+    const searchInput = this.overlayRef?.overlayElement.querySelector<HTMLInputElement>('input.aesy-select-dropdown-search-input');
+    if (!searchInput) return;
+    searchInput.focus();
+    // Si se abrió escribiendo sobre el select, el cursor queda al final de lo escrito
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
   }
 
   close(): void {
@@ -359,11 +400,17 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
       return;
     }
 
+    // Si el foco estaba en el buscador, vuelve al select antes de que desaparezca el desplegable
+    const activeElement = this.selectInput.nativeElement.ownerDocument.activeElement;
+    if (activeElement && this.overlayRef?.overlayElement.contains(activeElement)) this.selectInput.nativeElement.focus();
+
     this.closeOverlay();
 
     this.isOpen.set(false);
 
     this.highlightedIndex.set(-1);
+
+    this.searchText.set('');
 
     this.onTouched();
 
@@ -592,11 +639,30 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
         }
 
         break;
+
+      default:
+        if (this.searchable() && this.isPrintableKey(event)) this.startSearchFromSelect(event);
     }
   }
 
+  /**
+   * Con búsqueda, escribir sobre el select lo abre y empieza a buscar. Si ya estaba abierto (se ha escrito antes de
+   * que el foco llegue al buscador), la tecla se añade a la búsqueda.
+   */
+  private startSearchFromSelect(event: KeyboardEvent): void {
+    event.preventDefault();
+    this.searchText.update(searchText => (this.isOpen() ? searchText + event.key : event.key));
+    if (this.isOpen()) this.focusSearchInput();
+    else this.open();
+    this.highlightFirstEnabledOption();
+  }
+
+  private isPrintableKey(event: KeyboardEvent): boolean {
+    return event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
+  }
+
   private moveHighlight(direction: number): void {
-    const options = this.options();
+    const options = this.availableOptions;
 
     if (options.length === 0) {
       return;
@@ -617,15 +683,22 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
 
       if (!options[index].disabled) {
         this.highlightedIndex.set(index);
+        this.scrollHighlightedOptionIntoView();
         return;
       }
     }
   }
 
+  /** Mantiene visible la opción resaltada al moverse con el teclado por una lista con scroll. */
+  private scrollHighlightedOptionIntoView(): void {
+    const optionElement = this.selectInput.nativeElement.ownerDocument.getElementById(this.getOptionId(this.highlightedIndex()));
+    optionElement?.scrollIntoView?.({ block: 'nearest' });
+  }
+
   private selectHighlightedOption(): void {
     const index = this.highlightedIndex();
 
-    const option = this.options()[index];
+    const option = this.availableOptions[index];
 
     if (!option || option.disabled) {
       return;
@@ -635,18 +708,52 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
   }
 
   private setInitialHighlightedOption(): void {
-    const options = this.options();
-
-    const selectedIndex = options.findIndex(option => this.isSelected(option) && !option.disabled);
+    const selectedIndex = this.availableOptions.findIndex(option => this.isSelected(option) && !option.disabled);
 
     if (selectedIndex >= 0) {
       this.highlightedIndex.set(selectedIndex);
       return;
     }
 
-    const firstEnabledIndex = options.findIndex(option => !option.disabled);
+    this.highlightFirstEnabledOption();
+  }
 
-    this.highlightedIndex.set(firstEnabledIndex);
+  private highlightFirstEnabledOption(): void {
+    this.highlightedIndex.set(this.availableOptions.findIndex(option => !option.disabled));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Search
+  // ---------------------------------------------------------------------------
+
+  protected onSearchInput(event: Event): void {
+    this.searchText.set((event.target as HTMLInputElement).value);
+    this.highlightFirstEnabledOption();
+  }
+
+  /** Teclado dentro del buscador: las flechas y Enter actúan sobre las opciones filtradas. */
+  protected onSearchKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowUp':
+        event.preventDefault();
+        this.moveHighlight(event.key === 'ArrowDown' ? 1 : -1);
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        this.selectHighlightedOption();
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        this.close();
+        break;
+
+      case 'Tab':
+        this.close();
+        break;
+    }
   }
 
   // ---------------------------------------------------------------------------

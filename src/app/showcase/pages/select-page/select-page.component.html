@@ -1,6 +1,4 @@
 <app-doc-page slug="select">
-  <p class="demo-note" docPageNotes>Esta versión no incluye búsqueda ni filtrado de opciones dentro del desplegable.</p>
-
   <app-doc-section sectionId="basico" heading="Básico" description="Selección simple con [(value)], sin Angular Forms. El output selectValueChanged avisa de cada cambio." [snippet]="SNIPPETS.basic">
     <div class="demo-narrow demo-stack">
       <aesy-select label="País" placeholder="Selecciona un país" [options]="COUNTRY_OPTIONS" [(value)]="basicCountry" (selectValueChanged)="onBasicSelectValueChanged($event)" />
@@ -21,6 +19,14 @@
       <aesy-select label="País" [clearable]="true" [options]="COUNTRY_OPTIONS" [(value)]="clearableCountry" />
       <app-value-preview [value]="clearableCountry()" />
     </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="busqueda" heading="Con búsqueda" description="searchable añade un campo arriba del desplegable que filtra las opciones sin distinguir mayúsculas ni tildes (prueba con «japon»). Recibe el foco al abrir, las flechas y Enter eligen entre las filtradas, y escribir sobre el select cerrado lo abre buscando. En múltiple, la búsqueda se mantiene mientras eliges." [snippet]="SNIPPETS.searchable">
+    <div class="demo-grid">
+      <aesy-select label="País" placeholder="Selecciona un país" [searchable]="true" [clearable]="true" [options]="DEMO_OPTIONS.searchableCountries" [(value)]="searchableCountry" />
+      <aesy-select label="Tecnologías" searchPlaceholder="Buscar tecnología…" noSearchResultsText="Ninguna tecnología coincide" [searchable]="true" [multiple]="true" [options]="DEMO_OPTIONS.skills" [(value)]="searchableSkills" />
+    </div>
+    <app-value-preview [value]="{ country: searchableCountry(), skills: searchableSkills() }" />
   </app-doc-section>
 
   <app-doc-section sectionId="opciones-deshabilitadas" heading="Opciones deshabilitadas" description="Marca disabled: true en una SelectOption para que se vea pero no se pueda elegir." [snippet]="SNIPPETS.disabledOptions">

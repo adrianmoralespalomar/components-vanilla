@@ -31,6 +31,8 @@ export class SelectPageComponent {
   protected readonly disabledOptionsCountry = signal<string | null>('ES');
   protected readonly lastChangedValue = signal<unknown>(null);
   protected readonly multipleSkills = signal<string[]>(['angular', 'signals']);
+  protected readonly searchableCountry = signal<string | null>(null);
+  protected readonly searchableSkills = signal<string[]>([]);
   protected readonly selectedIconSkills = signal<string[]>(['typescript']);
   protected readonly shippingMethod = signal<ShippingMethod | null>({ id: 2, code: 'EXPRESS', price: 4.95 });
   protected readonly alignedCountry = signal<string | null>('FR');

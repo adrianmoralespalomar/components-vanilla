@@ -28,6 +28,23 @@ protected readonly country = signal<string | null>(null);`,
   [options]="COUNTRY_OPTIONS"
   [(value)]="country" />`
   },
+  searchable: {
+    html: `<aesy-select
+  label="País"
+  [searchable]="true"
+  [options]="COUNTRY_OPTIONS"
+  [(value)]="country" />
+
+<!-- Textos del buscador personalizables -->
+<aesy-select
+  label="Tecnologías"
+  searchPlaceholder="Buscar tecnología…"
+  noSearchResultsText="Ninguna tecnología coincide"
+  [searchable]="true"
+  [multiple]="true"
+  [options]="SKILL_OPTIONS"
+  [(value)]="skills" />`
+  },
   disabledOptions: {
     ts: `protected readonly COUNTRY_OPTIONS: SelectOption[] = [
   { label: 'España', value: 'ES' },
@@ -91,6 +108,8 @@ aesy-select {
   --aesy-select-dropdown-option-selected-color: #ffffff;
   --aesy-select-input-multiple-element-background: #ececfe;
   --aesy-select-input-multiple-element-color: #2a2ad6;
+  --aesy-select-dropdown-max-height: 20rem;
+  --aesy-select-dropdown-search-background: #f8f8ff;
 }
 
 /* Las variables comunes de los form controls viven en :root */
