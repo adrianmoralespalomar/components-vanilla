@@ -108,11 +108,12 @@ npm run generate-lib
 npm run debugapp
 
 # Simular la publicación: compila la librería y muestra qué se incluiría, sin publicar
-# (antes: npm login y con el debugapp parado, que pone la versión 0.0.0-watch)
+# (antes de los dos: npm login y el debugapp parado)
 npm run publish-lib-dry-run
 
-# Publicar de verdad
-npm publish ./dist/aesy-components
+# Publicar: sube la versión minor (0.1.0 → 0.2.0), compila y publica.
+# Después, commitea el package.json de la librería con la versión nueva.
+npm run publish-lib
 ```
 
 Para añadir un componente nuevo, sigue el checklist del [README del repositorio](../../README.md#crear-un-componente-nuevo-checklist). Los problemas conocidos y mejoras pendientes están en [PENDIENTES.md](PENDIENTES.md).
