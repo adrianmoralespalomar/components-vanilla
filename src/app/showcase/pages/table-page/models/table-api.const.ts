@@ -3,7 +3,7 @@ import { ComponentApi } from '../../../models/component-api.interface';
 export const TABLE_API: ComponentApi = {
   inputs: [
     { name: 'config', type: 'TableConfig<T>', defaultValue: 'obligatorio', description: 'Columnas y comportamiento de la tabla.' },
-    { name: 'paginationMetaConfig', type: 'PaginationMeta', defaultValue: 'obligatorio', description: 'Estado y textos de la paginación.' },
+    { name: 'paginationMetaConfig', type: 'PaginationMeta | null', defaultValue: 'null', description: 'Estado y textos de la paginación. Sin él no hay paginación: en local se muestran todas las filas y con serverSide requestData pide todas (page y rowsPerPageCurrent a null).' },
     { name: 'data', type: 'T[]', defaultValue: '[]', description: 'Filas. En local, todas (si cambian, la tabla se actualiza conservando filtros, orden y página); con serverSide, solo las de la página actual.' }
   ],
   outputs: [
@@ -30,11 +30,18 @@ export const TABLE_API: ComponentApi = {
       ]
     },
     {
+      name: 'Directivas',
+      properties: [
+        { name: 'ng-template[aesyTableCell]', type: 'TableCellDirective<T>', description: 'Plantilla de las celdas de la columna con esa key. let-row recibe la fila y let-column="column" la columna.' },
+        { name: '[aesyTableCellRows]', type: 'T[] | undefined', description: 'Solo para el tipado: pasa las mismas filas que a la tabla y row llega con su tipo. Sin él, row es Record<string, unknown>.' }
+      ]
+    },
+    {
       name: 'TableColumn<T>',
       properties: [
-        { name: 'key', type: 'keyof T & string', description: 'Propiedad de la fila que muestra la columna.' },
+        { name: 'key', type: 'keyof T & string', description: 'Propiedad de la fila que muestra la columna. En las columnas custom, cualquier identificador.' },
         { name: 'label', type: 'string', description: 'Texto de la cabecera.' },
-        { name: 'type', type: "'text' | 'number' | 'date' | 'select'", description: 'Tipo de dato; decide el filtro que se muestra.' },
+        { name: 'type', type: "'text' | 'number' | 'date' | 'select' | 'custom'", description: "Tipo de dato; decide el filtro que se muestra. 'custom' es una columna sin dato propio que se pinta con aesyTableCell y no se ordena ni filtra." },
         { name: 'options', type: 'SelectOption[] | undefined', description: 'Opciones del filtro cuando type es select.' },
         { name: 'sortable', type: 'boolean | undefined', description: 'Permite ordenar por la columna.' },
         { name: 'filterable', type: 'boolean | undefined', description: 'Muestra un filtro bajo la cabecera.' },
@@ -70,8 +77,8 @@ export const TABLE_API: ComponentApi = {
     {
       name: 'RequestData',
       properties: [
-        { name: 'page', type: 'number', description: 'Página pedida.' },
-        { name: 'rowsPerPageCurrent', type: 'number', description: 'Filas por página.' },
+        { name: 'page', type: 'number | null', description: 'Página pedida. null si la tabla no tiene paginación: devuelve todas las filas.' },
+        { name: 'rowsPerPageCurrent', type: 'number | null', description: 'Filas por página. null si la tabla no tiene paginación.' },
         { name: 'filters', type: 'any', description: 'Valores de los filtros, por key de columna.' },
         { name: 'sortByKey', type: 'string | undefined', description: 'Columna por la que ordenar.' },
         { name: 'sortDirection', type: "'asc' | 'desc' | '' | undefined", description: 'Dirección de la ordenación.' }

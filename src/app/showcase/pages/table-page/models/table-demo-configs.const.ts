@@ -36,6 +36,16 @@ export const TABLE_DEMO_CONFIGS = {
     serverSide: false,
     tableName: 'docsDraggablePeople'
   } satisfies TableConfig<DemoPerson>,
+  customCells: {
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
+      { key: 'role', label: 'Rol', type: 'text', sortable: true },
+      { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: DEMO_COUNTRY_FILTER_OPTIONS },
+      { key: 'actions', label: 'Acciones', type: 'custom', width: '200px', alignCell: 'right', alignHeader: 'right' }
+    ],
+    serverSide: false,
+    tableName: 'docsCustomCells'
+  } satisfies TableConfig<DemoPerson>,
   serverProducts: {
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true, width: '80px' },
@@ -47,6 +57,15 @@ export const TABLE_DEMO_CONFIGS = {
     serverSide: true,
     tableName: 'docsServerProducts'
   } satisfies TableConfig<DemoProduct>,
+  citiesWithoutPagination: {
+    columns: [
+      { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+      { key: 'country', label: 'País', type: 'text', sortable: true },
+      { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+    ],
+    serverSide: false,
+    tableName: 'docsCitiesWithoutPagination'
+  } satisfies TableConfig<DemoCity>,
   customPagination: {
     columns: DEMO_PEOPLE_COLUMNS.map(column => ({ ...column, filterable: false, fixed: false })),
     serverSide: false,

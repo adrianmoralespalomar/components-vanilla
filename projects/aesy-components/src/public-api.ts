@@ -33,9 +33,16 @@ export * from './lib/form-controls/shared/models/icon-position.type';
 export * from './lib/form-controls/textarea/models/textarea-resize.type';
 export * from './lib/form-controls/textarea/textarea.component';
 
+export * from './lib/table/directives/table-cell.directive';
 export * from './lib/table/models/request-data.interface';
 export * from './lib/table/models/row-order-change.interface';
-export * from './lib/table/models/table-column.interface';
+export * from './lib/table/models/table-cell-context.interface';
+export * from './lib/table/models/table-column-align.type';
+export * from './lib/table/models/table-column-base.interface';
+export * from './lib/table/models/table-column-type.type';
+export * from './lib/table/models/table-column.type';
+export * from './lib/table/models/table-custom-column.interface';
+export * from './lib/table/models/table-data-column.interface';
 export * from './lib/table/models/table-config.interface';
 export * from './lib/table/table-pagination/models/pagination-meta-rows-per-page.interface';
 export * from './lib/table/table-pagination/models/pagination-meta.interface';

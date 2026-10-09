@@ -51,6 +51,35 @@ protected readonly selectedCities = signal<City[]>([]);`,
   [paginationMetaConfig]="CITIES_PAGINATION"
   (selectionChange)="selectedCities.set($event)" />`
   },
+  customCells: {
+    ts: `protected readonly people = signal<Person[]>(PEOPLE);
+
+protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: 'people',
+  columns: [
+    { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
+    // Columna de datos con plantilla: se sigue ordenando y filtrando por country
+    { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: COUNTRY_OPTIONS },
+    // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
+    { key: 'actions', label: 'Acciones', type: 'custom', width: '200px', alignCell: 'right' }
+  ]
+};
+
+protected onRemovePersonButtonClicked(person: Person): void {
+  this.people.update(people => people.filter(currentPerson => currentPerson !== person));
+}`,
+    html: `<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG" [paginationMetaConfig]="PEOPLE_PAGINATION">
+  <!-- aesyTableCellRows solo sirve para que person llegue tipado como Person -->
+  <ng-template aesyTableCell="country" [aesyTableCellRows]="people()" let-person>
+    <span class="country-badge">{{ person.country }}</span>
+  </ng-template>
+
+  <ng-template aesyTableCell="actions" [aesyTableCellRows]="people()" let-person>
+    <aesy-button type="tertiary" label="Ver" (buttonClick)="onViewPersonButtonClicked(person)" />
+    <aesy-button type="danger" label="Quitar" (buttonClick)="onRemovePersonButtonClicked(person)" />
+  </ng-template>
+</aesy-table>`
+  },
   draggable: {
     ts: `// En local la tabla ya reordena sus filas; rowOrderChange sirve para guardar el nuevo orden.
 // Con serverSide: true eres tú quien reordena los datos:
@@ -72,16 +101,23 @@ protected readonly products = signal<Product[]>([]);
 protected readonly pagination = signal<PaginationMeta>({ page: 1, rowsPerPageCurrent: 5, total: 0 });
 
 protected onProductsTableDataRequested(requestData: RequestData): void {
+  // page y rowsPerPageCurrent son null si la tabla no tiene paginación
+  const rowsPerPageCurrent = requestData.rowsPerPageCurrent ?? 0;
   const params = new HttpParams()
-    .set('limit', requestData.rowsPerPageCurrent)
-    .set('skip', (requestData.page - 1) * requestData.rowsPerPageCurrent)
+    .set('limit', rowsPerPageCurrent)
+    .set('skip', ((requestData.page ?? 1) - 1) * rowsPerPageCurrent)
     .set('q', requestData.filters?.title ?? '')
     .set('sortBy', requestData.sortByKey ?? '')
     .set('order', requestData.sortDirection || 'asc');
 
   this.httpClient.get<ProductsResponse>('https://dummyjson.com/products/search', { params }).subscribe(response => {
     this.products.set(response.products);
-    this.pagination.update(pagination => ({ ...pagination, page: requestData.page, rowsPerPageCurrent: requestData.rowsPerPageCurrent, total: response.total }));
+    this.pagination.update(pagination => ({
+      ...pagination,
+      page: requestData.page ?? pagination.page,
+      rowsPerPageCurrent: requestData.rowsPerPageCurrent ?? pagination.rowsPerPageCurrent,
+      total: response.total
+    }));
   });
 }`,
     html: `<aesy-table
@@ -107,6 +143,18 @@ protected onProductsTableDataRequested(requestData: RequestData): void {
     { label: '12 filas', value: 12 }
   ]
 };`
+  },
+  withoutPagination: {
+    ts: `protected readonly CITIES_TABLE_CONFIG: TableConfig<City> = {
+  tableName: 'cities',
+  columns: [
+    { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+    { key: 'country', label: 'País', type: 'text', sortable: true },
+    { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right' }
+  ]
+};`,
+    html: `<!-- Sin [paginationMetaConfig]: se muestran todas las filas -->
+<aesy-table [data]="CITIES" [config]="CITIES_TABLE_CONFIG" />`
   },
   theming: {
     css: `aesy-table {

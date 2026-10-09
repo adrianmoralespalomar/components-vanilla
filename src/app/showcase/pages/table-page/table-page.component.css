@@ -1,3 +1,24 @@
 .local-table {
   --aesy-table-container-height: 20rem;
 }
+
+/* Los botones de la columna Acciones necesitan algo más de alto que el texto */
+.custom-cells-table {
+  --aesy-table-cell-height: 3rem;
+
+  .country-badge {
+    background: #ede9fe;
+    border-radius: 999px;
+    color: #6d28d9;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.625rem;
+  }
+
+  .person-actions {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}

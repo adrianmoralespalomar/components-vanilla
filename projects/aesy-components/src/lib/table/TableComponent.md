@@ -16,7 +16,8 @@ Selector: `aesy-table`.
 - Columnas fijas a la izquierda (`fixed`) y cabecera fija (`isHeaderFixed`).
 - Columnas y filas reordenables arrastrando (CDK drag & drop).
 - Persistencia de filtros en la URL (`persistFilters`).
-- Paginación configurable: textos, iconos, primera/última página y filas por página.
+- Paginación configurable (u omitible): textos, iconos, primera/última página y filas por página.
+- Celdas con contenido propio (botones, enlaces, etiquetas…) con `aesyTableCell`, y columnas `custom` sin dato propio (acciones).
 
 ---
 
@@ -121,6 +122,53 @@ La columna de casillas no tiene texto en la cabecera; si quieres uno, usa `selec
 
 ---
 
+# Celdas personalizadas
+
+Por defecto cada celda muestra `row[key]` como texto. Para pintar otra cosa (botones, enlaces, etiquetas), declara dentro de la tabla un `ng-template` con `aesyTableCell` y la `key` de la columna. `let-row` recibe la fila y `let-column="column"` la columna.
+
+```ts
+import { TableCellDirective, TableComponent, TableConfig } from 'aesy-components';
+
+@Component({
+  imports: [TableCellDirective, TableComponent]
+})
+export class DocumentsComponent {
+  protected readonly documents = signal<Document[]>([]);
+
+  protected readonly DOCUMENTS_TABLE_CONFIG: TableConfig<Document> = {
+    tableName: 'documents',
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
+      { key: 'status', label: 'Estado', type: 'text', sortable: true },
+      { key: 'actions', label: 'Acciones', type: 'custom', width: '120px' }
+    ]
+  };
+}
+```
+
+```html
+<aesy-table [data]="documents()" [config]="DOCUMENTS_TABLE_CONFIG">
+  <ng-template aesyTableCell="status" [aesyTableCellRows]="documents()" let-document>
+    <span class="status-badge">{{ document.status }}</span>
+  </ng-template>
+
+  <ng-template aesyTableCell="actions" [aesyTableCellRows]="documents()" let-document>
+    <aesy-button type="tertiary" label="Descargar" (buttonClick)="onDownloadButtonClicked(document)" />
+  </ng-template>
+</aesy-table>
+```
+
+Dos tipos de columna con plantilla:
+
+- **Columna de datos** (`status`): su `key` es una propiedad de la fila. La plantilla solo cambia cómo se pinta; se sigue ordenando y filtrando por el valor.
+- **Columna `custom`** (`actions`): su `key` es un identificador cualquiera, no tiene que estar en la fila. No se ordena ni se filtra. Si no tiene plantilla, sus celdas quedan vacías.
+
+El resto de columnas siguen comprobando que su `key` existe en `T`: una errata como `key: 'nmae'` da error de compilación.
+
+**Tipado de la fila.** Angular no puede deducir el tipo de las filas a partir de la tabla, así que `aesyTableCellRows` recibe las mismas filas que `data` solo para eso: con él, `document` llega como `Document`. Sin él, llega como `Record<string, unknown>` y, con `strictTemplates`, no se puede pasar a un método que espere un `Document`.
+
+---
+
 # Columnas y filas reordenables
 
 ```ts
@@ -168,6 +216,10 @@ protected readonly PAGINATION: PaginationMeta = {
 
 Cada botón admite texto (`…Label`) o icono (`…IconSvg`, path SVG de 20×20). Si se indica texto, el icono no se muestra.
 
+Sin `paginationMetaConfig` no se muestra la paginación: en modo local se pintan todas las filas y, en modo servidor, `requestData` llega con `page` y `rowsPerPageCurrent` a `null` (hay que devolver todas).
+
+Si ninguna columna es `filterable`, la cabecera no reserva el hueco de los filtros.
+
 ---
 
 # Persistencia de filtros en la URL
@@ -183,7 +235,7 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | Input | Tipo | Default | Descripción |
 |---|---|---|---|
 | `config` | `TableConfig<T>` | obligatorio | Columnas y comportamiento. |
-| `paginationMetaConfig` | `PaginationMeta` | obligatorio | Estado y textos de la paginación. |
+| `paginationMetaConfig` | `PaginationMeta \| null` | `null` | Estado y textos de la paginación. Sin él, no hay paginación. |
 | `data` | `T[]` | `[]` | Filas. En local, todas (los cambios se reflejan); en servidor, las de la página actual. |
 
 ## Outputs
@@ -195,6 +247,13 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `currentPageChange` | `number` | Nueva página actual. |
 | `rowsPerPageChange` | `number` | Nuevo número de filas por página. |
 | `rowOrderChange` | `RowOrderChange<T>` | Una fila se ha arrastrado a otra posición. |
+
+## Directivas
+
+| Selector | Descripción |
+|---|---|
+| `ng-template[aesyTableCell]` | Plantilla de las celdas de la columna con esa `key` (`TableCellDirective<T>`). Contexto: `TableCellContext<T>` (`$implicit`: la fila; `column`: la columna). |
+| `[aesyTableCellRows]` | Opcional, solo para el tipado: las mismas filas que `data`. |
 
 ## Tipos
 
@@ -212,13 +271,27 @@ export interface TableConfig<T> {
   sortDirection?: 'asc' | 'desc' | '';
 }
 
-export interface TableColumn<T> {
+export type TableColumn<T> = TableDataColumn<T> | TableCustomColumn;
+
+export interface TableDataColumn<T> {
   key: keyof T & string;
   label: string;
   type: 'text' | 'number' | 'date' | 'select';
   options?: SelectOption[];       // filtro de tipo select
   sortable?: boolean;
   filterable?: boolean;
+  fixed?: boolean;
+  width?: string;
+  alignHeader?: 'left' | 'center' | 'right';
+  alignCell?: 'left' | 'center' | 'right';
+}
+
+export interface TableCustomColumn {
+  key: string;                    // identificador; no tiene que estar en la fila
+  label: string;
+  type: 'custom';
+  sortable?: false;
+  filterable?: false;
   fixed?: boolean;
   width?: string;
   alignHeader?: 'left' | 'center' | 'right';
@@ -232,8 +305,8 @@ export interface TableSelectableConfig<T> {
 }
 
 export interface RequestData {
-  page: number;
-  rowsPerPageCurrent: number;
+  page: number | null;               // null sin paginación: devuelve todas las filas
+  rowsPerPageCurrent: number | null; // null sin paginación
   filters: any;
   sortByKey?: string;
   sortDirection?: 'asc' | 'desc' | '';

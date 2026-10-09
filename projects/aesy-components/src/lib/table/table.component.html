@@ -22,9 +22,9 @@
           [class.aesy-table-column-draggable]="config().draggableColumns && col.key !== selectableKey && !col.fixed"
           [class.aesy-table-column-fixed]="col.fixed"
           [style.left]="getFixedColumnLeft(col)">
-          <div class="aesy-table-header" [class.aesy-table-header-fixed]="config().isHeaderFixed || col.fixed">
+          <div class="aesy-table-header" [class.aesy-table-header-fixed]="config().isHeaderFixed || col.fixed" [class.aesy-table-header-without-filters]="!hasFilterableColumns()">
             <div class="aesy-table-th-label-container">
-              <span class="aesy-table-th-label" [class.aesy-table-th-sortable]="col.sortable !== false" (click)="changeSort(col)">
+              <span class="aesy-table-th-label" [class.aesy-table-th-sortable]="isColumnSortable(col)" (click)="changeSort(col)">
                 {{ col.label }}
               </span>
               @if (getSortIcon(col.key); as icon) {
@@ -32,15 +32,17 @@
               }
             </div>
 
-            <div class="aesy-table-th-filter" [class.aesy-table-th-filter-empty]="!col.filterable">
-              @if (col.filterable) {
-                @if (col.type === 'select') {
-                  <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
-                } @else {
-                  <aesy-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
+            @if (hasFilterableColumns()) {
+              <div class="aesy-table-th-filter" [class.aesy-table-th-filter-empty]="!col.filterable">
+                @if (col.filterable) {
+                  @if (col.type === 'select') {
+                    <aesy-select [options]="col.options ?? []" [formControl]="filters[col.key]" [clearable]="true" />
+                  } @else {
+                    <aesy-input-text [formControl]="filters[col.key]" [placeholder]="'Filtrar por ' + col.label" />
+                  }
                 }
-              }
-            </div>
+              </div>
+            }
           </div>
 
           <!-- AG-GRID STYLE PREVIEW: El tooltip oscuro flotante -->
@@ -91,8 +93,10 @@
               [style.left]="getFixedColumnLeft(col)">
               @if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
+              } @else if (cellTemplatesByColumnKey().has(col.key)) {
+                <ng-container [ngTemplateOutlet]="cellTemplatesByColumnKey().get(col.key)" [ngTemplateOutletContext]="{ $implicit: row, column: col }" />
               } @else {
-                <span>{{ row[col.key] }}</span>
+                <span>{{ getCellValue(row, col.key) }}</span>
               }
             </div>
           }

@@ -18,6 +18,24 @@
     <app-value-preview label="selectionChange" [value]="selectedCities()" />
   </app-doc-section>
 
+  <app-doc-section sectionId="celdas-personalizadas" heading="Celdas personalizadas" description="Un ng-template con aesyTableCell y la key de una columna pinta lo que quieras en sus celdas. En una columna de datos (aquí País) se sigue ordenando y filtrando por el valor; una columna type: 'custom' (Acciones) no necesita estar en la fila y no se ordena ni se filtra. Con aesyTableCellRows, row llega con el tipo de tus filas." [snippet]="SNIPPETS.customCells">
+    <div class="demo-row">
+      <aesy-button type="tertiary" label="Restaurar personas" [disabled]="customCellsPeople().length === PEOPLE.length" (buttonClick)="onRestoreCustomCellsPeopleButtonClicked()" />
+    </div>
+    <aesy-table class="custom-cells-table" [data]="customCellsPeople()" [config]="CONFIGS.customCells" [paginationMetaConfig]="CUSTOM_CELLS_PAGINATION">
+      <ng-template aesyTableCell="country" [aesyTableCellRows]="customCellsPeople()" let-person>
+        <span class="country-badge">{{ person.country }}</span>
+      </ng-template>
+      <ng-template aesyTableCell="actions" [aesyTableCellRows]="customCellsPeople()" let-person>
+        <div class="person-actions">
+          <aesy-button type="tertiary" label="Ver" (buttonClick)="onViewPersonButtonClicked(person)" />
+          <aesy-button type="danger" label="Quitar" (buttonClick)="onRemovePersonButtonClicked(person)" />
+        </div>
+      </ng-template>
+    </aesy-table>
+    <app-value-preview label="Persona vista" [value]="viewedPerson()" />
+  </app-doc-section>
+
   <app-doc-section sectionId="arrastrar" heading="Columnas y filas reordenables" description="draggableColumns permite mover columnas arrastrando la cabecera y draggableRows mueve filas. En local la tabla reordena sola (si no hay filtro ni orden activos) y avisa con rowOrderChange." [snippet]="SNIPPETS.draggable">
     <aesy-table [data]="PEOPLE" [config]="CONFIGS.draggablePeople" [paginationMetaConfig]="DRAGGABLE_PAGINATION" (rowOrderChange)="onDraggablePeopleRowOrderChanged($event)" />
     <app-value-preview label="rowOrderChange" [value]="lastRowOrderChange()" />
@@ -35,6 +53,10 @@
 
   <app-doc-section sectionId="paginacion" heading="Paginación personalizada" description="PaginationMeta controla los textos, los botones de primera y última página, el indicador de página y el selector de filas por página." [snippet]="SNIPPETS.pagination">
     <aesy-table [data]="PEOPLE" [config]="CONFIGS.customPagination" [paginationMetaConfig]="CUSTOM_PAGINATION" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="sin-paginacion" heading="Sin paginación" description="Sin paginationMetaConfig no se pinta la paginación y, en local, se muestran todas las filas. Como ninguna columna es filterable, la cabecera tampoco reserva el hueco de los filtros. Con serverSide, requestData llega con page y rowsPerPageCurrent a null: hay que devolver todas las filas." [snippet]="SNIPPETS.withoutPagination">
+    <aesy-table [data]="CITIES" [config]="CONFIGS.citiesWithoutPagination" />
   </app-doc-section>
 
   <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" variant="plain" description="Variables con prefijo --aesy-table- para alto del contenedor, fondos de cabecera y filas, bordes, celdas y texto. Los filtros de cabecera se ajustan con las variables de los form controls." [snippet]="SNIPPETS.theming" />

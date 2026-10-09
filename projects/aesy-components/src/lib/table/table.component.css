@@ -138,6 +138,11 @@
   overflow: hidden;
 }
 
+.aesy-table-header-without-filters {
+  height: calc(var(--aesy-table-header-label-height) + (2 * var(--aesy-table-cell-padding-y)));
+  min-height: calc(var(--aesy-table-header-label-height) + (2 * var(--aesy-table-cell-padding-y)));
+}
+
 .aesy-table-header-fixed {
   position: sticky;
   top: 0;

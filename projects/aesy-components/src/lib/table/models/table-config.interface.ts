@@ -1,4 +1,4 @@
-import { TableColumn } from './table-column.interface';
+import { TableColumn } from './table-column.type';
 
 export interface TableConfig<T = Record<string, unknown>> {
   columns: TableColumn<T>[];

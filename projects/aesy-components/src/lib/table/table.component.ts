@@ -1,5 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, untracked, ViewChildren } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, contentChildren, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, TemplateRef, untracked, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,10 +8,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CheckboxComponent } from '../form-controls/checkbox/checkbox.component';
 import { InputTextComponent } from '../form-controls/input-text/input-text.component';
 import { SelectComponent } from '../form-controls/select/select.component';
+import { TableCellDirective } from './directives/table-cell.directive';
 import { RequestData } from './models/request-data.interface';
 import { RowOrderChange } from './models/row-order-change.interface';
 import { Row } from './models/row.type';
-import { TableColumn } from './models/table-column.interface';
+import { TableCellContext } from './models/table-cell-context.interface';
+import { TableColumn } from './models/table-column.type';
 import { TableConfig } from './models/table-config.interface';
 import { PaginationMeta } from './table-pagination/models/pagination-meta.interface';
 import { TablePaginationComponent } from './table-pagination/table-pagination.component';
@@ -18,7 +21,7 @@ import { TablePaginationComponent } from './table-pagination/table-pagination.co
 @Component({
   selector: 'aesy-table',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent, CheckboxComponent, CdkDropList, CdkDrag, CdkDragPreview, CdkDragPlaceholder],
+  imports: [ReactiveFormsModule, InputTextComponent, SelectComponent, TablePaginationComponent, CheckboxComponent, CdkDropList, CdkDrag, CdkDragPreview, CdkDragPlaceholder, NgTemplateOutlet],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -32,7 +35,8 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
 
   readonly data = input<T[]>([]);
   readonly config = input.required<TableConfig<T>>();
-  readonly paginationMetaConfig = input.required<PaginationMeta>();
+  /** null = sin paginación: en local se muestran todas las filas. */
+  readonly paginationMetaConfig = input<PaginationMeta | null>(null);
 
   readonly requestData = output<RequestData>();
   readonly selectionChange = output<T[]>();
@@ -44,18 +48,24 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     originalData: T[];
     filteredData: T[];
     config: TableConfig<T>;
-    paginationMetaConfig: PaginationMeta;
+    paginationMetaConfig: PaginationMeta | null;
   } | null>(null);
 
   private readonly dataToSendBackWhenEvents = signal<RequestData>({
-    page: 1,
-    rowsPerPageCurrent: 10,
+    page: null,
+    rowsPerPageCurrent: null,
     filters: {},
     sortByKey: '',
     sortDirection: 'asc'
   });
 
   protected readonly isServerSide = computed(() => this.config()?.serverSide ?? false);
+  /** Sin columnas filtrables no se reserva el hueco de los filtros en la cabecera. */
+  protected readonly hasFilterableColumns = computed(() => this.config().columns.some(column => column.filterable));
+  private readonly cellTemplates = contentChildren<TableCellDirective<T>>(TableCellDirective);
+  protected readonly cellTemplatesByColumnKey = computed(
+    () => new Map<string, TemplateRef<TableCellContext<T>>>(this.cellTemplates().map(cellTemplate => [cellTemplate.columnKey(), cellTemplate.templateRef]))
+  );
   protected readonly selectableKey = '__selectable__';
   /** Valores de `selectable.key` de las filas seleccionadas. Empieza con `selectable.selectedValues`. */
   protected readonly selectedKeys = signal<Set<unknown>>(new Set());
@@ -83,7 +93,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     effect(() => this.initConfigurations());
     effect(() => this.initFilters());
     effect(() => this.applyPersistFilters());
-    effect(() => this.initColumnOrder(), { allowSignalWrites: true });
+    effect(() => this.initColumnOrder());
     effect(() => this.syncLocalDataWithInput());
     effect(() => this.syncLocalPaginationWithInput());
     effect(() => this.syncSelectedRowsWithData());
@@ -107,8 +117,8 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
       this.applyClientFilteringSortAndPagination();
     } else {
       this.dataToSendBackWhenEvents.set({
-        page: this.paginationMetaConfig().page,
-        rowsPerPageCurrent: this.paginationMetaConfig().rowsPerPageCurrent,
+        page: this.paginationMetaConfig()?.page ?? null,
+        rowsPerPageCurrent: this.paginationMetaConfig()?.rowsPerPageCurrent ?? null,
         filters: {},
         sortByKey: this.config()?.sortByKey,
         sortDirection: this.config()?.sortDirection
@@ -209,7 +219,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   protected get columns(): TableColumn<T>[] {
     const columns = this.orderedColumns();
     if (!this.config().selectable) return columns;
-    return [{ key: this.selectableKey as keyof T & string, label: this.config().selectable?.headerLabel ?? '', type: 'text' }, ...columns];
+    return [{ key: this.selectableKey, label: this.config().selectable?.headerLabel ?? '', type: 'custom' }, ...columns];
   }
 
   // === NUEVO: COLUMNAS REACTIVAS PARA EL TBODY ===
@@ -249,7 +259,11 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.calculateFixedOffsets();
-    this.resizeObserver = new ResizeObserver(() => this.calculateFixedOffsets());
+    // Sin ResizeObserver (SSR, jsdom) las columnas fijas se recalculan solo al cambiar las cabeceras
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => this.calculateFixedOffsets());
+      this.destroyRef.onDestroy(() => this.resizeObserver?.disconnect());
+    }
     this.observeHeaderElements();
 
     this.headerElements.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -430,12 +444,21 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     void this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: 'merge' });
   }
 
+  /** Sin paginación la petición no limita las filas: page y rowsPerPageCurrent van a null. */
   protected emitRequest(): void {
-    this.requestData.emit(this.dataToSendBackWhenEvents());
+    const requestData = this.dataToSendBackWhenEvents();
+    const paginationMetaConfig = this.paginationMetaConfig();
+    if (!paginationMetaConfig) return this.requestData.emit({ ...requestData, page: null, rowsPerPageCurrent: null });
+    this.requestData.emit({ ...requestData, page: requestData.page ?? paginationMetaConfig.page, rowsPerPageCurrent: requestData.rowsPerPageCurrent ?? paginationMetaConfig.rowsPerPageCurrent });
+  }
+
+  /** Las columnas custom (incluida la de casillas) no se ordenan. */
+  protected isColumnSortable(column: TableColumn<T>): boolean {
+    return column.type !== 'custom' && column.sortable !== false;
   }
 
   protected changeSort(column: TableColumn<T>): void {
-    if (column.key === this.selectableKey || column.sortable === false) return;
+    if (!this.isColumnSortable(column)) return;
     const newSortKey: string = column.key;
     const newSortDirection = this.sortKey !== newSortKey ? 'asc' : this.sortDirection === 'asc' ? 'desc' : 'asc';
 
@@ -453,7 +476,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
       this.dataToSendBackWhenEvents.update(x => ({ ...x, page: newPage }));
       this.emitRequest();
     } else {
-      this.tableForNoServerSide.update(config => (config ? { ...config, paginationMetaConfig: { ...config.paginationMetaConfig, page: newPage } } : null));
+      this.tableForNoServerSide.update(config => (config?.paginationMetaConfig ? { ...config, paginationMetaConfig: { ...config.paginationMetaConfig, page: newPage } } : config));
       this.applyClientFilteringSortAndPagination();
     }
   }
@@ -463,7 +486,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
       this.dataToSendBackWhenEvents.update(x => ({ ...x, rowsPerPageCurrent: newRowsPerPage }));
       this.emitRequest();
     } else {
-      this.tableForNoServerSide.update(config => (config ? { ...config, paginationMetaConfig: { ...config.paginationMetaConfig, rowsPerPageCurrent: newRowsPerPage } } : null));
+      this.tableForNoServerSide.update(config => (config?.paginationMetaConfig ? { ...config, paginationMetaConfig: { ...config.paginationMetaConfig, rowsPerPageCurrent: newRowsPerPage } } : config));
       this.applyClientFilteringSortAndPagination();
     }
   }
@@ -488,7 +511,8 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     }
 
     this.tableForNoServerSide.update(config => {
-      if (!config || !config.paginationMetaConfig) return null;
+      if (!config) return null;
+      if (!config.paginationMetaConfig) return { ...config, filteredData: filtered };
       const total = filtered.length;
       const rowsPerPage = config.paginationMetaConfig.rowsPerPageCurrent;
       const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
@@ -504,7 +528,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   }
 
   /** Lee el valor de una columna con una clave en texto. Así `T` puede ser una interfaz y no solo un `Record<string, unknown>`. */
-  private getCellValue(row: T, key: string): unknown {
+  protected getCellValue(row: T, key: string): unknown {
     return (row as Record<string, unknown>)[key];
   }
 

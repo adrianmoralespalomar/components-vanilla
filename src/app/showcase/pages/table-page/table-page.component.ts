@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableComponent } from 'aesy-components';
+import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent } from 'aesy-components';
 import { ComponentApi } from '../../models/component-api.interface';
 import { DEMO_PEOPLE } from '../../models/demo-people.const';
 import { DemoPerson } from '../../models/demo-person.interface';
@@ -22,7 +22,7 @@ import { TABLE_SNIPPETS } from './models/table-snippets.const';
 
 @Component({
   selector: 'app-table-page',
-  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableComponent, ValuePreviewComponent],
+  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, ValuePreviewComponent],
   templateUrl: './table-page.component.html',
   styleUrl: './table-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,6 +40,7 @@ export class TablePageComponent {
   // En modo local la tabla pagina por su cuenta: estos objetos fijan el estado inicial
   protected readonly ASYNC_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: 0, pageShown: true };
   protected readonly CITIES_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 4, total: DEMO_CITIES.length };
+  protected readonly CUSTOM_CELLS_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length };
   protected readonly CUSTOM_PAGINATION: PaginationMeta = {
     page: 1,
     rowsPerPageCurrent: 4,
@@ -60,6 +61,7 @@ export class TablePageComponent {
   protected readonly LOCAL_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length, pageShown: true };
 
   protected readonly asyncPeople = signal<DemoPerson[]>([]);
+  protected readonly customCellsPeople = signal<DemoPerson[]>(DEMO_PEOPLE);
   protected readonly isLoadingAsyncPeople = signal<boolean>(false);
   protected readonly isLoadingProducts = signal<boolean>(false);
   protected readonly lastProductsRequestData = signal<RequestData | null>(null);
@@ -68,6 +70,7 @@ export class TablePageComponent {
   protected readonly productsLoadError = signal<string | null>(null);
   protected readonly productsPagination = signal<PaginationMeta>({ page: 1, rowsPerPageCurrent: 5, total: 0, pageShown: true, rowsPerPage: [5, 10, 20].map(rows => ({ label: `${rows} filas`, value: rows })) });
   protected readonly selectedProductTitles = signal<string[]>([]);
+  protected readonly viewedPerson = signal<DemoPerson | null>(null);
   // Coincide con selectable.selectedValues de la config: las de España empiezan seleccionadas
   protected readonly selectedCities = signal<DemoCity[]>(DEMO_CITIES.filter(city => city.country === 'España'));
 
@@ -99,6 +102,19 @@ export class TablePageComponent {
     this.selectedCities.set(selectedCities);
   }
 
+  protected onRestoreCustomCellsPeopleButtonClicked(): void {
+    this.customCellsPeople.set(DEMO_PEOPLE);
+  }
+
+  protected onViewPersonButtonClicked(person: DemoPerson): void {
+    this.viewedPerson.set(person);
+  }
+
+  protected onRemovePersonButtonClicked(person: DemoPerson): void {
+    this.customCellsPeople.update(people => people.filter(currentPerson => currentPerson !== person));
+    if (this.viewedPerson() === person) this.viewedPerson.set(null);
+  }
+
   protected onProductsSelectionChanged(selectedProducts: DemoProduct[]): void {
     this.selectedProductTitles.set(selectedProducts.map(product => `${product.id} · ${product.title}`));
   }
@@ -109,7 +125,12 @@ export class TablePageComponent {
 
   protected onProductsTableDataRequested(requestData: RequestData): void {
     const searchText: string | undefined = requestData.filters?.title;
-    let params = new HttpParams().set('limit', requestData.rowsPerPageCurrent).set('skip', (requestData.page - 1) * requestData.rowsPerPageCurrent).set('select', 'id,title,category,price');
+    // null = tabla sin paginación; en dummyjson, limit 0 devuelve todas las filas
+    const rowsPerPageCurrent = requestData.rowsPerPageCurrent ?? 0;
+    let params = new HttpParams()
+      .set('limit', rowsPerPageCurrent)
+      .set('skip', ((requestData.page ?? 1) - 1) * rowsPerPageCurrent)
+      .set('select', 'id,title,category,price');
     if (searchText) params = params.set('q', searchText);
     if (requestData.sortByKey) params = params.set('sortBy', requestData.sortByKey).set('order', requestData.sortDirection || 'asc');
 
@@ -123,7 +144,12 @@ export class TablePageComponent {
         next: response => {
           this.isLoadingProducts.set(false);
           this.products.set(response.products);
-          this.productsPagination.update(pagination => ({ ...pagination, page: requestData.page, rowsPerPageCurrent: requestData.rowsPerPageCurrent, total: response.total }));
+          this.productsPagination.update(pagination => ({
+            ...pagination,
+            page: requestData.page ?? pagination.page,
+            rowsPerPageCurrent: requestData.rowsPerPageCurrent ?? pagination.rowsPerPageCurrent,
+            total: response.total
+          }));
         },
         error: () => {
           this.isLoadingProducts.set(false);
