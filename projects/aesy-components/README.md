@@ -1,6 +1,6 @@
 # aesy-components
 
-Librería de componentes para Angular 22: standalone, `OnPush`, basada en signals e integrada con Angular Forms. Todo el aspecto se personaliza con variables CSS.
+Librería de componentes para Angular (20, 21 y 22): standalone, `OnPush`, basada en signals e integrada con Angular Forms. Todo el aspecto se personaliza con variables CSS.
 
 ## Componentes
 
@@ -32,10 +32,12 @@ npm install aesy-components
 
 | Paquete | Versión |
 |---|---|
-| `@angular/core`, `@angular/common` | `^22.1.0` |
-| `@angular/forms` | `^22.1.0` |
-| `@angular/cdk` | `^22.1.0` (overlay del select y del datepicker, drag & drop de la tabla) |
-| `@angular/router` | `^22.1.0` (solo lo usa la tabla, para `persistFilters`) |
+| `@angular/core`, `@angular/common` | `^20.0.0 \|\| ^21.0.0 \|\| ^22.0.0` |
+| `@angular/forms` | Igual |
+| `@angular/cdk` | Igual (overlay del select y del datepicker, drag & drop de la tabla) |
+| `@angular/router` | Igual (solo lo usa la tabla, para `persistFilters`) |
+
+Funciona con y sin zone.js. La librería se compila con Angular 20 (la versión mínima); por eso el repositorio está en Angular 20 y no en la última.
 
 ## Tema CSS
 

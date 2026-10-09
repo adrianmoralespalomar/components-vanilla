@@ -27,6 +27,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "components-vanilla:build:development",
+            "runner": "vitest",
             "tsConfig": "projects/aesy-components/tsconfig.spec.json"
           }
         }
@@ -90,7 +92,12 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "components-vanilla:build:development",
+            "runner": "vitest",
+            "tsConfig": "tsconfig.spec.json"
+          }
         }
       }
     }

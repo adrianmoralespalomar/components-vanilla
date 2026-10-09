@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, contentChild, effect, input, signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChild, effect, input, InputSignal, signal, TemplateRef, viewChild } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { StepContentDirective } from '../directives/step-content.directive';
 
@@ -25,7 +25,8 @@ export class StepComponent {
   /** En modo lineal, un paso opcional no bloquea el avance. */
   readonly optional = input<boolean>(false);
   /** Formulario del paso. En modo lineal no se puede avanzar mientras sea inválido. */
-  readonly stepControl = input<AbstractControl | null>(null);
+  // Tipo explícito: inferido, TypeScript lo publica como AbstractControl<any, any, any>, que Angular 20.0 no admite
+  readonly stepControl: InputSignal<AbstractControl | null> = input<AbstractControl | null>(null);
   // #endregion INPUTS
 
   // #region INTERNAL STATE

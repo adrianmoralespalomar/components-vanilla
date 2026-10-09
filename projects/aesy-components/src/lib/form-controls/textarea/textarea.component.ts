@@ -2,7 +2,7 @@ import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, forwa
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 
@@ -101,7 +101,7 @@ export class TextareaComponent implements AfterContentInit, ControlValueAccessor
   // #endregion CONTROL VALUE ACCESSOR
 
   // #region GETTERS
-  get control() {
+  get control(): AbstractControl | null {
     return this.ngControl?.control ?? null;
   }
 

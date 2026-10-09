@@ -1,7 +1,7 @@
 import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, Injector, input, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { getValidationErrorMessage } from '../shared/utils/get-validation-error-message';
 import { hasRequiredValidator } from '../shared/utils/has-required-validator';
 import { IconPosition } from '../shared/models/icon-position.type';
@@ -102,7 +102,7 @@ export class InputTextComponent implements AfterContentInit, ControlValueAccesso
   // #endregion CONTROL VALUE ACCESSOR
 
   // #region GETTERS
-  get control() {
+  get control(): AbstractControl | null {
     return this.ngControl?.control ?? null;
   }
 

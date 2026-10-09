@@ -2,7 +2,7 @@ import { AfterContentInit, ChangeDetectionStrategy, Component, DestroyRef, Eleme
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
 import { ConnectedPosition, Overlay, OverlayRef } from '@angular/cdk/overlay';
 
@@ -191,7 +191,7 @@ export class SelectComponent implements AfterContentInit, ControlValueAccessor {
 
   // #region GETTERS
 
-  get control() {
+  get control(): AbstractControl | null {
     return this.ngControl?.control ?? null;
   }
 
