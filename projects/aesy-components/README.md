@@ -37,8 +37,6 @@ npm install aesy-components
 | `@angular/cdk` | `^22.1.0` (overlay del select y del datepicker, drag & drop de la tabla) |
 | `@angular/router` | `^22.1.0` (solo lo usa la tabla, para `persistFilters`) |
 
-> `@angular/forms` y `@angular/router` aún no están declaradas en `peerDependencies` (ver [PENDIENTES.md](PENDIENTES.md)).
-
 ## Tema CSS
 
 Los controles de formulario comparten variables comunes (`--aesy-form-controls-*`) que se definen en `:root`. Importa el tema una vez en los estilos globales de tu aplicación:
@@ -109,9 +107,16 @@ npm run generate-lib
 # Compilar en modo watch y arrancar el showcase
 npm run debugapp
 
-# Publicar
-cd dist/aesy-components
-npm publish
+# Simular la publicación: compila la librería y muestra qué se incluiría, sin publicar
+# (antes: npm login y con el debugapp parado, que pone la versión 0.0.0-watch)
+npm run publish-lib-dry-run
+
+# Publicar de verdad
+npm publish ./dist/aesy-components
 ```
 
 Para añadir un componente nuevo, sigue el checklist del [README del repositorio](../../README.md#crear-un-componente-nuevo-checklist). Los problemas conocidos y mejoras pendientes están en [PENDIENTES.md](PENDIENTES.md).
+
+## Licencia
+
+[MIT](LICENSE) © amoradev

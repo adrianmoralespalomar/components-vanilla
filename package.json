@@ -5,7 +5,8 @@
     "ng": "ng",
     "build": "ng build aesy-components && ng build",
     "debugapp": "node -e \"require('fs').rmSync('dist/aesy-components', { recursive: true, force: true })\" && concurrently \"ng build aesy-components --watch\" \"wait-on dist/aesy-components/package.json && ng serve\"",
-    "generate-lib": "ng build aesy-components"
+    "generate-lib": "ng build aesy-components",
+    "publish-lib-dry-run": "npm run generate-lib && npm publish ./dist/aesy-components --dry-run"
   },
   "private": true,
   "packageManager": "npm@11.4.2",

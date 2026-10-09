@@ -1,10 +1,37 @@
 {
   "name": "aesy-components",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "Librería de componentes para Angular: standalone, basada en signals, integrada con Angular Forms y personalizable con variables CSS.",
+  "keywords": [
+    "angular",
+    "components",
+    "ui",
+    "signals",
+    "accordion",
+    "datepicker",
+    "dialog",
+    "select",
+    "stepper",
+    "table",
+    "toast"
+  ],
+  "author": "amoradev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrianmoralespalomar/components-vanilla.git",
+    "directory": "projects/aesy-components"
+  },
+  "homepage": "https://github.com/adrianmoralespalomar/components-vanilla/tree/main/projects/aesy-components#readme",
+  "bugs": {
+    "url": "https://github.com/adrianmoralespalomar/components-vanilla/issues"
+  },
   "peerDependencies": {
+    "@angular/cdk": "^22.1.0",
     "@angular/common": "^22.1.0",
     "@angular/core": "^22.1.0",
-    "@angular/cdk": "^22.1.0"
+    "@angular/forms": "^22.1.0",
+    "@angular/router": "^22.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

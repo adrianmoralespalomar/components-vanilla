@@ -18,19 +18,13 @@ Lista de problemas y mejoras detectados en `aesy-components`. Marca cada punto a
 
 ## Publicación en npm
 
-- [ ] **`peerDependencies` incompletas** en `projects/aesy-components/package.json`:
-  - [ ] Añadir `@angular/forms` (lo usan casi todos los controles).
-  - [ ] `@angular/router`: lo usa la tabla (`persistFilters` escribe query params). Añadirlo como peer o quitar esa dependencia de la tabla (por ejemplo, inyectarlo de forma opcional o delegar la persistencia en quien la use).
-- [ ] Borrar `src/lib/aesy-components.ts` (componente de plantilla del CLI que no se usa).
-- [ ] Metadatos del `package.json`: `description`, `license`, `repository`, `keywords`, `author`.
-- [ ] Añadir fichero `LICENSE`.
-- [ ] Comprobar si el nombre `aesy-components` está libre en npm (`npm view aesy-components`); si no, usar un scope (`@usuario/aesy-components`).
 - [ ] Revisar el rango de `peerDependencies` (`^22.1.0`) si se quiere usar en proyectos con otras versiones de Angular.
 - [ ] Tests: solo hay specs de `button` y `table`. Cubrir al menos los controles de formulario, el acordeón (apertura simple y `multi`, `opened`/`closed`, teclado, contenido diferido) el stepper (modo lineal con `stepControl`, opcional/no editable, `reset`, orientación, teclado), el diálogo (`open`/`close(result)`, Escape y fondo, `DialogService` y `afterClosed`) y los toasts (temporizador con pausa, `maxVisible`, `onAction`/`afterDismissed`).
 - [ ] Revisar textos fijos en español dentro de los componentes (mensajes de validación por defecto, placeholders, paginación) por si se quiere internacionalizar.
 
 ## Hecho
 
+- [x] Preparado para publicar en npm: `peerDependencies` completas (`@angular/forms` y `@angular/router`), metadatos del `package.json` (descripción, licencia, repositorio, palabras clave, autor), licencia MIT (`LICENSE`), versión `0.1.0` y borrado el componente de plantilla del CLI. El nombre `aesy-components` está libre en npm.
 - [x] Controles de formulario con `formControlName`: se suscribían a los eventos del control en `ngOnInit`, cuando Angular aún no lo ha asignado, así que un `markAllAsTouched()` o un `reset()` hecho desde fuera no se reflejaba hasta interactuar con el campo. Ahora se inicializan en `ngAfterContentInit` (los 7 controles). Con `[formControl]` ya funcionaba.
 - [x] Selectores unificados con `aesy-`: `aesy-datepicker`, `aesy-input-number`, `aesy-input-text`, `aesy-radio-button`, `aesy-textarea` (también los ids generados y los `.md`). **Cambio incompatible** para quien usara los antiguos `app-*`.
 - [x] Variables CSS del checkbox renombradas de `--checkbox-*` a `--aesy-checkbox-*`. **Cambio incompatible** para quien las sobrescribiera.

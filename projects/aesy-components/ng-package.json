@@ -9,6 +9,7 @@
       "glob": "**/theme/**/*.css",
       "input": "src/lib",
       "output": "."
-    }
+    },
+    "LICENSE"
   ]
 }
