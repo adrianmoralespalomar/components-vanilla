@@ -1,6 +1,6 @@
 {
   "name": "aesy-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Librería de componentes para Angular: standalone, basada en signals, integrada con Angular Forms y personalizable con variables CSS.",
   "keywords": [
     "angular",
