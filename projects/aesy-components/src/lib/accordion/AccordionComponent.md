@@ -144,7 +144,7 @@ No se puede abrir ni cerrar desde la cabecera y la navegación con teclado lo sa
 ```html
 <aesy-accordion togglePosition="before">…</aesy-accordion>
 <aesy-accordion [hideToggle]="true">…</aesy-accordion>
-<aesy-accordion class="plus-accordion" [toggleIconSvg]="PLUS_ICON_PATH">…</aesy-accordion>
+<aesy-accordion class="plus-accordion" [toggleIconSvg]="AESY_ICON_PLUS">…</aesy-accordion>
 ```
 
 ```css

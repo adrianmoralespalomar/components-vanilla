@@ -5,6 +5,7 @@
   @if (description()) {
     <p class="doc-section-description">{{ description() }}</p>
   }
+  <ng-content select="[docSectionDescription]" />
 </header>
 
 <div [class]="variant() === 'card' ? 'doc-section-card' : 'doc-section-plain'">

@@ -4,6 +4,7 @@ export const INPUT_TEXT_API: ComponentApi = {
   inputs: [
     { name: 'label', type: 'string', defaultValue: "''", description: 'Texto de la etiqueta.' },
     { name: 'placeholder', type: 'string', defaultValue: "''", description: 'Texto mostrado con el campo vacío.' },
+    { name: 'ariaLabel', type: 'string | null', defaultValue: 'null', description: 'Nombre accesible cuando el campo no tiene label visible (por ejemplo, un buscador).' },
     { name: 'type', type: "'text' | 'password' | 'email'", defaultValue: "'text'", description: 'Tipo del input nativo.' },
     { name: 'maxlength', type: 'number | null', defaultValue: 'null', description: 'Longitud máxima del texto.' },
     { name: 'showCharCount', type: 'boolean', defaultValue: 'false', description: 'Muestra el contador de caracteres (junto a maxlength, también el máximo).' },

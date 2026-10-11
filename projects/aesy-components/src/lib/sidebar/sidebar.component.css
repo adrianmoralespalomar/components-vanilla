@@ -1,0 +1,218 @@
+/*
+ * Las variables --aesy-sidebar-* no se declaran en :host: se leen con su valor por defecto (var(--x, defecto)).
+ * Así se heredan y puedes sobrescribirlas en aesy-sidebar, en aesy-sidebar-layout o en cualquier contenedor.
+ *
+ * El host ocupa en el flujo el hueco del sidebar (lo que empuja al contenido) y el panel va posicionado encima:
+ * con overlay el hueco se queda plegado y el panel crece por encima del contenido.
+ */
+:host {
+  /* Duración de las transiciones: 0s con prefers-reduced-motion (al final del fichero) */
+  --_duration: var(--aesy-sidebar-transition-duration, 0.2s);
+  /*
+   * Se suma al ancho para que el contenido mida justo width / icon-width y los iconos queden centrados:
+   * el borde y, en floating (los dos lados) e inset (solo el exterior), el hueco alrededor de la superficie
+   */
+  --_gap-total: 1px;
+  --_expanded-width: calc(var(--aesy-sidebar-width, 16rem) + var(--_gap-total));
+  --_icon-width: calc(var(--aesy-sidebar-icon-width, 3.5rem) + var(--_gap-total));
+
+  color: var(--aesy-sidebar-text-color, #374151);
+  flex-shrink: 0;
+  order: -1;
+  position: relative;
+  transition: width var(--_duration) ease;
+  width: var(--_expanded-width);
+  z-index: var(--aesy-sidebar-z-index, 20);
+}
+
+:host([data-side='right']) {
+  order: 1;
+}
+
+/* Abierto por encima del contenido: también por encima del fondo oscuro y de los demás sidebars */
+:host([data-overlay][data-state='expanded']) {
+  z-index: calc(var(--aesy-sidebar-z-index, 20) + 10);
+}
+
+:host([data-variant='floating']) {
+  --_gap-total: calc(2 * var(--aesy-sidebar-gap, 0.5rem) + 2px);
+}
+
+:host([data-variant='inset']) {
+  --_gap-total: var(--aesy-sidebar-gap, 0.5rem);
+}
+
+:host([data-collapsible='icon'][data-state='collapsed']),
+:host([data-collapsible='icon'][data-overlay]) {
+  width: var(--_icon-width);
+}
+
+:host([data-collapsible='offcanvas'][data-state='collapsed']),
+:host([data-collapsible='offcanvas'][data-overlay]) {
+  width: 0;
+}
+
+.sidebar-panel {
+  bottom: 0;
+  box-sizing: border-box;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transition:
+    width var(--_duration) ease,
+    transform var(--_duration) ease,
+    visibility 0s;
+  width: var(--_expanded-width);
+}
+
+:host([data-side='right']) .sidebar-panel {
+  left: auto;
+  right: 0;
+}
+
+:host([data-variant='floating']) .sidebar-panel {
+  padding: var(--aesy-sidebar-gap, 0.5rem);
+}
+
+:host([data-variant='inset']) .sidebar-panel {
+  padding: var(--aesy-sidebar-gap, 0.5rem) 0 var(--aesy-sidebar-gap, 0.5rem) var(--aesy-sidebar-gap, 0.5rem);
+}
+
+:host([data-variant='inset'][data-side='right']) .sidebar-panel {
+  padding: var(--aesy-sidebar-gap, 0.5rem) var(--aesy-sidebar-gap, 0.5rem) var(--aesy-sidebar-gap, 0.5rem) 0;
+}
+
+:host([data-collapsible='icon'][data-state='collapsed']) .sidebar-panel {
+  width: var(--_icon-width);
+}
+
+/* Plegado offcanvas: sale de la pantalla y, al terminar la animación, queda oculto (fuera del orden de tabulación) */
+:host([data-collapsible='offcanvas'][data-state='collapsed']) .sidebar-panel {
+  transform: translateX(-100%);
+  transition:
+    width var(--_duration) ease,
+    transform var(--_duration) ease,
+    visibility 0s linear var(--_duration);
+  visibility: hidden;
+}
+
+:host([data-collapsible='offcanvas'][data-state='collapsed'][data-side='right']) .sidebar-panel {
+  transform: translateX(100%);
+}
+
+.sidebar-surface {
+  background: var(--aesy-sidebar-background, #ffffff);
+  border-right: 1px solid var(--aesy-sidebar-border-color, #e5e7eb);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  transition: box-shadow var(--_duration) ease;
+}
+
+:host([data-side='right']) .sidebar-surface {
+  border-left: 1px solid var(--aesy-sidebar-border-color, #e5e7eb);
+  border-right: 0;
+}
+
+:host([data-variant='standard'][data-overlay][data-state='expanded']) .sidebar-surface {
+  box-shadow: var(--aesy-sidebar-overlay-shadow, 0 10px 30px rgb(17 24 39 / 0.12));
+}
+
+:host([data-variant='floating']) .sidebar-surface {
+  border: 1px solid var(--aesy-sidebar-border-color, #e5e7eb);
+  border-radius: var(--aesy-sidebar-floating-border-radius, 0.75rem);
+  box-shadow: var(--aesy-sidebar-floating-shadow, 0 4px 16px rgb(17 24 39 / 0.08));
+}
+
+:host([data-variant='inset']) .sidebar-surface {
+  background: var(--aesy-sidebar-inset-background, #f4f4f5);
+  border: 0;
+}
+
+.sidebar-header,
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 0.25rem;
+  padding: var(--aesy-sidebar-padding, 0.5rem);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.sidebar-content {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: var(--aesy-sidebar-scrollbar-color, #d1d5db) transparent;
+  scrollbar-width: thin;
+
+  /* Contenedor interior para que el contenido proyectado no encoja: crece con él y hace scroll el exterior */
+  .sidebar-content-inner {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--aesy-sidebar-content-gap, 0.5rem);
+    min-height: 100%;
+    padding: var(--aesy-sidebar-padding, 0.5rem);
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--aesy-sidebar-content-gap, 0.5rem);
+  }
+}
+
+/* Plegado a iconos la barra de scroll restaría ancho a la columna y descentraría los iconos: se oculta (el scroll sigue funcionando) */
+:host([data-collapsible='icon'][data-state='collapsed']) .sidebar-content {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.sidebar-rail {
+  background: transparent;
+  border: 0;
+  bottom: 0;
+  cursor: ew-resize;
+  padding: 0;
+  position: absolute;
+  right: -0.5rem;
+  top: 0;
+  width: 1rem;
+
+  &::after {
+    background: transparent;
+    bottom: 0;
+    content: '';
+    left: 50%;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    transition: background var(--_duration);
+    width: 2px;
+  }
+
+  &:hover::after {
+    background: var(--aesy-sidebar-rail-color, #d1d5db);
+  }
+}
+
+:host([data-side='right']) .sidebar-rail {
+  left: -0.5rem;
+  right: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    --_duration: 0s;
+  }
+}

@@ -1,0 +1,297 @@
+<app-doc-page slug="sidebar">
+  <app-doc-section sectionId="basico" heading="Básico" description="Pasa el menú en [items]: ítems sueltos y grupos, con badges y submenús. Cabecera y pie se proyectan con aesySidebarHeader y aesySidebarFooter. El botón con aesySidebarTrigger lo pliega a la columna de iconos y lo despliega." [snippet]="SNIPPETS.basic">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #basicSidebar [items]="basicEntries()" (itemClick)="onBasicItemClicked($event)">
+        <aesy-sidebar-item aesySidebarHeader label="Acme Inc">
+          <span class="sidebar-demo-logo" aesySidebarItemIcon>A</span>
+        </aesy-sidebar-item>
+        <aesy-sidebar-item aesySidebarFooter label="Juan Díaz">
+          <span class="sidebar-demo-avatar" aesySidebarItemIcon>JD</span>
+        </aesy-sidebar-item>
+      </aesy-sidebar>
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="basicSidebar" />
+          <span class="sidebar-demo-title">{{ basicActiveItem().label }}</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder"></div>
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="variantes" heading="Variantes y modos" description="Prueba todas las combinaciones con los controles. Qué hace cada opción:" [snippet]="SNIPPETS.variants">
+    <dl class="sidebar-playground-legend" docSectionDescription>
+      <dt>variant</dt>
+      <dd>
+        <ul>
+          <li><strong>standard</strong>: pegado al borde, separado con una línea.</li>
+          <li><strong>floating</strong>: panel separado del borde, redondeado y con sombra.</li>
+          <li><strong>inset</strong>: sin fondo propio y el contenido como una tarjeta.</li>
+        </ul>
+      </dd>
+      <dt>collapsible</dt>
+      <dd>
+        <ul>
+          <li><strong>icon</strong>: plegado se queda en una columna de iconos.</li>
+          <li><strong>offcanvas</strong>: plegado sale de la pantalla.</li>
+          <li><strong>none</strong>: siempre abierto.</li>
+        </ul>
+      </dd>
+      <dt>side</dt>
+      <dd>Lado en el que se coloca: <strong>left</strong> o <strong>right</strong>.</dd>
+      <dt>overlay</dt>
+      <dd>Al abrirse va por encima del contenido en vez de empujarlo. Se cierra con Escape o pulsando fuera.</dd>
+      <dt>openOnHover</dt>
+      <dd>Plegado, se despliega al pasar el ratón y se vuelve a plegar al salir.</dd>
+      <dt>backdrop</dt>
+      <dd>Oscurece el contenido mientras está abierto por encima (con overlay).</dd>
+      <dt>rail</dt>
+      <dd>Franja fina en el borde interior que lo pliega y despliega al pulsarla.</dd>
+    </dl>
+    <div class="sidebar-playground-controls">
+      <aesy-select label="variant" [options]="VARIANT_OPTIONS" [(value)]="playgroundVariant" />
+      <aesy-select label="collapsible" [options]="COLLAPSIBLE_OPTIONS" [(value)]="playgroundCollapsible" />
+      <aesy-radio-button label="side" orientation="horizontal" [options]="SIDE_OPTIONS" [(value)]="playgroundSide" />
+      <div class="sidebar-playground-checkboxes">
+        <aesy-checkbox label="overlay" [(value)]="playgroundOverlay" />
+        <aesy-checkbox label="openOnHover" [(value)]="playgroundOpenOnHover" />
+        <aesy-checkbox label="backdrop" [(value)]="playgroundBackdrop" />
+        <aesy-checkbox label="rail" [(value)]="playgroundRail" />
+      </div>
+    </div>
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar
+        #playgroundSidebar
+        [variant]="playgroundVariant()"
+        [collapsible]="playgroundCollapsible()"
+        [side]="playgroundSide()"
+        [overlay]="playgroundOverlay()"
+        [openOnHover]="playgroundOpenOnHover()"
+        [backdrop]="playgroundBackdrop()"
+        [rail]="playgroundRail()"
+        [items]="playgroundEntries()"
+        (itemClick)="onPlaygroundItemClicked($event)">
+        <aesy-sidebar-item aesySidebarHeader label="Acme Inc">
+          <span class="sidebar-demo-logo" aesySidebarItemIcon>A</span>
+        </aesy-sidebar-item>
+        <aesy-sidebar-item aesySidebarFooter label="Juan Díaz">
+          <span class="sidebar-demo-avatar" aesySidebarItemIcon>JD</span>
+        </aesy-sidebar-item>
+      </aesy-sidebar>
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="playgroundSidebar" />
+          <span class="sidebar-demo-title">{{ playgroundActiveItem().label }}</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder"></div>
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="maquetado-libre" heading="Maquetado libre" description="Sin [items], maqueta tú el menú con aesy-sidebar-group y aesy-sidebar-item, y mete cualquier otro HTML: un buscador, una tarjeta, avatares… Un ítem con ítems dentro es un submenú. Con aesySidebarItemIcon pones otro icono (logo, avatar) y plegado a iconos se sigue viendo." [snippet]="SNIPPETS.manual">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #manualSidebar variant="floating" ariaLabel="Menú maquetado">
+        <aesy-sidebar-item aesySidebarHeader label="Acme Inc" (itemClick)="onManualItemClicked('Acme Inc')">
+          <span class="sidebar-demo-logo" aesySidebarItemIcon>A</span>
+        </aesy-sidebar-item>
+
+        <aesy-input-text class="sidebar-demo-search" placeholder="Buscar…" ariaLabel="Buscar en el menú" />
+
+        <aesy-sidebar-group label="General">
+          <aesy-sidebar-item label="Inicio" [iconSvg]="ICONS.home" [active]="manualLastClickedLabel() === 'Inicio'" (itemClick)="onManualItemClicked('Inicio')" />
+          <aesy-sidebar-item label="Bandeja de entrada" badge="5" [iconSvg]="ICONS.inbox" [active]="manualLastClickedLabel() === 'Bandeja de entrada'" (itemClick)="onManualItemClicked('Bandeja de entrada')" />
+          <aesy-sidebar-item label="Analítica" [iconSvg]="ICONS.chart">
+            <aesy-sidebar-item label="Resumen" [active]="manualLastClickedLabel() === 'Resumen'" (itemClick)="onManualItemClicked('Resumen')" />
+            <aesy-sidebar-item label="Informes" [active]="manualLastClickedLabel() === 'Informes'" (itemClick)="onManualItemClicked('Informes')" />
+          </aesy-sidebar-item>
+        </aesy-sidebar-group>
+
+        <aesy-sidebar-group label="Equipo">
+          <aesy-sidebar-item label="Lucía Martín" [active]="manualLastClickedLabel() === 'Lucía Martín'" (itemClick)="onManualItemClicked('Lucía Martín')">
+            <span class="sidebar-demo-avatar sidebar-demo-avatar-pink" aesySidebarItemIcon>LM</span>
+          </aesy-sidebar-item>
+          <aesy-sidebar-item label="Carlos Ruiz" [active]="manualLastClickedLabel() === 'Carlos Ruiz'" (itemClick)="onManualItemClicked('Carlos Ruiz')">
+            <span class="sidebar-demo-avatar sidebar-demo-avatar-green" aesySidebarItemIcon>CR</span>
+          </aesy-sidebar-item>
+        </aesy-sidebar-group>
+
+        <div class="sidebar-demo-promo">
+          <strong>Pásate a Pro</strong>
+          <span>Proyectos ilimitados y soporte prioritario.</span>
+          <aesy-button type="secondary" label="Ver planes" (buttonClick)="onManualItemClicked('Ver planes')" />
+        </div>
+
+        <aesy-sidebar-item aesySidebarFooter label="Ajustes" [iconSvg]="ICONS.users" [disabled]="true" />
+      </aesy-sidebar>
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="manualSidebar" />
+          <span class="sidebar-demo-title">Último pulsado: {{ manualLastClickedLabel() }}</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="router" heading="Navegación con el router" description="Con link (lo mismo que routerLink) el ítem es un enlace del router y se marca activo solo según la ruta, con aria-current. linkActiveExact lo activa solo con la ruta exacta (para '/'). Con href es un enlace externo. Estos enlaces son reales: llevan a las páginas del showcase." [snippet]="SNIPPETS.router">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #routerSidebar ariaLabel="Navegación del showcase" [items]="NAVIGATION_ENTRIES" />
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="routerSidebar" />
+          <span class="sidebar-demo-title">Estás en Sidebar: su enlace sale activo</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <p class="sidebar-demo-text">Los ítems sin icono muestran su inicial al plegarse a iconos.</p>
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="submenus" heading="Submenús anidados" description="children admite cualquier profundidad. Las carpetas que contienen el ítem activo se abren solas; el resto empieza cerrado (o abierto con expanded: true). Plegado a iconos, pulsar un ítem con submenú despliega el sidebar y lo abre." [snippet]="SNIPPETS.nested">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #nestedSidebar ariaLabel="Archivos" [items]="nestedEntries()" (itemClick)="onNestedItemClicked($event)">
+        <aesy-sidebar-item aesySidebarHeader label="Gestor de archivos">
+          <span class="sidebar-demo-logo sidebar-demo-logo-orange" aesySidebarItemIcon>F</span>
+        </aesy-sidebar-item>
+      </aesy-sidebar>
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="nestedSidebar" />
+          <span class="sidebar-demo-title">{{ nestedActiveItem().label }}</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="estado-controlado" heading="Estado controlado" description="open es un model: enlázalo con [(open)] para abrirlo o cerrarlo desde fuera. También tienes show(), hide() y toggle() desde una referencia al componente. Aquí es offcanvas: plegado sale de la pantalla." [snippet]="SNIPPETS.controlled">
+    <div class="demo-row">
+      <aesy-checkbox label="open" [(value)]="isControlledSidebarOpen" />
+      <aesy-button type="secondary" label="toggle()" (buttonClick)="controlledSidebar.toggle()" />
+      <aesy-button label="show()" (buttonClick)="controlledSidebar.show()" />
+      <aesy-button label="hide()" (buttonClick)="controlledSidebar.hide()" />
+    </div>
+    <aesy-sidebar-layout class="sidebar-demo sidebar-demo-short">
+      <aesy-sidebar #controlledSidebar collapsible="offcanvas" [items]="basicEntries()" [(open)]="isControlledSidebarOpen" (itemClick)="onBasicItemClicked($event)" />
+      <aesy-sidebar-main>
+        <div class="sidebar-demo-body">
+          <app-value-preview label="open" [value]="isControlledSidebarOpen()" />
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="dos-sidebars" heading="Dos sidebars" description="Puedes tener varios en el mismo layout, cada uno con su botón. A la izquierda, la navegación plegable a iconos; a la derecha, un panel de avisos offcanvas por encima del contenido, con fondo oscuro, que se cierra con Escape o pulsando fuera." [snippet]="SNIPPETS.dual">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #dualNavigation [items]="basicEntries()" [open]="false" (itemClick)="onBasicItemClicked($event)" />
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="dualNavigation" />
+          <span class="sidebar-demo-title">{{ basicActiveItem().label }}</span>
+          <aesy-button class="demo-icon-button sidebar-demo-trigger-end" ariaLabel="Avisos" [iconSvg]="ICONS.bell" [aesySidebarTrigger]="notificationsPanel" />
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+      <aesy-sidebar
+        #notificationsPanel
+        side="right"
+        collapsible="offcanvas"
+        width="18rem"
+        ariaLabel="Avisos"
+        [overlay]="true"
+        [backdrop]="true"
+        [(open)]="isNotificationsPanelOpen">
+        <div class="sidebar-demo-panel-title" aesySidebarHeader>Avisos</div>
+        <ul class="sidebar-demo-notifications">
+          <li><strong>Lucía</strong> te ha mencionado en «Informe T1».</li>
+          <li><strong>Carlos</strong> ha subido 3 archivos a Compartidos.</li>
+          <li>Tu suscripción se renueva en 5 días.</li>
+        </ul>
+        <aesy-button aesySidebarFooter type="secondary" label="Marcar todo como leído" (buttonClick)="notificationsPanel.hide()" />
+      </aesy-sidebar>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="movil" heading="Adaptado a móvil" description="Con mobileBreakpoint (en px), por debajo de ese ancho de ventana pasa a panel oculto por encima del contenido, con fondo oscuro, y se cierra al elegir un ítem. Al volver a escritorio recupera su estado. Aquí es 1024: estrecha la ventana para verlo." [snippet]="SNIPPETS.mobile">
+    <aesy-sidebar-layout class="sidebar-demo">
+      <aesy-sidebar #responsiveSidebar [mobileBreakpoint]="1024" [items]="responsiveEntries()" (itemClick)="onResponsiveItemClicked($event)" />
+      <aesy-sidebar-main>
+        <header class="sidebar-demo-header">
+          <aesy-button class="demo-icon-button" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="ICONS.sidebar" [aesySidebarTrigger]="responsiveSidebar" />
+          <span class="sidebar-demo-title">{{ responsiveActiveItem().label }}</span>
+          <span class="sidebar-demo-chip">{{ responsiveSidebar.isOverlay() ? 'Móvil' : 'Escritorio' }}</span>
+        </header>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="piezas" heading="Piezas" group="reference" variant="plain">
+    <ul class="sidebar-reference-list">
+      <li><code>aesy-sidebar-layout</code>: contenedor de la aplicación. Coloca los sidebars y el contenido en fila, pinta el fondo oscuro de <code>backdrop</code> y el fondo de <code>inset</code>. Ocupa el alto de la ventana (<code>--aesy-sidebar-layout-height</code>, por defecto <code>100dvh</code>) y es el contenido el que hace scroll.</li>
+      <li><code>aesy-sidebar</code>: el menú. Pinta <code>[items]</code> y además todo lo que proyectes: <code>aesySidebarHeader</code> arriba, <code>aesySidebarFooter</code> abajo y el resto en la zona con scroll.</li>
+      <li><code>aesy-sidebar-main</code>: el contenido principal. Ocupa el resto del ancho y, con un sidebar <code>inset</code>, se ve como una tarjeta.</li>
+      <li><code>aesy-sidebar-group</code>: bloque de ítems con título. Plegado a iconos, el título se oculta.</li>
+      <li><code>aesy-sidebar-item</code>: enlace del router (<code>link</code>), enlace externo (<code>href</code>), acción (<code>itemClick</code>) o, con ítems dentro, submenú.</li>
+      <li><code>aesySidebarTrigger</code>: directiva para el botón que lo abre y lo cierra, en un <code>aesy-button</code> o un <code>&lt;button&gt;</code> nativo. Sin valor controla el sidebar que la contiene o el primero del layout.</li>
+      <li>El sidebar funciona también sin <code>aesy-sidebar-layout</code> dentro de tu propio contenedor flex (sin fondo oscuro).</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="accesibilidad" heading="Teclado y accesibilidad" group="reference" variant="plain">
+    <ul class="sidebar-reference-list">
+      <li>El panel es un <code>&lt;aside&gt;</code> con <code>aria-label</code> (<code>ariaLabel</code>) y el menú de <code>[items]</code> va en un <code>&lt;nav&gt;</code>. Los grupos son <code>role="group"</code> con su título y sus ítems, listas (<code>role="list"</code> / <code>listitem</code>).</li>
+      <li>El botón con <code>aesySidebarTrigger</code> lleva <code>aria-controls</code> y <code>aria-expanded</code>. Los ítems con submenú, igual; el submenú cerrado queda <code>inert</code>.</li>
+      <li>El enlace activo lleva <code>aria-current="page"</code>. Plegado a iconos, cada ítem muestra su nombre en un <code>title</code>.</li>
+      <li><kbd>Tab</kbd> recorre los ítems. Abierto por encima del contenido (<code>overlay</code> o móvil), <kbd>Escape</kbd> lo cierra y devuelve el foco al botón que lo abre. Plegado offcanvas queda oculto y fuera del orden de tabulación.</li>
+      <li>Con <code>prefers-reduced-motion</code> no hay animaciones.</li>
+    </ul>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion" heading="Personalización" group="reference" description="Las variables --aesy-sidebar-* se heredan: decláralas en el sidebar, en el layout o en cualquier contenedor (incluido :root para toda la aplicación)." [snippet]="SNIPPETS.theming">
+    <aesy-sidebar-layout class="sidebar-demo sidebar-demo-short sidebar-demo-dark">
+      <aesy-sidebar [items]="basicEntries()" (itemClick)="onBasicItemClicked($event)">
+        <aesy-sidebar-item aesySidebarHeader label="Acme Inc">
+          <span class="sidebar-demo-logo" aesySidebarItemIcon>A</span>
+        </aesy-sidebar-item>
+      </aesy-sidebar>
+      <aesy-sidebar-main>
+        <div class="sidebar-demo-body">
+          <div class="sidebar-demo-placeholder sidebar-demo-placeholder-tall"></div>
+        </div>
+      </aesy-sidebar-main>
+    </aesy-sidebar-layout>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-sidebar" heading="API · aesy-sidebar" group="reference" variant="plain">
+    <app-api-reference [api]="SIDEBAR_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-sidebar-item" heading="API · aesy-sidebar-item" group="reference" variant="plain">
+    <app-api-reference [api]="SIDEBAR_ITEM_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-sidebar-group" heading="API · aesy-sidebar-group" group="reference" variant="plain">
+    <app-api-reference [api]="SIDEBAR_GROUP_API" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="api-sidebar-trigger" heading="API · aesySidebarTrigger" group="reference" variant="plain">
+    <app-api-reference [api]="SIDEBAR_TRIGGER_API" />
+  </app-doc-section>
+</app-doc-page>

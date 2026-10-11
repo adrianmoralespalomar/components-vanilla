@@ -1,0 +1,221 @@
+/* Variables --aesy-sidebar-*: ver la nota de sidebar.component.css (se leen con valor por defecto y se heredan). */
+:host {
+  /* Duración de las transiciones: 0s con prefers-reduced-motion (al final del fichero) */
+  --_duration: var(--aesy-sidebar-transition-duration, 0.2s);
+  /* Relleno que deja el icono centrado en la columna plegada (icon-width menos el padding del sidebar) */
+  --_item-padding-x: calc((var(--aesy-sidebar-icon-width, 3.5rem) - 2 * var(--aesy-sidebar-padding, 0.5rem) - var(--aesy-sidebar-item-icon-size, 1.125rem)) / 2);
+
+  display: block;
+}
+
+.sidebar-item-element {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--aesy-sidebar-item-border-radius, 0.5rem);
+  box-sizing: border-box;
+  color: var(--aesy-sidebar-item-color, inherit);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: var(--aesy-sidebar-item-font-size, 0.875rem);
+  font-weight: var(--aesy-sidebar-item-font-weight, 500);
+  gap: var(--aesy-sidebar-item-gap, 0.625rem);
+  margin: 0;
+  min-height: var(--aesy-sidebar-item-height, 2.25rem);
+  padding: 0 var(--_item-padding-x);
+  text-align: start;
+  text-decoration: none;
+  transition:
+    background var(--_duration),
+    color var(--_duration);
+  white-space: nowrap;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    background: var(--aesy-sidebar-item-background-hover, #f3f4f6);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--aesy-sidebar-focus-color, #3b82f6);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    color: var(--aesy-sidebar-disabled-color, #9ca3af);
+    cursor: not-allowed;
+
+    .sidebar-item-icon {
+      color: inherit;
+    }
+  }
+
+  .sidebar-item-icon {
+    align-items: center;
+    color: var(--aesy-sidebar-item-icon-color, #6b7280);
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--aesy-sidebar-item-icon-size, 1.125rem);
+    justify-content: center;
+    position: relative;
+    transition: color var(--_duration);
+    width: var(--aesy-sidebar-item-icon-size, 1.125rem);
+
+    svg {
+      fill: currentColor;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Plegado, el badge se ve como un punto sobre el icono */
+    &.sidebar-item-icon-badge::after {
+      background: var(--aesy-sidebar-badge-background, #4f46e5);
+      border: 2px solid var(--aesy-sidebar-background, #ffffff);
+      border-radius: 50%;
+      content: '';
+      height: 0.375rem;
+      opacity: 0;
+      position: absolute;
+      right: -0.25rem;
+      top: -0.25rem;
+      transition: opacity var(--_duration);
+      width: 0.375rem;
+    }
+  }
+
+  .sidebar-item-initial {
+    display: none;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .sidebar-item-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-item-label,
+  .sidebar-item-badge,
+  .sidebar-item-chevron {
+    transition: opacity var(--_duration);
+  }
+
+  .sidebar-item-badge {
+    background: var(--aesy-sidebar-badge-background, #4f46e5);
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: var(--aesy-sidebar-badge-color, #ffffff);
+    flex-shrink: 0;
+    font-size: var(--aesy-sidebar-badge-font-size, 0.75rem);
+    font-weight: 600;
+    line-height: 1.25rem;
+    min-width: 1.25rem;
+    padding: 0 0.375rem;
+    text-align: center;
+  }
+
+  .sidebar-item-chevron {
+    color: var(--aesy-sidebar-item-icon-color, #6b7280);
+    fill: currentColor;
+    flex-shrink: 0;
+    height: 1rem;
+    transition:
+      opacity var(--_duration),
+      transform var(--_duration) ease;
+    width: 1rem;
+  }
+
+  &[aria-expanded='true'] .sidebar-item-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.sidebar-item-element-active {
+  background: var(--aesy-sidebar-item-active-background, #eef2ff);
+  color: var(--aesy-sidebar-item-active-color, #4338ca);
+  font-weight: var(--aesy-sidebar-item-active-font-weight, 600);
+
+  &:hover:not(:disabled) {
+    background: var(--aesy-sidebar-item-active-background, #eef2ff);
+  }
+
+  .sidebar-item-icon {
+    color: inherit;
+  }
+}
+
+/* Plegado a iconos: solo queda el icono (o la inicial si no tiene) */
+:host(.aesy-sidebar-item-collapsed) .sidebar-item-element {
+  .sidebar-item-label,
+  .sidebar-item-badge,
+  .sidebar-item-chevron {
+    opacity: 0;
+  }
+
+  .sidebar-item-initial {
+    display: inline;
+  }
+
+  .sidebar-item-icon.sidebar-item-icon-badge::after {
+    opacity: 1;
+  }
+}
+
+/* Ítems de un submenú: más bajos y sin hueco de icono si no lo tienen */
+:host(.aesy-sidebar-item-nested) .sidebar-item-element {
+  font-weight: var(--aesy-sidebar-subitem-font-weight, 400);
+  min-height: var(--aesy-sidebar-subitem-height, 2rem);
+  padding: 0 0.625rem;
+
+  .sidebar-item-icon:empty {
+    display: none;
+  }
+}
+
+:host(.aesy-sidebar-item-nested) .sidebar-item-element-active {
+  font-weight: var(--aesy-sidebar-item-active-font-weight, 600);
+}
+
+/* La altura se anima con grid-template-rows (0fr → 1fr), sin medir el contenido */
+.sidebar-item-submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows var(--_duration) ease,
+    visibility 0s linear var(--_duration);
+  visibility: hidden;
+
+  .sidebar-item-submenu-content {
+    min-height: 0;
+    overflow: clip;
+  }
+
+  .sidebar-item-submenu-items {
+    border-left: 1px solid var(--aesy-sidebar-submenu-border-color, #e5e7eb);
+    display: flex;
+    flex-direction: column;
+    gap: var(--aesy-sidebar-item-spacing, 0.125rem);
+    margin: 0.125rem 0 0.125rem calc(var(--_item-padding-x) + var(--aesy-sidebar-item-icon-size, 1.125rem) / 2);
+    padding-left: 0.5rem;
+  }
+}
+
+:host(.aesy-sidebar-item-nested) .sidebar-item-submenu .sidebar-item-submenu-items {
+  margin-left: 1rem;
+}
+
+.sidebar-item-submenu-expanded {
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--_duration) ease,
+    visibility 0s;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    --_duration: 0s;
+  }
+}

@@ -1,0 +1,32 @@
+<aside class="sidebar-panel" [id]="panelId" [attr.aria-label]="ariaLabel() || null">
+  <div class="sidebar-surface">
+    <div class="sidebar-header"><ng-content select="[aesySidebarHeader]" /></div>
+
+    <div class="sidebar-content">
+      <div class="sidebar-content-inner">
+        @if (items().length) {
+          <nav class="sidebar-nav">
+            @for (entry of items(); track $index) {
+              @if (isSidebarGroup(entry)) {
+                <aesy-sidebar-group [label]="entry.label ?? ''">
+                  @for (groupItem of entry.items; track $index) {
+                    <aesy-sidebar-item [item]="groupItem" />
+                  }
+                </aesy-sidebar-group>
+              } @else {
+                <aesy-sidebar-item [item]="entry" />
+              }
+            }
+          </nav>
+        }
+        <ng-content />
+      </div>
+    </div>
+
+    <div class="sidebar-footer"><ng-content select="[aesySidebarFooter]" /></div>
+  </div>
+
+  @if (rail() && currentCollapsible() !== 'none') {
+    <button type="button" class="sidebar-rail" tabindex="-1" aria-hidden="true" title="Plegar o desplegar el menú" (click)="onRailClicked()"></button>
+  }
+</aside>

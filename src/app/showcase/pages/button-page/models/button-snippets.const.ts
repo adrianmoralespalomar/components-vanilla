@@ -14,13 +14,14 @@ export const BUTTON_SNIPPETS = {
     html: `<aesy-button type="success" label="Guardar" [disabled]="isSaving()" />`
   },
   icon: {
-    ts: `// models/add-icon-path.const.ts
-export const ADD_ICON_PATH: string = 'M10 4a1 1 0 0 1 1 1v4h4a1 1 0 1 1 0 2h-4v4a1 1 0 1 1-2 0v-4H5a1 1 0 1 1 0-2h4V5a1 1 0 0 1 1-1z';`,
+    ts: `import { AESY_ICON_PLUS } from 'aesy-components';
+
+protected readonly AESY_ICON_PLUS: string = AESY_ICON_PLUS;`,
     html: `<!-- ariaLabel es obligatorio en la práctica: es lo único que leerá un lector de pantalla -->
 <aesy-button
   type="secondary"
   ariaLabel="Añadir usuario"
-  [iconSvg]="ADD_ICON_PATH"
+  [iconSvg]="AESY_ICON_PLUS"
   (buttonClick)="onAddButtonClicked()" />`
   },
   events: {

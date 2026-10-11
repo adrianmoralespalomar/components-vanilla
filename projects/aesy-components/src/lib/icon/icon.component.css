@@ -1,0 +1,14 @@
+/* --aesy-icon-size se lee con valor por defecto: se hereda y puedes declararlo en cualquier contenedor */
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+  height: var(--aesy-icon-size, 1.25rem);
+  vertical-align: middle;
+  width: var(--aesy-icon-size, 1.25rem);
+}
+
+svg {
+  fill: currentColor;
+  height: 100%;
+  width: 100%;
+}

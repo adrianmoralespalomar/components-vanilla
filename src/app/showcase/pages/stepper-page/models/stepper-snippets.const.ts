@@ -95,9 +95,10 @@ protected onTripStepperSelectionChanged(selectionChange: StepperSelectionChange)
 </aesy-stepper>`
   },
   customContent: {
-    ts: `// models/star-icon-path.const.ts
-export const STAR_ICON_PATH: string = 'M10 2.5l2.32 4.7 5.18.75-3.75 3.66.89 5.16L10 14.33l-4.64 2.44.89-5.16L2.5 7.95l5.18-.75L10 2.5z';`,
-    html: `<aesy-stepper [completedIconSvg]="STAR_ICON_PATH">
+    ts: `import { AESY_ICON_STAR } from 'aesy-components';
+
+protected readonly AESY_ICON_STAR: string = AESY_ICON_STAR;`,
+    html: `<aesy-stepper [completedIconSvg]="AESY_ICON_STAR">
   <aesy-step>
     <span aesyStepLabel>
       Pedido

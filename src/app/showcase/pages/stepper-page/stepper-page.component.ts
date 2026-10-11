@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  AESY_ICONS,
   ButtonComponent,
   CheckboxComponent,
   InputTextComponent,
@@ -28,7 +29,6 @@ import { ValuePreviewComponent } from '../../ui/value-preview/value-preview.comp
 import { STEP_API } from './models/step-api.const';
 import { STEPPER_API } from './models/stepper-api.const';
 import { STEPPER_EVENTS_LOG_MAX_LENGTH } from './models/stepper-events-log-max-length.const';
-import { STEPPER_ICON_PATHS } from './models/stepper-icon-paths.const';
 import { STEPPER_LAZY_TABLE_CONFIG } from './models/stepper-lazy-table-config.const';
 import { STEPPER_ONBOARDING_STEP_LABELS } from './models/stepper-onboarding-step-labels.const';
 import { STEPPER_ORIENTATION_OPTIONS } from './models/stepper-orientation-options.const';
@@ -60,7 +60,7 @@ import { STEPPER_TRIP_STEP_LABELS } from './models/stepper-trip-step-labels.cons
 })
 export class StepperPageComponent {
   protected readonly CONTROLLED_STEPS: string[] = STEPPER_TRIP_STEP_LABELS;
-  protected readonly ICON_PATHS = STEPPER_ICON_PATHS;
+  protected readonly ICONS = AESY_ICONS;
   protected readonly LABEL_BOTTOM_STEPS: string[] = STEPPER_ONBOARDING_STEP_LABELS;
   protected readonly LAZY_TABLE_CONFIG: TableConfig<DemoPerson> = STEPPER_LAZY_TABLE_CONFIG;
   protected readonly LAZY_TABLE_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 4, total: DEMO_PEOPLE.length, pageShown: true };

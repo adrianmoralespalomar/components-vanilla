@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { afterRenderEffect, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, model, output, untracked, viewChild } from '@angular/core';
-import { DIALOG_CLOSE_ICON_PATH } from './models/dialog-close-icon-path.const';
+import { AESY_ICON_CLOSE } from '../icon/models/icon-paths/aesy-icon-close.const';
 import { DialogRole } from './models/dialog-role.type';
 import { DialogSize } from './models/dialog-size.type';
 
@@ -50,7 +50,7 @@ export class DialogComponent {
   private pendingResult: unknown = undefined;
   private previouslyFocusedElement: HTMLElement | null = null;
 
-  protected readonly CLOSE_ICON_PATH: string = DIALOG_CLOSE_ICON_PATH;
+  protected readonly CLOSE_ICON_PATH: string = AESY_ICON_CLOSE;
   protected readonly titleId = `aesy-dialog-${++nextDialogId}-title`;
   // #endregion INTERNAL STATE
 

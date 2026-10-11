@@ -1,0 +1,72 @@
+<ng-template #itemContent>
+  <span class="sidebar-item-icon" [class.sidebar-item-icon-badge]="currentBadge() !== null">
+    <ng-content select="[aesySidebarItemIcon]">
+      @if (currentIconSvg(); as iconSvg) {
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="iconSvg" /></svg>
+      } @else if (!parentItem) {
+        <span class="sidebar-item-initial" aria-hidden="true">{{ currentLabel().charAt(0) }}</span>
+      }
+    </ng-content>
+  </span>
+  <span class="sidebar-item-label">{{ currentLabel() }}</span>
+  @if (currentBadge() !== null) {
+    <span class="sidebar-item-badge">{{ currentBadge() }}</span>
+  }
+  @if (hasSubmenu()) {
+    <svg class="sidebar-item-chevron" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="SUBMENU_ICON_PATH" /></svg>
+  }
+</ng-template>
+
+@if (currentLink() !== null && !isDisabled() && !hasSubmenu()) {
+  <a
+    class="sidebar-item-element"
+    routerLinkActive=""
+    [class.sidebar-item-element-active]="isActive()"
+    [routerLink]="currentLink()"
+    [routerLinkActiveOptions]="{ exact: isLinkActiveExact() }"
+    [attr.aria-current]="isActive() ? 'page' : null"
+    [attr.target]="currentTarget()"
+    [attr.title]="isIconMode() ? currentLabel() : null"
+    (isActiveChange)="onRouterLinkActiveChanged($event)"
+    (click)="onItemElementClicked($event)">
+    <ng-container [ngTemplateOutlet]="itemContent" />
+  </a>
+} @else if (currentHref() !== null && !isDisabled() && !hasSubmenu()) {
+  <a
+    class="sidebar-item-element"
+    [class.sidebar-item-element-active]="isActive()"
+    [href]="currentHref()"
+    [attr.aria-current]="isActive() ? 'page' : null"
+    [attr.rel]="currentTarget() === '_blank' ? 'noopener noreferrer' : null"
+    [attr.target]="currentTarget()"
+    [attr.title]="isIconMode() ? currentLabel() : null"
+    (click)="onItemElementClicked($event)">
+    <ng-container [ngTemplateOutlet]="itemContent" />
+  </a>
+} @else {
+  <button
+    type="button"
+    class="sidebar-item-element"
+    [class.sidebar-item-element-active]="isActive()"
+    [disabled]="isDisabled()"
+    [attr.aria-controls]="hasSubmenu() ? submenuId : null"
+    [attr.aria-current]="isActive() ? 'true' : null"
+    [attr.aria-expanded]="hasSubmenu() ? isSubmenuVisible() : null"
+    [attr.title]="isIconMode() ? currentLabel() : null"
+    (click)="onItemElementClicked($event)">
+    <ng-container [ngTemplateOutlet]="itemContent" />
+  </button>
+}
+
+@if (hasSubmenu()) {
+  <div class="sidebar-item-submenu" [class.sidebar-item-submenu-expanded]="isSubmenuVisible()" [id]="submenuId" [attr.inert]="isSubmenuVisible() ? null : ''">
+    <div class="sidebar-item-submenu-content">
+      <div class="sidebar-item-submenu-items" role="list">
+        @for (childItem of childItemsData(); track $index) {
+          <aesy-sidebar-item [item]="childItem" />
+        }
+        <ng-content />
+      </div>
+    </div>
+  </div>
+}

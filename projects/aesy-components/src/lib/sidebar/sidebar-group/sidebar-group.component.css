@@ -1,0 +1,35 @@
+/* Variables --aesy-sidebar-*: ver la nota de sidebar.component.css (se leen con valor por defecto y se heredan). */
+:host {
+  /* Duración de las transiciones: 0s con prefers-reduced-motion (al final del fichero) */
+  --_duration: var(--aesy-sidebar-transition-duration, 0.2s);
+  display: block;
+}
+
+.sidebar-group-label {
+  align-items: center;
+  color: var(--aesy-sidebar-group-label-color, #6b7280);
+  display: flex;
+  font-size: var(--aesy-sidebar-group-label-font-size, 0.75rem);
+  font-weight: var(--aesy-sidebar-group-label-font-weight, 500);
+  height: var(--aesy-sidebar-group-label-height, 2rem);
+  overflow: hidden;
+  padding-inline: calc((var(--aesy-sidebar-icon-width, 3.5rem) - 2 * var(--aesy-sidebar-padding, 0.5rem) - var(--aesy-sidebar-item-icon-size, 1.125rem)) / 2);
+  transition: opacity var(--_duration) ease;
+  white-space: nowrap;
+}
+
+.sidebar-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aesy-sidebar-item-spacing, 0.125rem);
+}
+
+:host(.aesy-sidebar-group-collapsed) .sidebar-group-label {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    --_duration: 0s;
+  }
+}

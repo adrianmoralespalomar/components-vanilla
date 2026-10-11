@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CheckboxComponent } from '../form-controls/checkbox/checkbox.component';
 import { InputTextComponent } from '../form-controls/input-text/input-text.component';
 import { SelectComponent } from '../form-controls/select/select.component';
+import { AESY_ICON_SLIDERS } from '../icon/models/icon-paths/aesy-icon-sliders.const';
 import { TableCellDirective } from './directives/table-cell.directive';
 import { RequestData } from './models/request-data.interface';
 import { RowOrderChange } from './models/row-order-change.interface';
@@ -43,6 +44,8 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   readonly currentPageChange = output<number>();
   readonly rowsPerPageChange = output<number>();
   readonly rowOrderChange = output<RowOrderChange<T>>();
+
+  protected readonly DRAG_ICON_PATH: string = AESY_ICON_SLIDERS;
 
   protected readonly tableForNoServerSide = signal<{
     originalData: T[];

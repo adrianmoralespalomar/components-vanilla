@@ -61,6 +61,13 @@
                 </aesy-dialog-actions>
               </aesy-dialog>
             }
+            @case ('icon') {
+              <div class="home-icon-preview">
+                @for (iconName of HOME_PREVIEW_ICON_NAMES; track iconName) {
+                  <aesy-icon size="1.5rem" [name]="iconName" />
+                }
+              </div>
+            }
             @case ('input-number') {
               <aesy-input-number label="Importe" suffix="€" [minFractionDigits]="2" [(value)]="amount" />
               <app-value-preview [value]="amount()" />
@@ -75,6 +82,14 @@
             @case ('select') {
               <aesy-select label="País" placeholder="Selecciona un país" [clearable]="true" [options]="COUNTRY_OPTIONS" [(value)]="country" />
               <app-value-preview [value]="country()" />
+            }
+            @case ('sidebar') {
+              <aesy-sidebar-layout class="home-sidebar-preview">
+                <aesy-sidebar #homeSidebar variant="inset" ariaLabel="Menú de ejemplo" [items]="HOME_SIDEBAR_ENTRIES" />
+                <aesy-sidebar-main>
+                  <aesy-button class="demo-icon-button home-sidebar-preview-trigger" ariaLabel="Mostrar u ocultar el menú" [iconSvg]="SIDEBAR_TOGGLE_ICON_PATH" [aesySidebarTrigger]="homeSidebar" />
+                </aesy-sidebar-main>
+              </aesy-sidebar-layout>
             }
             @case ('stepper') {
               <aesy-stepper>

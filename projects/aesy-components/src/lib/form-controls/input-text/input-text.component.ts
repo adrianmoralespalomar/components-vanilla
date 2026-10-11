@@ -29,6 +29,8 @@ export class InputTextComponent implements AfterContentInit, ControlValueAccesso
    * Si es true, permitimos escribir el valor completo y dejamos que Angular Forms marque el control como inválido.
    */
   readonly allowTypeInvalidValue = input<boolean>(false);
+  /** Nombre accesible cuando el campo no tiene `label` visible (por ejemplo, un buscador). */
+  readonly ariaLabel = input<string | null>(null);
   readonly autocomplete = input<string>('off');
   /** Estado disabled para uso sin Angular Forms.*/
   readonly disabled = input<boolean>(false);

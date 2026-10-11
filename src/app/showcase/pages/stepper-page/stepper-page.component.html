@@ -148,7 +148,7 @@
   </app-doc-section>
 
   <app-doc-section sectionId="contenido-personalizado" heading="Etiquetas e iconos personalizados" description="Proyecta tu propia etiqueta con aesyStepLabel (se añade detrás de label) y cambia los iconos de completado y error con completedIconSvg y errorIconSvg (path en viewBox 20×20)." [snippet]="SNIPPETS.customContent">
-    <aesy-stepper [completedIconSvg]="ICON_PATHS.star">
+    <aesy-stepper [completedIconSvg]="ICONS.star">
       <aesy-step>
         <span class="stepper-demo-label" aesyStepLabel>
           Pedido
@@ -161,7 +161,7 @@
       </aesy-step>
       <aesy-step>
         <span class="stepper-demo-label" aesyStepLabel>
-          <svg class="stepper-demo-label-icon" viewBox="0 0 20 20" aria-hidden="true"><path [attr.d]="ICON_PATHS.truck" /></svg>
+          <svg class="stepper-demo-label-icon" viewBox="0 0 20 20" aria-hidden="true"><path [attr.d]="ICONS.truck" /></svg>
           Envío exprés
         </span>
         <p class="stepper-demo-paragraph">Llega mañana antes de las 14:00.</p>

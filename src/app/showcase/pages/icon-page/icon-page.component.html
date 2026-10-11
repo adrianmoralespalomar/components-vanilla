@@ -1,0 +1,74 @@
+<app-doc-page slug="icon">
+  <app-doc-section sectionId="galeria" heading="Galería" description="Busca un icono (también por su descripción: «casa», «error», «flecha»…), elige tamaño y color, y pulsa uno para ver cómo usarlo: con aesy-icon, con su constante en cualquier iconSvg, o copiando o descargando el SVG.">
+    <div class="icon-gallery-toolbar">
+      <aesy-input-text class="icon-gallery-search" placeholder="Buscar icono…" ariaLabel="Buscar icono" [(value)]="searchText" />
+      <aesy-radio-button label="Tamaño (px)" orientation="horizontal" [options]="SIZE_OPTIONS" [(value)]="previewSizePx" />
+      <label class="icon-gallery-color">
+        Color
+        <input type="color" [value]="previewColor()" (input)="onColorInputChanged($event)" />
+      </label>
+    </div>
+
+    <div class="icon-gallery">
+      <div class="icon-gallery-grid">
+        @for (item of filteredItems(); track item.name) {
+          <button
+            type="button"
+            class="icon-gallery-tile"
+            [class.icon-gallery-tile-selected]="item.name === selectedItem().name"
+            [attr.aria-pressed]="item.name === selectedItem().name"
+            [title]="item.keywords"
+            (click)="onIconTileClicked(item)">
+            <aesy-icon [name]="item.name" [size]="previewSizePx() + 'px'" [style.color]="previewColor()" />
+            <span class="icon-gallery-tile-name">{{ item.name }}</span>
+          </button>
+        } @empty {
+          <p class="icon-gallery-empty">Ningún icono coincide con «{{ searchText() }}».</p>
+        }
+      </div>
+
+      <aside class="icon-gallery-detail" aria-live="polite">
+        <div class="icon-gallery-preview" [style.color]="previewColor()">
+          <aesy-icon size="72px" [name]="selectedItem().name" />
+        </div>
+        <div class="icon-gallery-detail-title">
+          <h3>{{ selectedItem().name }}</h3>
+          <p>{{ selectedItem().keywords }}</p>
+        </div>
+        <aesy-button type="secondary" label="Descargar SVG" (buttonClick)="onDownloadSvgButtonClicked()" />
+        <span class="icon-gallery-code-label">Componente</span>
+        <app-code-block language="html" [code]="selectedComponentCode()" />
+        <span class="icon-gallery-code-label">Constante (para iconSvg)</span>
+        <app-code-block language="ts" [code]="selectedConstantCode()" />
+        <span class="icon-gallery-code-label">SVG ({{ previewSizePx() }} px, {{ previewColor() }})</span>
+        <app-code-block language="html" [code]="selectedSvgCode()" />
+      </aside>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="componente" heading="Componente aesy-icon" description="Pinta un icono por su nombre. Toma el color del texto, mide 1.25rem (size o --aesy-icon-size para cambiarlo) y es decorativo salvo que le des un ariaLabel." [snippet]="SNIPPETS.component">
+    <div class="demo-row demo-row-spacious">
+      <aesy-icon name="home" />
+      <aesy-icon name="check-circle" size="2rem" class="icon-demo-success" />
+      <aesy-icon name="warning" size="2rem" class="icon-demo-warning" ariaLabel="Aviso" />
+      <span class="icon-demo-inline"><aesy-icon name="mail" /> Junto a un texto</span>
+    </div>
+  </app-doc-section>
+
+  <app-doc-section sectionId="en-componentes" heading="En otros componentes" description="Cada icono se exporta también como constante (AESY_ICON_HOME, AESY_ICON_PLUS…) con su path SVG: pásala a cualquier iconSvg (button, sidebar, accordion, stepper…). Importando constantes sueltas, solo entran en tu bundle los iconos que uses." [snippet]="SNIPPETS.constants">
+    <div class="demo-row">
+      <aesy-button type="secondary" ariaLabel="Añadir" [iconSvg]="ICONS.plus" />
+      <aesy-button ariaLabel="Menú" [iconSvg]="ICONS.menu" />
+      <aesy-button type="danger" ariaLabel="Borrar" [iconSvg]="ICONS.trash" />
+    </div>
+    <aesy-stepper [completedIconSvg]="ICONS.star" [selectedIndex]="1">
+      <aesy-step label="Carrito" [completed]="true" />
+      <aesy-step label="Envío" />
+      <aesy-step label="Pago" />
+    </aesy-stepper>
+  </app-doc-section>
+
+  <app-doc-section sectionId="api" heading="API · aesy-icon" group="reference" variant="plain">
+    <app-api-reference [api]="ICON_API" />
+  </app-doc-section>
+</app-doc-page>

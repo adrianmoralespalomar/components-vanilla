@@ -80,11 +80,12 @@ protected onOrderDetailsOpened(): void {
 </aesy-accordion>`
   },
   toggleIcon: {
-    ts: `// models/plus-icon-path.const.ts
-export const PLUS_ICON_PATH: string = 'M10 4a1 1 0 0 1 1 1v4h4a1 1 0 1 1 0 2h-4v4a1 1 0 1 1-2 0v-4H5a1 1 0 1 1 0-2h4V5a1 1 0 0 1 1-1z';`,
+    ts: `import { AESY_ICON_PLUS } from 'aesy-components';
+
+protected readonly AESY_ICON_PLUS: string = AESY_ICON_PLUS;`,
     html: `<aesy-accordion togglePosition="before">…</aesy-accordion>
 
-<aesy-accordion class="plus-accordion" [toggleIconSvg]="PLUS_ICON_PATH">…</aesy-accordion>
+<aesy-accordion class="plus-accordion" [toggleIconSvg]="AESY_ICON_PLUS">…</aesy-accordion>
 
 <aesy-accordion [hideToggle]="true">…</aesy-accordion>`,
     css: `.plus-accordion {

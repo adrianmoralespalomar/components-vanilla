@@ -1,8 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, contentChild, effect, ElementRef, inject, input, linkedSignal, model, output, untracked, viewChild } from '@angular/core';
+import { AESY_ICON_CHEVRON_DOWN } from '../../icon/models/icon-paths/aesy-icon-chevron-down.const';
 import { AccordionAppearance } from '../models/accordion-appearance.type';
 import { AccordionHeadingLevel } from '../models/accordion-heading-level.type';
-import { ACCORDION_TOGGLE_ICON_PATH_DEFAULT } from '../models/accordion-toggle-icon-path-default.const';
 import { AccordionTogglePosition } from '../models/accordion-toggle-position.type';
 import { AESY_ACCORDION } from '../models/aesy-accordion.token';
 import { AccordionItemContentDirective } from './accordion-item-content.directive';
@@ -64,7 +64,7 @@ export class AccordionItemComponent {
 
   protected readonly currentAppearance = computed<AccordionAppearance>(() => this.accordion?.appearance() ?? 'separated');
   protected readonly currentHeadingLevel = computed<AccordionHeadingLevel>(() => this.headingLevel() ?? this.accordion?.headingLevel() ?? 3);
-  protected readonly currentToggleIconSvg = computed<string>(() => this.toggleIconSvg() ?? this.accordion?.toggleIconSvg() ?? ACCORDION_TOGGLE_ICON_PATH_DEFAULT);
+  protected readonly currentToggleIconSvg = computed<string>(() => this.toggleIconSvg() ?? this.accordion?.toggleIconSvg() ?? AESY_ICON_CHEVRON_DOWN);
   protected readonly currentTogglePosition = computed<AccordionTogglePosition>(() => this.togglePosition() ?? this.accordion?.togglePosition() ?? 'after');
   protected readonly isToggleHidden = computed<boolean>(() => this.hideToggle() ?? this.accordion?.hideToggle() ?? false);
   // #endregion INTERNAL STATE

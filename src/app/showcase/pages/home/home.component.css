@@ -241,3 +241,22 @@
     padding: 28px 20px;
   }
 }
+
+.home-sidebar-preview {
+  --aesy-sidebar-layout-height: 260px;
+
+  border: 1px solid var(--showcase-border);
+  border-radius: 12px;
+
+  .home-sidebar-preview-trigger {
+    margin: 8px;
+  }
+}
+
+.home-icon-preview {
+  color: var(--showcase-text-muted);
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(6, 1.5rem);
+  justify-content: space-between;
+}

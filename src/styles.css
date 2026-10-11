@@ -82,6 +82,21 @@ code {
   margin: 0;
 }
 
+/* aesy-button de solo icono y sin fondo para las demos (abrir el sidebar, avisos…) */
+aesy-button.demo-icon-button {
+  --aesy-button-background-primary: transparent;
+  --aesy-button-background-primary-hover: var(--showcase-hover);
+  --aesy-button-border-color-primary: transparent;
+  --aesy-button-border-radius: 8px;
+  --aesy-button-icon-height: 18px;
+  --aesy-button-icon-width: 18px;
+  --aesy-button-padding-x: 6px;
+  --aesy-button-padding-y: 6px;
+  --aesy-button-text-color-primary: var(--showcase-text-muted);
+
+  flex-shrink: 0;
+}
+
 .demo-note {
   background: #fff6e0;
   border: 1px solid #f0d58a;

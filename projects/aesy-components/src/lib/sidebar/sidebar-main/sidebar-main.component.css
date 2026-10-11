@@ -1,0 +1,18 @@
+/* Variables --aesy-sidebar-*: ver la nota de sidebar.component.css (se leen con valor por defecto y se heredan). */
+:host {
+  background: var(--aesy-sidebar-main-background, #ffffff);
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* Con un sidebar inset el contenido es una tarjeta sobre el fondo del layout */
+:host([data-inset]) {
+  border: 1px solid var(--aesy-sidebar-main-inset-border-color, #e5e7eb);
+  border-radius: var(--aesy-sidebar-main-inset-border-radius, 0.75rem);
+  box-shadow: var(--aesy-sidebar-main-inset-shadow, 0 1px 3px rgb(17 24 39 / 0.06));
+  margin: var(--aesy-sidebar-gap, 0.5rem);
+}

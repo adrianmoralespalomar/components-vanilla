@@ -78,11 +78,13 @@ Con `disabled` el botón usa los colores `-disabled` de su variante y no emite `
 
 ```ts
 // models/add-icon-path.const.ts
-export const ADD_ICON_PATH: string = 'M10 4a1 1 0 0 1 1 1v4h4a1 1 0 1 1 0 2h-4v4a1 1 0 1 1-2 0v-4H5a1 1 0 1 1 0-2h4V5a1 1 0 0 1 1-1z';
+import { AESY_ICON_PLUS } from 'aesy-components';
+
+protected readonly AESY_ICON_PLUS: string = AESY_ICON_PLUS;
 ```
 
 ```html
-<aesy-button type="secondary" ariaLabel="Añadir usuario" [iconSvg]="ADD_ICON_PATH" (buttonClick)="onAddButtonClicked()" />
+<aesy-button type="secondary" ariaLabel="Añadir usuario" [iconSvg]="AESY_ICON_PLUS" (buttonClick)="onAddButtonClicked()" />
 ```
 
 Si se indican `label` e `iconSvg` a la vez, se muestra solo el texto.
@@ -106,6 +108,8 @@ El SVG del icono está marcado con `aria-hidden`, así que no se anuncia como im
 | `iconSvg` | `string \| null \| undefined` | `null` | Path SVG (viewBox 20×20). Solo se muestra si no hay `label`. |
 | `disabled` | `boolean \| undefined` | `false` | Deshabilita el botón. |
 | `ariaLabel` | `string \| null` | `null` | Nombre accesible. Imprescindible en botones de solo icono. |
+| `ariaExpanded` | `boolean \| null` | `null` | `aria-expanded`, si el botón abre y cierra algo (un panel, un menú). Con `aesySidebarTrigger` se pone solo. |
+| `ariaControls` | `string \| null` | `null` | `aria-controls`: id de lo que abre y cierra. Con `aesySidebarTrigger` se pone solo. |
 
 ## Outputs
 

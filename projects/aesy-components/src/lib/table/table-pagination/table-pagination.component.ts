@@ -1,7 +1,10 @@
 import { Component, computed, input, output } from '@angular/core';
 import { ButtonComponent } from '../../button/button.component';
 import { SelectComponent } from '../../form-controls/select/select.component';
-import { FIRST_PAGE_SVG_ICON_PATH_DEFAULT, LAST_PAGE_SVG_ICON_PATH_DEFAULT, NEXT_PAGE_SVG_ICON_PATH_DEFAULT, PREVIOUS_PAGE_SVG_ICON_PATH_DEFAULT } from './constants/svg-icon-default.constant';
+import { AESY_ICON_CHEVRON_LEFT } from '../../icon/models/icon-paths/aesy-icon-chevron-left.const';
+import { AESY_ICON_CHEVRON_RIGHT } from '../../icon/models/icon-paths/aesy-icon-chevron-right.const';
+import { AESY_ICON_CHEVRONS_LEFT } from '../../icon/models/icon-paths/aesy-icon-chevrons-left.const';
+import { AESY_ICON_CHEVRONS_RIGHT } from '../../icon/models/icon-paths/aesy-icon-chevrons-right.const';
 import { PaginationMeta } from './models/pagination-meta.interface';
 
 @Component({
@@ -15,18 +18,18 @@ export class TablePaginationComponent {
   readonly pageChanged = output<number>();
   readonly rowsPerPageChanged = output<number>();
 
-  protected readonly getGoFirstPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.goFirstPageButtonLabel ? null : (this.paginationMetaConfig().goFirstPageButtonIconSvg ?? FIRST_PAGE_SVG_ICON_PATH_DEFAULT)));
+  protected readonly getGoFirstPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.goFirstPageButtonLabel ? null : (this.paginationMetaConfig().goFirstPageButtonIconSvg ?? AESY_ICON_CHEVRONS_LEFT)));
   protected readonly isFirstPageButtonDisabled = computed(() => this.paginationMetaConfig().page <= 1);
 
-  protected readonly getPreviousPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.previousLabel ? null : (this.paginationMetaConfig().previousIconSvg ?? PREVIOUS_PAGE_SVG_ICON_PATH_DEFAULT)));
+  protected readonly getPreviousPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.previousLabel ? null : (this.paginationMetaConfig().previousIconSvg ?? AESY_ICON_CHEVRON_LEFT)));
   protected readonly isPreviousPageButtonDisabled = computed(() => this.paginationMetaConfig().page <= 1);
 
-  protected readonly getNextPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.nextLabel ? null : (this.paginationMetaConfig().nextIconSvg ?? NEXT_PAGE_SVG_ICON_PATH_DEFAULT)));
+  protected readonly getNextPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.nextLabel ? null : (this.paginationMetaConfig().nextIconSvg ?? AESY_ICON_CHEVRON_RIGHT)));
   protected readonly isNextPageButtonDisabled = computed(() => {
     return this.paginationMetaConfig().page * this.paginationMetaConfig().rowsPerPageCurrent >= this.paginationMetaConfig().total;
   });
 
-  protected readonly getGoLastPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.goLastPageButtonLabel ? null : (this.paginationMetaConfig().goLastPageButtonIconSvg ?? LAST_PAGE_SVG_ICON_PATH_DEFAULT)));
+  protected readonly getGoLastPageIconSvgPath = computed(() => (this.paginationMetaConfig()?.goLastPageButtonLabel ? null : (this.paginationMetaConfig().goLastPageButtonIconSvg ?? AESY_ICON_CHEVRONS_RIGHT)));
   protected readonly isLastPageButtonDisabled = computed(() => this.paginationMetaConfig().page * this.paginationMetaConfig().rowsPerPageCurrent >= this.paginationMetaConfig().total);
 
   protected changePageToFirst(): void {

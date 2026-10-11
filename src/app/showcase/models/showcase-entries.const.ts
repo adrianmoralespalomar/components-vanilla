@@ -41,6 +41,13 @@ export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
     loadPage: () => import('../pages/dialog-page/dialog-page.component').then(m => m.DialogPageComponent)
   },
   {
+    slug: 'icon',
+    name: 'Icon',
+    selector: 'aesy-icon',
+    description: 'Set de iconos propios en SVG (20×20, color del texto): componente aesy-icon, una constante por icono para cualquier iconSvg y galería para buscar, copiar y descargar.',
+    loadPage: () => import('../pages/icon-page/icon-page.component').then(m => m.IconPageComponent)
+  },
+  {
     slug: 'input-number',
     name: 'Input number',
     selector: 'aesy-input-number',
@@ -67,6 +74,14 @@ export const SHOWCASE_ENTRIES: ShowcaseEntry[] = [
     selector: 'aesy-select',
     description: 'Desplegable propio con selección simple o múltiple, botón de limpiar y opciones deshabilitadas.',
     loadPage: () => import('../pages/select-page/select-page.component').then(m => m.SelectPageComponent)
+  },
+  {
+    slug: 'sidebar',
+    name: 'Sidebar',
+    selector: 'aesy-sidebar',
+    description: 'Menú lateral por datos o maquetado a mano: tres variantes, plegado a iconos o fuera de pantalla, submenús, enlaces del router, overlay con fondo oscuro y modo móvil.',
+    isPreviewWide: true,
+    loadPage: () => import('../pages/sidebar-page/sidebar-page.component').then(m => m.SidebarPageComponent)
   },
   {
     slug: 'stepper',

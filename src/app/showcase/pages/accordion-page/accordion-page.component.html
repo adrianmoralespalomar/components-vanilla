@@ -75,7 +75,7 @@
     <div class="demo-grid">
       <div class="demo-stack">
         <p class="demo-caption">togglePosition="before"</p>
-        <aesy-accordion togglePosition="before" [toggleIconSvg]="ICON_PATHS.arrowRight" class="accordion-demo-arrow">
+        <aesy-accordion togglePosition="before" [toggleIconSvg]="ICONS['chevron-right']" class="accordion-demo-arrow">
           @for (faqItem of SHORT_FAQ_ITEMS; track faqItem.question) {
             <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
           }
@@ -83,7 +83,7 @@
       </div>
       <div class="demo-stack">
         <p class="demo-caption">Icono + que gira 45°</p>
-        <aesy-accordion class="accordion-demo-plus" [toggleIconSvg]="ICON_PATHS.plus">
+        <aesy-accordion class="accordion-demo-plus" [toggleIconSvg]="ICONS.plus">
           @for (faqItem of SHORT_FAQ_ITEMS; track faqItem.question) {
             <aesy-accordion-item [label]="faqItem.question">{{ faqItem.answer }}</aesy-accordion-item>
           }

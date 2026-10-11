@@ -153,7 +153,7 @@ Cambiar `selectedIndex` desde fuera no aplica las restricciones de `linear` (es 
 # Etiquetas e iconos personalizados
 
 ```html
-<aesy-stepper [completedIconSvg]="STAR_ICON_PATH">
+<aesy-stepper [completedIconSvg]="AESY_ICON_STAR">
   <aesy-step>
     <span aesyStepLabel>
       Pedido

@@ -36,10 +36,10 @@
 
   <app-doc-section sectionId="icono" heading="Solo icono" description="iconSvg recibe el atributo d de un path dibujado en un viewBox de 20×20. Si también hay label, se muestra solo el texto." [snippet]="SNIPPETS.icon">
     <div class="demo-row">
-      <aesy-button type="secondary" ariaLabel="Añadir" [iconSvg]="ICON_PATHS.add" />
-      <aesy-button type="success" ariaLabel="Confirmar" [iconSvg]="ICON_PATHS.check" />
-      <aesy-button type="danger" ariaLabel="Cerrar" [iconSvg]="ICON_PATHS.close" />
-      <aesy-button label="Con label: el icono no se ve" [iconSvg]="ICON_PATHS.add" />
+      <aesy-button type="secondary" ariaLabel="Añadir" [iconSvg]="ICONS.plus" />
+      <aesy-button type="success" ariaLabel="Confirmar" [iconSvg]="ICONS.check" />
+      <aesy-button type="danger" ariaLabel="Cerrar" [iconSvg]="ICONS.close" />
+      <aesy-button label="Con label: el icono no se ve" [iconSvg]="ICONS.plus" />
     </div>
     <p class="demo-caption">
       Un botón solo con icono no tiene texto que leer: pon siempre ariaLabel para que los lectores de pantalla anuncien qué hace ("botón, Añadir" en lugar de solo "botón").

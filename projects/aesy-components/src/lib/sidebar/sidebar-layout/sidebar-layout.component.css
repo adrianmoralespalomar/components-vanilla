@@ -1,0 +1,37 @@
+/* Variables --aesy-sidebar-*: ver la nota de sidebar.component.css (se leen con valor por defecto y se heredan). */
+:host {
+  /* Duración de las transiciones: 0s con prefers-reduced-motion (al final del fichero) */
+  --_duration: var(--aesy-sidebar-transition-duration, 0.2s);
+  background: var(--aesy-sidebar-layout-background, transparent);
+  display: flex;
+  height: var(--aesy-sidebar-layout-height, 100dvh);
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+:host([data-inset]) {
+  background: var(--aesy-sidebar-inset-background, #f4f4f5);
+}
+
+/* Por encima del contenido y de los sidebars, salvo el que está abierto por encima (z-index + 10) */
+.sidebar-layout-backdrop {
+  background: var(--aesy-sidebar-backdrop-background, rgb(17 24 39 / 0.4));
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity var(--_duration) ease;
+  z-index: calc(var(--aesy-sidebar-z-index, 20) + 5);
+}
+
+.sidebar-layout-backdrop-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    --_duration: 0s;
+  }
+}

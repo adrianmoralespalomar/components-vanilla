@@ -565,6 +565,7 @@ Esto permite utilizar el componente en escenarios donde no necesitamos `FormCont
 |---|---|---|---|
 | `label` | `string` | `''` | Texto del label |
 | `placeholder` | `string` | `''` | Placeholder |
+| `ariaLabel` | `string \| null` | `null` | Nombre accesible si no hay `label` visible (un buscador, por ejemplo) |
 | `type` | `'text' \| 'password' \| 'email'` | `'text'` | Tipo de input |
 | `autocomplete` | `string` | `'off'` | Valor de autocomplete |
 | `maxlength` | `number \| null` | `null` | Longitud máxima |

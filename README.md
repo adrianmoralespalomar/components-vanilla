@@ -67,8 +67,9 @@ Con `npm run debugapp` en marcha la librería se recompila sola. Si no, `npm run
 
   Orden recomendado (el mismo en todas las páginas): básico → variantes/opciones → estados (deshabilitado, solo lectura) → ayuda y errores → Reactive Forms → Personalización → API.
 
+- [ ] Si la descripción de una sección necesita más que una frase (una lista, por ejemplo), proyecta el HTML en `app-doc-section` con el atributo `docSectionDescription`: se pinta debajo de `description`, fuera de la tarjeta.
 - [ ] Para avisos sobre el componente (algo que aún no soporta), añade en `app-doc-page` un `<p class="demo-note" docPageNotes>…</p>`.
-- [ ] Para maquetar las demos tienes clases globales en `src/styles.css`: `demo-row`, `demo-grid`, `demo-stack`, `demo-narrow`, `demo-caption`, `demo-note`.
+- [ ] Para maquetar las demos tienes clases globales en `src/styles.css`: `demo-row`, `demo-grid`, `demo-stack`, `demo-narrow`, `demo-caption`, `demo-note` y `demo-icon-button` (para un `aesy-button` de solo icono y sin fondo).
 
 ### 4. Vista previa en la landing (opcional)
 

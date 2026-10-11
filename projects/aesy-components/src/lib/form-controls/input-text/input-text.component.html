@@ -27,6 +27,7 @@
       [readonly]="readonly()"
       [attr.maxlength]="allowTypeInvalidValue() ? null : currentMaxLength"
       [attr.aria-invalid]="showError"
+      [attr.aria-label]="ariaLabel()"
       [attr.aria-describedby]="showError ? inputId + '-error' : helpText() ? inputId + '-help' : null"
       [class.aesy-form-control-text-align-left]="textAlign() === 'left'"
       [class.aesy-form-control-text-align-center]="textAlign() === 'center'"

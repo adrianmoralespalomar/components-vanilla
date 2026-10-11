@@ -11,10 +11,12 @@ Librería de componentes para Angular (20, 21 y 22): standalone, `OnPush`, basad
 | Checkbox | `aesy-checkbox` | [CheckboxComponent.md](src/lib/form-controls/checkbox/CheckboxComponent.md) |
 | Datepicker | `aesy-datepicker` | [DatepickerComponent.md](src/lib/form-controls/datepicker/DatepickerComponent.md) |
 | Dialog | `aesy-dialog`, `aesy-dialog-actions`, `DialogService` | [DialogComponent.md](src/lib/dialog/DialogComponent.md) |
+| Icon | `aesy-icon`, `AESY_ICON_*`, `AESY_ICONS` | [IconComponent.md](src/lib/icon/IconComponent.md) |
 | Input number | `aesy-input-number` | [InputNumberComponent.md](src/lib/form-controls/input-number/InputNumberComponent.md) |
 | Input text | `aesy-input-text` | [InputTextComponent.md](src/lib/form-controls/input-text/InputTextComponent.md) |
 | Radio button | `aesy-radio-button` | [RadioButtonComponent.md](src/lib/form-controls/radio-button/RadioButtonComponent.md) |
 | Select | `aesy-select` | [SelectComponent.md](src/lib/form-controls/select/SelectComponent.md) |
+| Sidebar | `aesy-sidebar-layout`, `aesy-sidebar`, `aesy-sidebar-main`, `aesy-sidebar-group`, `aesy-sidebar-item`, `[aesySidebarTrigger]` | [SidebarComponent.md](src/lib/sidebar/SidebarComponent.md) |
 | Stepper | `aesy-stepper`, `aesy-step` | [StepperComponent.md](src/lib/stepper/StepperComponent.md) |
 | Table | `aesy-table`, `ng-template[aesyTableCell]` | [TableComponent.md](src/lib/table/TableComponent.md) |
 | Toast | `ToastService` | [ToastService.md](src/lib/toast/ToastService.md) |
@@ -98,7 +100,7 @@ Todos los controles de formulario funcionan de dos formas:
 
 ### Tipos exportados
 
-Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `DialogConfig`, `DialogRef`, `DialogRole`, `DialogSize`, `AESY_DIALOG_DATA`, `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn` (`TableDataColumn` | `TableCustomColumn`), `TableColumnType`, `TableColumnAlign`, `TableSelectableConfig`, `TableCellContext`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData`, `RowOrderChange`, `StepperOrientation`, `StepperLabelPosition`, `StepperSelectionChange`, `ToastOptions`, `ToastRef`, `ToastType`, `ToastPosition`, `ToastDismissReason`, `ToastGlobalConfig` y `provideAesyToastConfig`.
+Además de los componentes, la librería exporta sus tipos públicos: `AccordionAppearance`, `AccordionTogglePosition`, `AccordionHeadingLevel`, `ButtonType`, `DialogConfig`, `DialogRef`, `DialogRole`, `DialogSize`, `AESY_DIALOG_DATA`, `AesyIconName`, `AESY_ICONS` (y una constante `AESY_ICON_*` por icono), `IconPosition`, `InputTextType`, `TextareaResize`, `RadioButtonOption`, `SelectOption`, `TableConfig`, `TableColumn` (`TableDataColumn` | `TableCustomColumn`), `TableColumnType`, `TableColumnAlign`, `TableSelectableConfig`, `TableCellContext`, `PaginationMeta`, `PaginationMetaRowsPerPage`, `RequestData`, `RowOrderChange`, `SidebarEntry`, `SidebarItem`, `SidebarGroup`, `SidebarItemLink`, `SidebarVariant`, `SidebarCollapsible`, `SidebarSide`, `StepperOrientation`, `StepperLabelPosition`, `StepperSelectionChange`, `ToastOptions`, `ToastRef`, `ToastType`, `ToastPosition`, `ToastDismissReason`, `ToastGlobalConfig` y `provideAesyToastConfig`.
 
 ## Desarrollo
 

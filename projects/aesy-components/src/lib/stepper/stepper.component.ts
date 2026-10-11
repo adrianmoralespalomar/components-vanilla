@@ -1,8 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, contentChildren, effect, ElementRef, forwardRef, input, model, output, untracked, viewChildren } from '@angular/core';
+import { AESY_ICON_CHECK } from '../icon/models/icon-paths/aesy-icon-check.const';
+import { AESY_ICON_EXCLAMATION } from '../icon/models/icon-paths/aesy-icon-exclamation.const';
 import { AESY_STEPPER } from './models/aesy-stepper.token';
-import { STEPPER_COMPLETED_ICON_PATH_DEFAULT } from './models/stepper-completed-icon-path-default.const';
-import { STEPPER_ERROR_ICON_PATH_DEFAULT } from './models/stepper-error-icon-path-default.const';
 import { StepperLabelPosition } from './models/stepper-label-position.type';
 import { StepperOrientation } from './models/stepper-orientation.type';
 import { StepperSelectionChange } from './models/stepper-selection-change.interface';
@@ -47,8 +47,8 @@ export class StepperComponent {
   private readonly headerButtons = viewChildren<ElementRef<HTMLButtonElement>>('headerButton');
   private previousSelectedIndex: number | null = null;
 
-  protected readonly currentCompletedIconSvg = computed<string>(() => this.completedIconSvg() ?? STEPPER_COMPLETED_ICON_PATH_DEFAULT);
-  protected readonly currentErrorIconSvg = computed<string>(() => this.errorIconSvg() ?? STEPPER_ERROR_ICON_PATH_DEFAULT);
+  protected readonly currentCompletedIconSvg = computed<string>(() => this.completedIconSvg() ?? AESY_ICON_CHECK);
+  protected readonly currentErrorIconSvg = computed<string>(() => this.errorIconSvg() ?? AESY_ICON_EXCLAMATION);
   // #endregion INTERNAL STATE
 
   constructor() {
