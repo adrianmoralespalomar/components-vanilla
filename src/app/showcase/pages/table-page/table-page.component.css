@@ -1,3 +1,37 @@
+/* El + del botón gira 45° al desplegar y queda como una x */
+.plus-expander-table {
+  --aesy-table-expander-icon-rotation-expanded: 45deg;
+  --aesy-table-expander-icon-color: #6d28d9;
+}
+
+.themed-table {
+  --aesy-table-header-background: #1e1b4b;
+  --aesy-table-header-border-color: #1e1b4b;
+  --aesy-table-body-odd-background: #f5f3ff;
+  --aesy-table-body-even-background: #ffffff;
+  --aesy-table-body-hover-background: #ddd6fe;
+  --aesy-table-body-border-color: #ddd6fe;
+  --aesy-table-text-color: #1e1b4b;
+  --aesy-table-cell-height: 3rem;
+  --aesy-table-header-text-color: #ffffff;
+
+  .role-badge {
+    background: #ede9fe;
+    border-radius: 999px;
+    color: #6d28d9;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.625rem;
+  }
+
+  .person-actions {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
 .local-table {
   --aesy-table-container-height: 20rem;
 }

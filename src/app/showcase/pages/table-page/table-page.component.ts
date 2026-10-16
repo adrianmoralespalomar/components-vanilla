@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent } from 'aesy-components';
+import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent, TableDetailDirective, TableExpanderDirective, TableRowExpandedChange } from 'aesy-components';
 import { ComponentApi } from '../../models/component-api.interface';
 import { DEMO_PEOPLE } from '../../models/demo-people.const';
 import { DemoPerson } from '../../models/demo-person.interface';
@@ -12,7 +12,11 @@ import { ValuePreviewComponent } from '../../ui/value-preview/value-preview.comp
 import { ASYNC_PEOPLE_LOAD_DELAY_MS } from './models/async-people-load-delay-ms.const';
 import { DEMO_CITIES } from './models/demo-cities.const';
 import { DemoCity } from './models/demo-city.interface';
+import { DEMO_COUNTRIES } from './models/demo-countries.const';
+import { DemoCountry } from './models/demo-country.interface';
+import { DemoOrder } from './models/demo-order.interface';
 import { DemoProduct } from './models/demo-product.interface';
+import { EXPANDABLE_ORDERS_LOAD_DELAY_MS } from './models/expandable-orders-load-delay-ms.const';
 import { DUMMY_PRODUCTS_URL } from './models/dummy-products-url.const';
 import { DummyProductsResponse } from './models/dummy-products-response.interface';
 import { NEW_DEMO_PEOPLE } from './models/new-demo-people.const';
@@ -22,7 +26,7 @@ import { TABLE_SNIPPETS } from './models/table-snippets.const';
 
 @Component({
   selector: 'app-table-page',
-  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, ValuePreviewComponent],
+  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, TableDetailDirective, TableExpanderDirective, ValuePreviewComponent],
   templateUrl: './table-page.component.html',
   styleUrl: './table-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,6 +38,7 @@ export class TablePageComponent {
   protected readonly API: ComponentApi = TABLE_API;
   protected readonly CITIES: DemoCity[] = DEMO_CITIES;
   protected readonly CONFIGS = TABLE_DEMO_CONFIGS;
+  protected readonly COUNTRIES: DemoCountry[] = DEMO_COUNTRIES;
   protected readonly PEOPLE: DemoPerson[] = DEMO_PEOPLE;
   protected readonly SNIPPETS = TABLE_SNIPPETS;
 
@@ -58,11 +63,16 @@ export class TablePageComponent {
     ]
   };
   protected readonly DRAGGABLE_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 6, total: DEMO_PEOPLE.length };
+  protected readonly THEMED_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length };
+  protected readonly EXPANDABLE_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 4, total: DEMO_PEOPLE.length };
   protected readonly LOCAL_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length, pageShown: true };
 
   protected readonly asyncPeople = signal<DemoPerson[]>([]);
   protected readonly customCellsPeople = signal<DemoPerson[]>(DEMO_PEOPLE);
   protected readonly isLoadingAsyncPeople = signal<boolean>(false);
+  protected readonly lastRowExpandedChange = signal<TableRowExpandedChange<DemoPerson> | null>(null);
+  /** Pedidos ya cargados, por nombre de persona (el `expandable.key` de la tabla). */
+  protected readonly personOrders = signal<Record<string, DemoOrder[]>>({});
   protected readonly isLoadingProducts = signal<boolean>(false);
   protected readonly lastProductsRequestData = signal<RequestData | null>(null);
   protected readonly lastRowOrderChange = signal<RowOrderChange<DemoPerson> | null>(null);
@@ -96,6 +106,17 @@ export class TablePageComponent {
 
   protected onRemoveFirstAsyncPersonButtonClicked(): void {
     this.asyncPeople.update(people => people.slice(1));
+  }
+
+  protected onPersonRowExpandedChanged(rowExpanded: TableRowExpandedChange<DemoPerson>): void {
+    this.lastRowExpandedChange.set(rowExpanded);
+    // Un endpoint falso: al desplegar se piden los pedidos de la persona y se devuelven en subRows
+    if (!rowExpanded.expanded || this.personOrders()[rowExpanded.row.name]) return;
+    const loadTimeoutId = setTimeout(() => {
+      const orders: DemoOrder[] = [1, 2, 3].map(orderNumber => ({ product: `Producto ${orderNumber}`, amount: orderNumber * rowExpanded.row.age }));
+      this.personOrders.update(personOrders => ({ ...personOrders, [rowExpanded.row.name]: orders }));
+    }, EXPANDABLE_ORDERS_LOAD_DELAY_MS);
+    this.destroyRef.onDestroy(() => clearTimeout(loadTimeoutId));
   }
 
   protected onCitiesSelectionChanged(selectedCities: DemoCity[]): void {

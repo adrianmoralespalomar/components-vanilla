@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDragPreview, CdkDragSortEvent, CdkDragStart, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, contentChildren, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, TemplateRef, untracked, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, contentChild, contentChildren, DestroyRef, effect, ElementRef, inject, input, output, QueryList, signal, TemplateRef, untracked, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,12 +10,18 @@ import { InputTextComponent } from '../form-controls/input-text/input-text.compo
 import { SelectComponent } from '../form-controls/select/select.component';
 import { AESY_ICON_SLIDERS } from '../icon/models/icon-paths/aesy-icon-sliders.const';
 import { TableCellDirective } from './directives/table-cell.directive';
+import { TableDetailDirective } from './directives/table-detail.directive';
+import { TableExpanderDirective } from './directives/table-expander.directive';
+import { TableExpanderContext } from './models/table-expander-context.interface';
+import { AESY_ICON_CHEVRON_DOWN } from '../icon/models/icon-paths/aesy-icon-chevron-down.const';
 import { RequestData } from './models/request-data.interface';
 import { RowOrderChange } from './models/row-order-change.interface';
 import { Row } from './models/row.type';
 import { TableCellContext } from './models/table-cell-context.interface';
 import { TableColumn } from './models/table-column.type';
 import { TableConfig } from './models/table-config.interface';
+import { TableRowExpandedChange } from './models/table-row-expanded-change.interface';
+import { TableSubRowExpandedChange } from './models/table-sub-row-expanded-change.interface';
 import { PaginationMeta } from './table-pagination/models/pagination-meta.interface';
 import { TablePaginationComponent } from './table-pagination/table-pagination.component';
 
@@ -38,8 +44,17 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   readonly config = input.required<TableConfig<T>>();
   /** null = sin paginación: en local se muestran todas las filas. */
   readonly paginationMetaConfig = input<PaginationMeta | null>(null);
+  /**
+   * Filas hijas de las filas desplegables, por el valor de `expandable.key` de la fila padre. Para cargarlas bajo demanda:
+   * al llegar `rowExpandedChange` se piden y se devuelve aquí un objeto nuevo. Mientras una fila desplegada no tenga entrada, muestra "Cargando…".
+   */
+  readonly subRows = input<Record<string, readonly object[]>>({});
 
   readonly requestData = output<RequestData>();
+  /** Una fila de esta tabla se ha desplegado o plegado. */
+  readonly rowExpandedChange = output<TableRowExpandedChange<T>>();
+  /** Una fila de una subtabla (a cualquier nivel) se ha desplegado o plegado. */
+  readonly subRowExpandedChange = output<TableSubRowExpandedChange>();
   readonly selectionChange = output<T[]>();
   readonly currentPageChange = output<number>();
   readonly rowsPerPageChange = output<number>();
@@ -66,9 +81,21 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   /** Sin columnas filtrables no se reserva el hueco de los filtros en la cabecera. */
   protected readonly hasFilterableColumns = computed(() => this.config().columns.some(column => column.filterable));
   private readonly cellTemplates = contentChildren<TableCellDirective<T>>(TableCellDirective);
-  protected readonly cellTemplatesByColumnKey = computed(
-    () => new Map<string, TemplateRef<TableCellContext<T>>>(this.cellTemplates().map(cellTemplate => [cellTemplate.columnKey(), cellTemplate.templateRef]))
-  );
+  /** Plantillas `aesyTableCell` que le pasa la tabla padre (con `aesyTableCellTable`) cuando esta es una subtabla. */
+  readonly inheritedCellTemplates = input<readonly TableCellDirective<Record<string, unknown>>[]>([]);
+  protected readonly detailTemplate = contentChild(TableDetailDirective);
+  /** Todas las plantillas de celda visibles desde aquí: las heredadas y las declaradas en esta tabla. */
+  protected readonly cellTemplatesForSubTables = computed(() => [...this.inheritedCellTemplates(), ...this.cellTemplates()] as unknown as readonly TableCellDirective<Record<string, unknown>>[]);
+  protected readonly cellTemplatesByColumnKey = computed(() => {
+    const declaredHere = new Set<unknown>(this.cellTemplates());
+    const tableName = this.config().tableName;
+    const applicableTemplates = this.cellTemplatesForSubTables().filter(cellTemplate => (cellTemplate.tableName() ? cellTemplate.tableName() === tableName : declaredHere.has(cellTemplate)));
+    return new Map<string, TemplateRef<TableCellContext<T>>>(applicableTemplates.map(cellTemplate => [cellTemplate.columnKey(), cellTemplate.templateRef as unknown as TemplateRef<TableCellContext<T>>]));
+  });
+  protected readonly expandableKey = '__expandable__';
+  /** Valores de `expandable.key` de las filas desplegadas. Empieza con `expandable.expandedValues`. */
+  protected readonly expandedKeys = signal<Set<unknown>>(new Set());
+  protected readonly subTableConfig = computed(() => this.config().expandable?.subTable);
   protected readonly selectableKey = '__selectable__';
   /** Valores de `selectable.key` de las filas seleccionadas. Empieza con `selectable.selectedValues`. */
   protected readonly selectedKeys = signal<Set<unknown>>(new Set());
@@ -108,6 +135,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     this.configInitialized = true;
     const config = this.config();
     this.selectedKeys.set(new Set(config?.selectable?.selectedValues ?? []));
+    this.expandedKeys.set(new Set(config?.expandable?.expandedValues ?? []));
     if (!config?.serverSide && !this.tableForNoServerSide()) {
       this.tableForNoServerSide.set({
         originalData: this.data(),
@@ -220,9 +248,20 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   }
 
   protected get columns(): TableColumn<T>[] {
-    const columns = this.orderedColumns();
-    if (!this.config().selectable) return columns;
-    return [{ key: this.selectableKey, label: this.config().selectable?.headerLabel ?? '', type: 'custom' }, ...columns];
+    const { selectable, expandable } = this.config();
+    const expanderColumn: TableColumn<T> | null = expandable ? { key: this.expandableKey, label: expandable.headerLabel ?? '', type: 'custom', width: '3rem' } : null;
+    const isExpanderBefore = expandable?.togglePosition !== 'after';
+    const leadingColumns: TableColumn<T>[] = [];
+    if (expanderColumn && isExpanderBefore) leadingColumns.push(expanderColumn);
+    if (selectable) leadingColumns.push({ key: this.selectableKey, label: selectable.headerLabel ?? '', type: 'custom' });
+    return [...leadingColumns, ...this.orderedColumns(), ...(expanderColumn && !isExpanderBefore ? [expanderColumn] : [])];
+  }
+
+  protected readonly expanderIconSvg = computed(() => this.config().expandable?.toggleIconSvg ?? AESY_ICON_CHEVRON_DOWN);
+  protected readonly expanderTemplate = contentChild(TableExpanderDirective);
+
+  protected getExpanderContext(row: T): TableExpanderContext<T> {
+    return { $implicit: row, expanded: this.isExpanded(row), toggle: () => this.onExpanderButtonClicked(row) };
   }
 
   // === NUEVO: COLUMNAS REACTIVAS PARA EL TBODY ===
@@ -360,9 +399,10 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   }
 
   protected dropColumn(event: CdkDragDrop<TableColumn<T>[]>): void {
-    const selectableOffset = this.config().selectable ? 1 : 0;
-    const previousIndex = event.previousIndex - selectableOffset;
-    const currentIndex = event.currentIndex - selectableOffset;
+    const { selectable, expandable } = this.config();
+    const leadingColumnsCount = (selectable ? 1 : 0) + (expandable && expandable.togglePosition !== 'after' ? 1 : 0);
+    const previousIndex = event.previousIndex - leadingColumnsCount;
+    const currentIndex = event.currentIndex - leadingColumnsCount;
 
     this.clearDragState();
 
@@ -418,7 +458,7 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   }
 
   protected isColumnDragDisabled(column: TableColumn<T>): boolean {
-    return column.key === this.selectableKey || !!column.fixed;
+    return column.key === this.selectableKey || column.key === this.expandableKey || !!column.fixed;
   }
 
   // ============================================================
@@ -543,6 +583,42 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     if (a > b) result = 1;
     else if (a < b) result = -1;
     return direction === 'asc' ? result : -result;
+  }
+
+  protected isExpanded(row: T): boolean {
+    return this.expandedKeys().has(this.getRowExpansionKey(row));
+  }
+
+  protected onExpanderButtonClicked(row: T): void {
+    const rowExpansionKey = this.getRowExpansionKey(row);
+    const expanded = !this.expandedKeys().has(rowExpansionKey);
+    this.expandedKeys.update(expandedKeys => {
+      const updatedKeys = new Set(this.config().expandable?.singleExpansion ? [] : expandedKeys);
+      if (expanded) updatedKeys.add(rowExpansionKey);
+      else updatedKeys.delete(rowExpansionKey);
+      return updatedKeys;
+    });
+    this.rowExpandedChange.emit({ row, expanded });
+  }
+
+  /** Filas hijas de una fila: las de su propiedad `subRowsKey` o, si no las tiene, las del input `subRows`. `undefined` = aún sin cargar. */
+  protected getSubRows(row: T): Record<string, unknown>[] | undefined {
+    const subRowsKey = this.config().expandable?.subRowsKey;
+    const ownSubRows = subRowsKey ? this.getCellValue(row, subRowsKey) : undefined;
+    return (ownSubRows ?? this.subRows()[String(this.getRowExpansionKey(row))]) as Record<string, unknown>[] | undefined;
+  }
+
+  protected onSubTableRowExpandedChanged(event: TableRowExpandedChange<Record<string, unknown>>, parentRow: T): void {
+    this.subRowExpandedChange.emit({ ...event, parentRows: [parentRow] });
+  }
+
+  protected onSubTableSubRowExpandedChanged(event: TableSubRowExpandedChange, parentRow: T): void {
+    this.subRowExpandedChange.emit({ ...event, parentRows: [parentRow, ...event.parentRows] });
+  }
+
+  private getRowExpansionKey(row: T): unknown {
+    const expansionKey = this.config().expandable?.key;
+    return expansionKey ? this.getCellValue(row, expansionKey) : row;
   }
 
   protected toggleRowSelection(row: T, isChecked: boolean): void {

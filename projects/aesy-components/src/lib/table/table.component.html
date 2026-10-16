@@ -74,6 +74,7 @@
     <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" (cdkDropListDropped)="dropRow($event)">
       @for (row of displayedData(); track $index) {
         <div class="aesy-table-row" cdkDrag [class.aesy-table-row-odd]="$index % 2 === 0" [class.aesy-table-row-even]="$index % 2 !== 0">
+          <div class="aesy-table-row-cells">
           <!-- AQUÍ SE USA bodyColumns() PARA REORDENAR EN TIEMPO REAL -->
           @for (col of bodyColumns(); track col.key) {
             <div
@@ -87,12 +88,47 @@
               [class.aesy-table-drop-target]="col.key === draggedColKey()"
               [style.width]="getColumnWidth(col) ? getColumnWidth(col) + 'px' : col.width"
               [style.left]="getFixedColumnLeft(col)">
-              @if (col.key === selectableKey) {
+              @if (col.key === expandableKey) {
+                @if (expanderTemplate(); as expander) {
+                  <ng-container [ngTemplateOutlet]="expander.templateRef" [ngTemplateOutletContext]="getExpanderContext(row)" />
+                } @else {
+                  <button
+                    type="button"
+                    class="aesy-table-expander"
+                    [attr.aria-expanded]="isExpanded(row)"
+                    [attr.aria-label]="isExpanded(row) ? 'Plegar fila' : 'Desplegar fila'"
+                    (click)="onExpanderButtonClicked(row)">
+                    <svg class="aesy-table-expander-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="expanderIconSvg()" /></svg>
+                  </button>
+                }
+              } @else if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else if (cellTemplatesByColumnKey().has(col.key)) {
                 <ng-container [ngTemplateOutlet]="cellTemplatesByColumnKey().get(col.key)" [ngTemplateOutletContext]="{ $implicit: row, column: col }" />
               } @else {
                 <span>{{ getCellValue(row, col.key) }}</span>
+              }
+            </div>
+          }
+          </div>
+
+          @if (isExpanded(row) && (detailTemplate() || subTableConfig())) {
+            <div class="aesy-table-detail">
+              @if (detailTemplate(); as detail) {
+                <ng-container [ngTemplateOutlet]="detail.templateRef" [ngTemplateOutletContext]="{ $implicit: row, subRows: getSubRows(row) }" />
+              } @else if (subTableConfig(); as subConfig) {
+                @if (getSubRows(row); as subRowsOfRow) {
+                  <aesy-table
+                    [data]="subRowsOfRow"
+                    [config]="subConfig"
+                    [paginationMetaConfig]="config().expandable?.subTablePagination ?? null"
+                    [subRows]="subRows()"
+                    [inheritedCellTemplates]="cellTemplatesForSubTables()"
+                    (rowExpandedChange)="onSubTableRowExpandedChanged($event, row)"
+                    (subRowExpandedChange)="onSubTableSubRowExpandedChanged($event, row)"/>
+                } @else {
+                  <span class="aesy-table-detail-message">Cargando…</span>
+                }
               }
             </div>
           }

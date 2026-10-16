@@ -19,6 +19,11 @@ export class TableCellDirective<T extends object = Row> {
   readonly templateRef = inject<TemplateRef<TableCellContext<T>>>(TemplateRef);
 
   readonly columnKey = input.required<string>({ alias: 'aesyTableCell' });
+  /**
+   * `tableName` de la subtabla donde se aplica la plantilla. Sin él, solo afecta a la tabla donde está declarada.
+   * Con él, a la tabla con ese `tableName` a cualquier nivel de anidación.
+   */
+  readonly tableName = input<string | undefined>(undefined, { alias: 'aesyTableCellTable' });
   /** Solo sirve para el tipado: Angular deduce de aquí el tipo de `row`. */
   readonly rows = input<readonly T[]>([], { alias: 'aesyTableCellRows' });
 

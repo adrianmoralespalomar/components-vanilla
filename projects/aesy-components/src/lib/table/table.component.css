@@ -43,6 +43,13 @@
   --aesy-table-body-even-background: #ffffff;
   --aesy-table-body-hover-background: #efefef;
   --aesy-table-body-border-color: #e2e8f0;
+
+  /* ================= EXPANDER ================= */
+
+  --aesy-table-expander-icon-color: #6b7280;
+  --aesy-table-expander-icon-size: 1.25rem;
+  --aesy-table-expander-icon-rotation-expanded: 180deg;
+  --aesy-table-expander-transition-duration: 0.2s;
 }
 
 /* ========================================================= */
@@ -100,7 +107,8 @@
 
   background: var(--aesy-table-background);
 
-  color: var(--aesy-table-text-color);
+  /* --aesy-table-header-text-color no se declara en :host: sin definir, hereda el color del texto */
+  color: var(--aesy-table-header-text-color, var(--aesy-table-text-color));
 
   font-size: var(--aesy-table-text-size);
   font-weight: var(--aesy-table-text-weight);
@@ -228,9 +236,65 @@
 
 .aesy-table-row {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   will-change: transform;
+}
+
+.aesy-table-row-cells {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+/* ========================================================= */
+/* EXPANDABLE (SUBTABLAS) */
+/* ========================================================= */
+
+.aesy-table-expander {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  .aesy-table-expander-icon {
+    width: var(--aesy-table-expander-icon-size);
+    height: var(--aesy-table-expander-icon-size);
+    fill: currentColor;
+    color: var(--aesy-table-expander-icon-color);
+    transition: transform var(--aesy-table-expander-transition-duration) ease;
+  }
+
+  &[aria-expanded='true'] .aesy-table-expander-icon {
+    transform: rotate(var(--aesy-table-expander-icon-rotation-expanded));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aesy-table-expander .aesy-table-expander-icon {
+    transition: none;
+  }
+}
+
+.aesy-table-detail {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--aesy-table-cell-padding-y) var(--aesy-table-cell-padding-x) var(--aesy-table-cell-padding-y) 3rem;
+  background: var(--aesy-table-background);
+  border-bottom: var(--aesy-table-border-width) var(--aesy-table-border-style) var(--aesy-table-body-border-color);
+  cursor: default;
+
+  aesy-table {
+    --aesy-table-min-width: 0;
+  }
+}
+
+.aesy-table-detail-message {
+  color: var(--aesy-table-text-color);
 }
 
 .aesy-table-row:hover {

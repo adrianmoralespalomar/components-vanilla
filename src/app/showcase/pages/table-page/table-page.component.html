@@ -36,6 +36,45 @@
     <app-value-preview label="Persona vista" [value]="viewedPerson()" />
   </app-doc-section>
 
+  <app-doc-section sectionId="subtablas" heading="Subtablas" description="expandable añade un botón que despliega una subtabla bajo cada fila. Las filas hijas pueden viajar dentro de la fila (subRowsKey, tabla de países) o pedirse al desplegar: rowExpandedChange avisa, tú llamas a tu endpoint y devuelves el resultado en subRows (tabla de personas, con singleExpansion). Una subtabla puede ser a su vez expandable." [snippet]="SNIPPETS.expandable">
+    <aesy-table [data]="COUNTRIES" [config]="CONFIGS.expandableCountries">
+      <!-- aesyTableCellTable apunta a la subtabla por su tableName -->
+      <ng-template aesyTableCell="population" aesyTableCellTable="docsExpandableCities" let-city>
+        <span class="country-badge">{{ city['population'] }} hab.</span>
+      </ng-template>
+    </aesy-table>
+    <aesy-table [data]="COUNTRIES" [config]="CONFIGS.expandableDetail">
+      <ng-template aesyTableDetail [aesyTableDetailRows]="COUNTRIES" let-country>
+        <p>{{ country.name }} tiene {{ country.cities.length }} ciudades en la demo.</p>
+      </ng-template>
+    </aesy-table>
+    <aesy-table [data]="PEOPLE" [config]="CONFIGS.expandablePeople" [paginationMetaConfig]="EXPANDABLE_PAGINATION" [subRows]="personOrders()" (rowExpandedChange)="onPersonRowExpandedChanged($event)" />
+    <app-value-preview label="rowExpandedChange" [value]="lastRowExpandedChange()" />
+  </app-doc-section>
+
+  <app-doc-section sectionId="subtablas-boton" heading="Botón de desplegar" description="Por defecto es el chevron del acordeón, a la izquierda. togglePosition lo pone a la derecha, toggleIconSvg cambia el icono y las variables --aesy-table-expander-* su color, tamaño y giro. Con aesyTableExpander pintas tu propio botón." [snippet]="SNIPPETS.expanderCustomization">
+    <aesy-table class="plus-expander-table" [data]="COUNTRIES" [config]="CONFIGS.expandableRightPlus" />
+    <aesy-table [data]="COUNTRIES" [config]="CONFIGS.expandableCustomButton">
+      <ng-template aesyTableExpander [aesyTableExpanderRows]="COUNTRIES" let-country let-expanded="expanded" let-toggle="toggle">
+        <aesy-button type="tertiary" [label]="expanded ? 'Ocultar' : 'Ver ' + country.cities.length + ' ciudades'" (buttonClick)="toggle()" />
+      </ng-template>
+    </aesy-table>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizacion-visual" heading="Personalización visual" description="Los colores, bordes y tamaños se cambian con variables CSS --aesy-table-* sobre el elemento (o una clase). El contenido de las celdas (etiquetas de estado, botones) se pinta con aesyTableCell, y en un botón custom manda su propio estilo." [snippet]="SNIPPETS.themedTable">
+    <aesy-table class="themed-table" [data]="PEOPLE" [config]="CONFIGS.themedPeople" [paginationMetaConfig]="THEMED_PAGINATION">
+      <ng-template aesyTableCell="role" [aesyTableCellRows]="PEOPLE" let-person>
+        <span class="role-badge">{{ person.role }}</span>
+      </ng-template>
+      <ng-template aesyTableCell="actions" [aesyTableCellRows]="PEOPLE" let-person>
+        <div class="person-actions">
+          <aesy-button type="secondary" label="Editar" (buttonClick)="onViewPersonButtonClicked(person)" />
+          <aesy-button type="danger" label="Borrar" (buttonClick)="onViewPersonButtonClicked(person)" />
+        </div>
+      </ng-template>
+    </aesy-table>
+  </app-doc-section>
+
   <app-doc-section sectionId="arrastrar" heading="Columnas y filas reordenables" description="draggableColumns permite mover columnas arrastrando la cabecera y draggableRows mueve filas. En local la tabla reordena sola (si no hay filtro ni orden activos) y avisa con rowOrderChange." [snippet]="SNIPPETS.draggable">
     <aesy-table [data]="PEOPLE" [config]="CONFIGS.draggablePeople" [paginationMetaConfig]="DRAGGABLE_PAGINATION" (rowOrderChange)="onDraggablePeopleRowOrderChanged($event)" />
     <app-value-preview label="rowOrderChange" [value]="lastRowOrderChange()" />

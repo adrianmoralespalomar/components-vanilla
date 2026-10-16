@@ -15,6 +15,7 @@ Selector: `aesy-table`.
 - Selección de filas con casillas (`selectable`).
 - Columnas fijas a la izquierda (`fixed`) y cabecera fija (`isHeaderFixed`).
 - Columnas y filas reordenables arrastrando (CDK drag & drop).
+- Subtablas desplegables (`expandable`), con las filas hijas en la propia fila o cargadas al desplegar.
 - Persistencia de filtros en la URL (`persistFilters`).
 - Paginación configurable (u omitible): textos, iconos, primera/última página y filas por página.
 - Celdas con contenido propio (botones, enlaces, etiquetas…) con `aesyTableCell`, y columnas `custom` sin dato propio (acciones).
@@ -169,6 +170,68 @@ El resto de columnas siguen comprobando que su `key` existe en `T`: una errata c
 
 ---
 
+# Subtablas (filas desplegables)
+
+`expandable` añade a la izquierda un botón que despliega una subtabla bajo cada fila. `TableConfig<T, S>`: `S` es el tipo de las filas de la subtabla.
+
+```ts
+protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person, Order> = {
+  tableName: 'people',
+  columns: [/* … */],
+  expandable: {
+    key: 'id',                  // identifica cada fila (y es la clave de subRows)
+    subTable: { tableName: 'orders', columns: ORDER_COLUMNS }
+  }
+};
+```
+
+Las filas hijas se pueden dar de dos formas (si la fila tiene la propiedad, gana sobre `subRows`):
+
+- **Dentro de la fila**: `subRowsKey: 'orders'` y cada `Person` trae su array `orders`.
+- **Bajo demanda**: `rowExpandedChange` avisa al desplegar y plegar; llamas a tu endpoint y devuelves el resultado en `subRows` (objeto nuevo, indexado por el valor de `key`). Mientras no haya entrada para una fila desplegada, muestra "Cargando…".
+
+```ts
+protected readonly orders = signal<Record<string, Order[]>>({});
+
+protected onPersonRowExpanded({ row, expanded }: TableRowExpandedChange<Person>): void {
+  if (!expanded || this.orders()[row.id]) return;
+  this.ordersService.getByPerson(row.id).subscribe(orders => this.orders.update(current => ({ ...current, [row.id]: orders })));
+}
+```
+
+```html
+<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG" [subRows]="orders()" (rowExpandedChange)="onPersonRowExpanded($event)" />
+```
+
+Para volver a pedirlos en cada despliegue, quita la entrada de `subRows` al plegar.
+
+- `subTable` puede llevar su propio `expandable` (anidación a varios niveles). Los eventos de los niveles inferiores suben por `subRowExpandedChange` (`{ row, expanded, parentRows }`, con `parentRows` desde la fila de esta tabla hacia abajo). `subRows` se pasa a todos los niveles, así que las claves deben ser únicas entre ellos.
+- `subTablePagination` pagina la subtabla; sin él se muestran todas sus filas.
+- `singleExpansion` pliega las demás al desplegar una; `expandedValues` fija las desplegadas al empezar (sin emitir evento).
+- **Celdas personalizadas en subtablas**: un `aesyTableCell` con `aesyTableCellTable="<tableName de la subtabla>"` se aplica a esa subtabla a cualquier nivel. Sin `aesyTableCellTable`, solo afecta a la tabla donde está declarada.
+- **Panel libre en lugar de subtabla**: un `ng-template aesyTableDetail` (con `let-row` y `let-subRows="subRows"`) sustituye a la subtabla; entonces `subTable` es opcional.
+
+```html
+<aesy-table [data]="people()" [config]="CONFIG">
+  <ng-template aesyTableCell="total" aesyTableCellTable="orders" let-order>{{ order.total }} €</ng-template>
+  <ng-template aesyTableDetail [aesyTableDetailRows]="people()" let-person>Ficha de {{ person.name }}</ng-template>
+</aesy-table>
+```
+
+- **Botón de desplegar**: por defecto es el chevron del acordeón (gira 180° al desplegar), a la izquierda. `togglePosition: 'after'` lo pasa a la derecha y `toggleIconSvg` cambia el icono (path SVG 20×20). Para un botón propio, `ng-template aesyTableExpander` con `let-expanded="expanded"` y `let-toggle="toggle"` (`toggle()` despliega o pliega y emite `rowExpandedChange`):
+
+```html
+<aesy-table [data]="people()" [config]="CONFIG">
+  <ng-template aesyTableExpander [aesyTableExpanderRows]="people()" let-person let-expanded="expanded" let-toggle="toggle">
+    <aesy-button type="tertiary" [label]="expanded ? 'Ocultar' : 'Ver pedidos'" (buttonClick)="toggle()" />
+  </ng-template>
+</aesy-table>
+```
+
+- No se combina bien con `draggableRows`: arrastrar desde la subtabla arrastraría la fila padre.
+
+---
+
 # Columnas y filas reordenables
 
 ```ts
@@ -237,6 +300,7 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `config` | `TableConfig<T>` | obligatorio | Columnas y comportamiento. |
 | `paginationMetaConfig` | `PaginationMeta \| null` | `null` | Estado y textos de la paginación. Sin él, no hay paginación. |
 | `data` | `T[]` | `[]` | Filas. En local, todas (los cambios se reflejan); en servidor, las de la página actual. |
+| `subRows` | `Record<string, readonly object[]>` | `{}` | Filas hijas de las filas desplegables, por el valor de `expandable.key`. |
 
 ## Outputs
 
@@ -247,6 +311,8 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `currentPageChange` | `number` | Nueva página actual. |
 | `rowsPerPageChange` | `number` | Nuevo número de filas por página. |
 | `rowOrderChange` | `RowOrderChange<T>` | Una fila se ha arrastrado a otra posición. |
+| `rowExpandedChange` | `TableRowExpandedChange<T>` | Una fila se ha desplegado o plegado (`{ row, expanded }`). |
+| `subRowExpandedChange` | `TableSubRowExpandedChange` | Lo mismo en una subtabla, a cualquier nivel. |
 
 ## Directivas
 
@@ -254,12 +320,18 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 |---|---|
 | `ng-template[aesyTableCell]` | Plantilla de las celdas de la columna con esa `key` (`TableCellDirective<T>`). Contexto: `TableCellContext<T>` (`$implicit`: la fila; `column`: la columna). |
 | `[aesyTableCellRows]` | Opcional, solo para el tipado: las mismas filas que `data`. |
+| `[aesyTableCellTable]` | Opcional: `tableName` de la subtabla donde se aplica la plantilla de celda. |
+| `ng-template[aesyTableDetail]` | Panel libre bajo la fila desplegada (`TableDetailDirective<T>`). Contexto: `TableDetailContext<T>` (`$implicit`: la fila; `subRows`: sus filas hijas). |
+| `[aesyTableDetailRows]` | Opcional, solo para el tipado de `row`. |
+| `ng-template[aesyTableExpander]` | Botón propio para desplegar filas (`TableExpanderDirective<T>`). Contexto: `TableExpanderContext<T>` (`$implicit`: la fila; `expanded`; `toggle`). |
+| `[aesyTableExpanderRows]` | Opcional, solo para el tipado de `row`. |
 
 ## Tipos
 
 ```ts
-export interface TableConfig<T> {
+export interface TableConfig<T, S = Record<string, unknown>> {
   tableName: string;
+  expandable?: TableExpandableConfig<T, S>;
   columns: TableColumn<T>[];
   serverSide?: boolean;
   persistFilters?: boolean;
@@ -302,6 +374,18 @@ export interface TableSelectableConfig<T> {
   headerLabel?: string;           // texto de la cabecera de las casillas (por defecto, vacía)
   key: keyof T & string;
   selectedValues?: unknown[];
+}
+
+export interface TableExpandableConfig<T, S> {
+  key: keyof T & string;
+  subTable?: TableConfig<S>;      // opcional si usas aesyTableDetail
+  subTablePagination?: PaginationMeta | null;
+  subRowsKey?: keyof T & string;
+  togglePosition?: 'before' | 'after';   // izquierda (por defecto) o derecha
+  toggleIconSvg?: string;                // por defecto, el chevron del acordeón
+  headerLabel?: string;
+  expandedValues?: unknown[];
+  singleExpansion?: boolean;
 }
 
 export interface RequestData {
@@ -357,7 +441,14 @@ Declaradas en `:host` con el prefijo `--aesy-table-`:
   --aesy-table-body-even-background: #ffffff;
   --aesy-table-body-hover-background: #efefef;
   --aesy-table-body-border-color: #e2e8f0;
+
+  --aesy-table-expander-icon-color: #6b7280;
+  --aesy-table-expander-icon-size: 1.25rem;
+  --aesy-table-expander-icon-rotation-expanded: 180deg;
+  --aesy-table-expander-transition-duration: 0.2s;
 }
 ```
+
+Además, `--aesy-table-header-text-color` (no tiene valor por defecto: sin definir, la cabecera usa `--aesy-table-text-color`) cambia el color del texto de la cabecera, útil con un fondo oscuro.
 
 Con `isHeaderFixed`, define `--aesy-table-container-height` para que la tabla tenga scroll propio. Los filtros de la cabecera son form controls: se ajustan con `--aesy-form-controls-*` (ver `form-controls/how-to-override-classes.md`).

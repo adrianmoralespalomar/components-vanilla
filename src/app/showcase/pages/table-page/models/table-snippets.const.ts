@@ -80,6 +80,72 @@ protected onRemovePersonButtonClicked(person: Person): void {
   </ng-template>
 </aesy-table>`
   },
+  expandable: {
+    ts: `// Filas hijas dentro de la fila (subRowsKey): no hace falta más
+protected readonly COUNTRIES_TABLE_CONFIG: TableConfig<Country, City> = {
+  tableName: 'countries',
+  columns: [{ key: 'name', label: 'País', type: 'text' }],
+  expandable: {
+    key: 'name',
+    subRowsKey: 'cities',
+    subTable: { tableName: 'cities', columns: CITY_COLUMNS }
+  }
+};
+
+// Filas hijas bajo demanda: al desplegar se avisa, se llama al endpoint y se devuelve en subRows
+protected readonly orders = signal<Record<string, Order[]>>({});
+
+protected onPersonRowExpanded({ row, expanded }: TableRowExpandedChange<Person>): void {
+  if (!expanded || this.orders()[row.name]) return;
+  this.ordersService.getByPerson(row.name).subscribe(orders => this.orders.update(current => ({ ...current, [row.name]: orders })));
+}`,
+    html: `<aesy-table [data]="COUNTRIES" [config]="COUNTRIES_TABLE_CONFIG" />
+
+<aesy-table
+  [data]="PEOPLE"
+  [config]="PEOPLE_TABLE_CONFIG"
+  [subRows]="orders()"
+  (rowExpandedChange)="onPersonRowExpanded($event)" />`
+  },
+  expanderCustomization: {
+    ts: `// Icono y lado del botón de desplegar (por defecto, el chevron del acordeón a la izquierda)
+expandable: { key: 'name', subRowsKey: 'cities', subTable: CITIES_TABLE_CONFIG, togglePosition: 'after', toggleIconSvg: AESY_ICON_PLUS }`,
+    html: `<!-- Botón propio: toggle() despliega o pliega la fila y emite rowExpandedChange -->
+<aesy-table [data]="COUNTRIES" [config]="COUNTRIES_TABLE_CONFIG">
+  <ng-template aesyTableExpander [aesyTableExpanderRows]="COUNTRIES" let-country let-expanded="expanded" let-toggle="toggle">
+    <aesy-button type="tertiary" [label]="expanded ? 'Ocultar' : 'Ver ciudades'" (buttonClick)="toggle()" />
+  </ng-template>
+</aesy-table>`,
+    css: `/* El + gira 45° al desplegar y queda como una x */
+aesy-table {
+  --aesy-table-expander-icon-rotation-expanded: 45deg;
+  --aesy-table-expander-icon-color: #6d28d9;
+}`
+  },
+  themedTable: {
+    html: `<aesy-table class="themed-table" [data]="PEOPLE" [config]="PEOPLE_TABLE_CONFIG">
+  <ng-template aesyTableCell="role" [aesyTableCellRows]="PEOPLE" let-person>
+    <span class="role-badge">{{ person.role }}</span>
+  </ng-template>
+  <ng-template aesyTableCell="actions" [aesyTableCellRows]="PEOPLE" let-person>
+    <aesy-button type="secondary" label="Editar" (buttonClick)="onEditButtonClicked(person)" />
+    <aesy-button type="danger" label="Borrar" (buttonClick)="onDeleteButtonClicked(person)" />
+  </ng-template>
+</aesy-table>`,
+    css: `.themed-table {
+  --aesy-table-header-background: #1e1b4b;
+  --aesy-table-header-border-color: #1e1b4b;
+  --aesy-table-header-text-color: #ffffff;
+  --aesy-table-body-odd-background: #f5f3ff;
+  --aesy-table-body-hover-background: #ddd6fe;
+  --aesy-table-body-border-color: #ddd6fe;
+  --aesy-table-text-color: #1e1b4b;
+  --aesy-table-cell-height: 3rem;
+}
+
+/* Las etiquetas y botones están en tu plantilla: se estilan con tu CSS */
+.themed-table .role-badge { background: #ede9fe; border-radius: 999px; color: #6d28d9; padding: 0.125rem 0.625rem; }`
+  },
   draggable: {
     ts: `// En local la tabla ya reordena sus filas; rowOrderChange sirve para guardar el nuevo orden.
 // Con serverSide: true eres tú quien reordena los datos:

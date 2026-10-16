@@ -1,8 +1,10 @@
-import { TableConfig } from 'aesy-components';
+import { AESY_ICON_PLUS, TableConfig } from 'aesy-components';
 import { DEMO_COUNTRY_FILTER_OPTIONS } from '../../../models/demo-country-filter-options.const';
 import { DemoPerson } from '../../../models/demo-person.interface';
 import { DEMO_CITIES } from './demo-cities.const';
 import { DemoCity } from './demo-city.interface';
+import { DemoCountry } from './demo-country.interface';
+import { DemoOrder } from './demo-order.interface';
 import { DEMO_PEOPLE_COLUMNS } from './demo-people-columns.const';
 import { DemoProduct } from './demo-product.interface';
 
@@ -46,6 +48,87 @@ export const TABLE_DEMO_CONFIGS = {
     serverSide: false,
     tableName: 'docsCustomCells'
   } satisfies TableConfig<DemoPerson>,
+  expandableCountries: {
+    columns: [{ key: 'name', label: 'País', type: 'text', sortable: true }],
+    expandable: {
+      key: 'name',
+      subRowsKey: 'cities',
+      subTable: {
+        columns: [
+          { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+        ],
+        tableName: 'docsExpandableCities'
+      }
+    },
+    tableName: 'docsExpandableCountries'
+  } satisfies TableConfig<DemoCountry, DemoCity>,
+  expandableRightPlus: {
+    columns: [{ key: 'name', label: 'País (icono + a la derecha)', type: 'text' }],
+    expandable: {
+      key: 'name',
+      subRowsKey: 'cities',
+      togglePosition: 'after',
+      toggleIconSvg: AESY_ICON_PLUS,
+      subTable: {
+        columns: [
+          { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+        ],
+        tableName: 'docsExpandableCitiesPlus'
+      }
+    },
+    tableName: 'docsExpandableRightPlus'
+  } satisfies TableConfig<DemoCountry, DemoCity>,
+  expandableCustomButton: {
+    columns: [{ key: 'name', label: 'País (botón propio a la derecha)', type: 'text' }],
+    expandable: {
+      key: 'name',
+      subRowsKey: 'cities',
+      togglePosition: 'after',
+      headerLabel: 'Ciudades',
+      subTable: {
+        columns: [
+          { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+        ],
+        tableName: 'docsExpandableCitiesButton'
+      }
+    },
+    tableName: 'docsExpandableCustomButton'
+  } satisfies TableConfig<DemoCountry, DemoCity>,
+  themedPeople: {
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text', sortable: true },
+      { key: 'role', label: 'Rol', type: 'text', sortable: true },
+      { key: 'age', label: 'Edad', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' },
+      { key: 'actions', label: 'Acciones', type: 'custom', width: '220px', alignCell: 'right', alignHeader: 'right' }
+    ],
+    tableName: 'docsThemedPeople'
+  } satisfies TableConfig<DemoPerson>,
+  expandableDetail: {
+    columns: [{ key: 'name', label: 'País (panel libre)', type: 'text' }],
+    expandable: { key: 'name' },
+    tableName: 'docsExpandableDetail'
+  } satisfies TableConfig<DemoCountry>,
+  expandablePeople: {
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text', sortable: true },
+      { key: 'role', label: 'Rol', type: 'text' }
+    ],
+    expandable: {
+      key: 'name',
+      singleExpansion: true,
+      subTable: {
+        columns: [
+          { key: 'product', label: 'Producto', type: 'text', sortable: true },
+          { key: 'amount', label: 'Importe (€)', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+        ],
+        tableName: 'docsExpandableOrders'
+      }
+    },
+    tableName: 'docsExpandablePeople'
+  } satisfies TableConfig<DemoPerson, DemoOrder>,
   serverProducts: {
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true, width: '80px' },
