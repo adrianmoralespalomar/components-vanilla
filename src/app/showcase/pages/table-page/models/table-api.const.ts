@@ -60,7 +60,7 @@ export const TABLE_API: ComponentApi = {
         { name: 'filterable', type: 'boolean | undefined', description: 'Muestra un filtro bajo la cabecera.' },
         { name: 'fixed', type: 'boolean | undefined', description: 'Fija la columna a la izquierda al hacer scroll horizontal.' },
         { name: 'width', type: 'string | undefined', description: 'Ancho CSS de la columna (px, %, rem…).' },
-        { name: 'alignHeader', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de la cabecera.' },
+        { name: 'alignHeader', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de la cabecera. Por defecto, a la izquierda; en columnas numéricas suele convenir right junto con alignCell.' },
         { name: 'alignCell', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de las celdas.' }
       ]
     },
@@ -69,7 +69,8 @@ export const TABLE_API: ComponentApi = {
       properties: [
         { name: 'key', type: 'keyof T & string', description: 'Propiedad que identifica cada fila de forma única. La selección se guarda por este valor.' },
         { name: 'headerLabel', type: 'string | undefined', description: 'Texto de la cabecera de la columna de casillas. Por defecto, vacía.' },
-        { name: 'selectedValues', type: 'unknown[] | undefined', description: 'Valores de key que empiezan seleccionados.' }
+        { name: 'selectedValues', type: 'unknown[] | undefined', description: 'Valores de key que empiezan seleccionados.' },
+        { name: 'width', type: 'string | undefined', description: 'Ancho CSS de la columna de casillas. Por defecto, 3rem: ensánchalo si pones un headerLabel largo.' }
       ]
     },
     {
@@ -80,6 +81,7 @@ export const TABLE_API: ComponentApi = {
         { name: 'subTablePagination', type: 'PaginationMeta | null | undefined', description: 'Paginación de la subtabla. Sin ella se muestran todas sus filas.' },
         { name: 'subRowsKey', type: 'keyof T & string | undefined', description: 'Propiedad de la fila con sus filas hijas. Si falta o es undefined, se buscan en subRows.' },
         { name: 'togglePosition', type: "'before' | 'after' | undefined", description: 'Lado donde va el botón: izquierda (before, por defecto) o derecha (after).' },
+        { name: 'toggleWidth', type: 'string | undefined', description: 'Ancho CSS de la columna del botón. Por defecto, 3rem: ensánchalo si pintas un botón propio con aesyTableExpander.' },
         { name: 'toggleIconSvg', type: 'string | undefined', description: 'Path SVG (20×20) del icono. Por defecto, el chevron del acordeón.' },
         { name: 'headerLabel', type: 'string | undefined', description: 'Texto de la cabecera de la columna del botón. Por defecto, vacía.' },
         { name: 'expandedValues', type: 'unknown[] | undefined', description: 'Valores de key de las filas desplegadas al empezar. No emiten rowExpandedChange.' },

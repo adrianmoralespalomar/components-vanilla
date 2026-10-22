@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, TableRowExpandedChange } from 'aesy-components';
+import { ButtonComponent, InputTextComponent, PaginationMeta, RequestData, RowOrderChange, SelectComponent, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, TableRowExpandedChange } from 'aesy-components';
 import { ComponentApi } from '../../models/component-api.interface';
 import { DEMO_PEOPLE } from '../../models/demo-people.const';
+import { DEMO_COUNTRY_FILTER_OPTIONS } from '../../models/demo-country-filter-options.const';
 import { DemoPerson } from '../../models/demo-person.interface';
 import { ApiReferenceComponent } from '../../ui/api-reference/api-reference.component';
 import { DocPageComponent } from '../../ui/doc-page/doc-page.component';
@@ -15,6 +16,8 @@ import { DemoCity } from './models/demo-city.interface';
 import { DEMO_COUNTRIES } from './models/demo-countries.const';
 import { DemoCountry } from './models/demo-country.interface';
 import { DemoOrder } from './models/demo-order.interface';
+import { DemoPeopleFilters } from './models/demo-people-filters.interface';
+import { DEMO_PEOPLE_INITIAL_FILTERS } from './models/demo-people-initial-filters.const';
 import { DemoProduct } from './models/demo-product.interface';
 import { EXPANDABLE_ORDERS_LOAD_DELAY_MS } from './models/expandable-orders-load-delay-ms.const';
 import { DUMMY_PRODUCTS_URL } from './models/dummy-products-url.const';
@@ -26,7 +29,7 @@ import { TABLE_SNIPPETS } from './models/table-snippets.const';
 
 @Component({
   selector: 'app-table-page',
-  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, ValuePreviewComponent],
+  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, InputTextComponent, SelectComponent, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, ValuePreviewComponent],
   templateUrl: './table-page.component.html',
   styleUrl: './table-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -37,6 +40,7 @@ export class TablePageComponent {
 
   protected readonly API: ComponentApi = TABLE_API;
   protected readonly CITIES: DemoCity[] = DEMO_CITIES;
+  protected readonly COUNTRY_OPTIONS = DEMO_COUNTRY_FILTER_OPTIONS;
   protected readonly CONFIGS = TABLE_DEMO_CONFIGS;
   protected readonly COUNTRIES: DemoCountry[] = DEMO_COUNTRIES;
   protected readonly PEOPLE: DemoPerson[] = DEMO_PEOPLE;
@@ -63,13 +67,23 @@ export class TablePageComponent {
     ]
   };
   protected readonly DRAGGABLE_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 6, total: DEMO_PEOPLE.length };
+  protected readonly EXTERNAL_FILTERS_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length };
   protected readonly THEMED_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length };
   protected readonly EXPANDABLE_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 4, total: DEMO_PEOPLE.length };
   protected readonly LOCAL_PAGINATION: PaginationMeta = { page: 1, rowsPerPageCurrent: 5, total: DEMO_PEOPLE.length, pageShown: true };
 
   protected readonly asyncPeople = signal<DemoPerson[]>([]);
   protected readonly customCellsPeople = signal<DemoPerson[]>(DEMO_PEOPLE);
+  protected readonly appliedFilters = signal<DemoPeopleFilters>(DEMO_PEOPLE_INITIAL_FILTERS);
   protected readonly clickedPerson = signal<DemoPerson | null>(null);
+  protected readonly draftCountryFilter = signal<string | null>(null);
+  protected readonly draftNameFilter = signal<string>('');
+  /** Los filtros viven fuera de la tabla: ella solo recibe las filas que ya los cumplen. */
+  protected readonly externallyFilteredPeople = computed((): DemoPerson[] => {
+    const { country, name } = this.appliedFilters();
+    const searchedName = name.trim().toLowerCase();
+    return DEMO_PEOPLE.filter(person => (!country || person.country === country) && person.name.toLowerCase().includes(searchedName));
+  });
   protected readonly isLoadingAsyncPeople = signal<boolean>(false);
   protected readonly lastRowExpandedChange = signal<TableRowExpandedChange<DemoPerson> | null>(null);
   /** Pedidos ya cargados, por nombre de persona (el `expandable.key` de la tabla). */
@@ -139,6 +153,16 @@ export class TablePageComponent {
 
   protected onProductsSelectionChanged(selectedProducts: DemoProduct[]): void {
     this.selectedProductTitles.set(selectedProducts.map(product => `${product.id} · ${product.title}`));
+  }
+
+  protected onSearchButtonClicked(): void {
+    this.appliedFilters.set({ country: this.draftCountryFilter(), name: this.draftNameFilter() });
+  }
+
+  protected onClearFiltersButtonClicked(): void {
+    this.draftCountryFilter.set(null);
+    this.draftNameFilter.set('');
+    this.appliedFilters.set(DEMO_PEOPLE_INITIAL_FILTERS);
   }
 
   protected onCustomRowClicked(person: DemoPerson): void {

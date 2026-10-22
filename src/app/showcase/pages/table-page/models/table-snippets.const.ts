@@ -51,24 +51,9 @@ protected readonly selectedCities = signal<City[]>([]);`,
   [paginationMetaConfig]="CITIES_PAGINATION"
   (selectionChange)="selectedCities.set($event)" />`
   },
-  customCells: {
-    ts: `protected readonly people = signal<Person[]>(PEOPLE);
-
-protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
-  tableName: 'people',
-  columns: [
-    { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
-    // Columna de datos con plantilla: se sigue ordenando y filtrando por country
-    { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: COUNTRY_OPTIONS },
-    // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
-    { key: 'actions', label: 'Acciones', type: 'custom', width: '200px', alignCell: 'right' }
-  ]
-};
-
-protected onRemovePersonButtonClicked(person: Person): void {
-  this.people.update(people => people.filter(currentPerson => currentPerson !== person));
-}`,
-    html: `<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG" [paginationMetaConfig]="PEOPLE_PAGINATION">
+  customData: {
+    html: `<!-- 1. Celdas personalizadas: aesyTableCell con la key de la columna -->
+<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG">
   <!-- aesyTableCellRows solo sirve para que person llegue tipado como Person -->
   <ng-template aesyTableCell="country" [aesyTableCellRows]="people()" let-person>
     <span class="country-badge">{{ person.country }}</span>
@@ -78,7 +63,63 @@ protected onRemovePersonButtonClicked(person: Person): void {
     <aesy-button type="tertiary" label="Ver" (buttonClick)="onViewPersonButtonClicked(person)" />
     <aesy-button type="danger" label="Quitar" (buttonClick)="onRemovePersonButtonClicked(person)" />
   </ng-template>
-</aesy-table>`
+</aesy-table>
+
+<!-- 2. Fila con maquetación libre, rowClass y clic -->
+<aesy-table [data]="people()" [config]="TEAM_TABLE_CONFIG" (rowClicked)="onPersonRowClicked($event)">
+  <!-- Sustituye las celdas de las columnas de datos; let-columns y let-index también están disponibles -->
+  <ng-template aesyTableRow [aesyTableRowRows]="people()" let-person>
+    <strong>{{ person.name }}</strong> · {{ person.role }}
+  </ng-template>
+</aesy-table>
+
+<!-- 3. Estado vacío -->
+<aesy-table [data]="[]" [config]="TEAM_TABLE_CONFIG">
+  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
+</aesy-table>`,
+    ts: `protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: people,
+  columns: [
+    { key: name, label: Nombre, type: text, sortable: true, filterable: true },
+    // Columna de datos con plantilla: se sigue ordenando y filtrando por country
+    { key: country, label: País, type: select, sortable: true, filterable: true, options: COUNTRY_OPTIONS },
+    // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
+    { key: actions, label: Acciones, type: custom, width: 200px, alignCell: right, alignHeader: right }
+  ]
+};
+
+protected readonly TEAM_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: team,
+  columns: [/* … */],
+  clickableRows: true, // emite rowClicked con clic o Enter (no con clics en botones, enlaces o campos)
+  rowClass: person => (person.age >= 40 ? row-senior : []) // clases por fila según sus datos
+};`,
+    css: `/* rowClass añade la clase dentro de la vista de la tabla: desde un componente hace falta ::ng-deep */
+.team-table ::ng-deep .aesy-table-row.row-senior { background: #fef3c7; }`
+  },
+  externalFilters: {
+    html: `<!-- Los filtros los maqueta el padre; la tabla no tiene columnas filterable -->
+<div class="filters" (keydown.enter)="onSearchButtonClicked()">
+  <aesy-input-text label="Nombre" [(value)]="draftName" />
+  <aesy-select label="País" [options]="COUNTRY_OPTIONS" [clearable]="true" [(value)]="draftCountry" />
+  <aesy-button label="Buscar" (buttonClick)="onSearchButtonClicked()" />
+</div>
+
+<aesy-table [data]="filteredPeople()" [config]="PEOPLE_TABLE_CONFIG" [paginationMetaConfig]="PEOPLE_PAGINATION" />`,
+    ts: `protected readonly draftName = signal<string>();
+protected readonly draftCountry = signal<string | null>(null);
+protected readonly appliedFilters = signal({ name: , country: null as string | null });
+
+// La tabla solo recibe las filas que ya cumplen los filtros aplicados
+protected readonly filteredPeople = computed(() => {
+  const { name, country } = this.appliedFilters();
+  return PEOPLE.filter(person => (!country || person.country === country) && person.name.toLowerCase().includes(name.trim().toLowerCase()));
+});
+
+protected onSearchButtonClicked(): void {
+  this.appliedFilters.set({ name: this.draftName(), country: this.draftCountry() });
+}`,
+    css: `.filters { align-items: flex-end; display: flex; flex-wrap: wrap; gap: 12px; }`
   },
   expandable: {
     ts: `// Filas hijas dentro de la fila (subRowsKey): no hace falta más
@@ -145,26 +186,6 @@ aesy-table {
 
 /* Las etiquetas y botones están en tu plantilla: se estilan con tu CSS */
 .themed-table .role-badge { background: #ede9fe; border-radius: 999px; color: #6d28d9; padding: 0.125rem 0.625rem; }`
-  },
-  customRows: {
-    html: `<aesy-table [data]="PEOPLE" [config]="TEAM_TABLE_CONFIG" (rowClicked)="onPersonRowClicked($event)">
-  <!-- Sustituye las celdas de las columnas de datos; let-columns y let-index también están disponibles -->
-  <ng-template aesyTableRow [aesyTableRowRows]="PEOPLE" let-person>
-    <strong>{{ person.name }}</strong> · {{ person.role }}
-  </ng-template>
-</aesy-table>
-
-<aesy-table [data]="[]" [config]="TEAM_TABLE_CONFIG">
-  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
-</aesy-table>`,
-    ts: `const TEAM_TABLE_CONFIG: TableConfig<Person> = {
-  tableName: 'team',
-  columns: [/* … */],
-  clickableRows: true, // emite rowClicked con clic o Enter (no con clics en botones, enlaces o campos)
-  rowClass: person => (person.age >= 40 ? 'row-senior' : []) // clases por fila según sus datos
-};`,
-    css: `/* rowClass añade la clase dentro de la vista de la tabla: desde un componente hace falta ::ng-deep */
-.team-table ::ng-deep .aesy-table-row.row-senior { background: #fef3c7; }`
   },
   draggable: {
     ts: `// En local la tabla ya reordena sus filas; rowOrderChange sirve para guardar el nuevo orden.

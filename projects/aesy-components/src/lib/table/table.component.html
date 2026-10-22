@@ -23,7 +23,10 @@
           [class.aesy-table-column-fixed]="col.fixed"
           [style.left]="getFixedColumnLeft(col)">
           <div class="aesy-table-header" [class.aesy-table-header-fixed]="config().isHeaderFixed || col.fixed" [class.aesy-table-header-without-filters]="!hasFilterableColumns()">
-            <div class="aesy-table-th-label-container">
+            <div
+              class="aesy-table-th-label-container"
+              [class.aesy-table-text-align-center]="col.alignHeader === 'center'"
+              [class.aesy-table-text-align-right]="col.alignHeader === 'right'">
               <span class="aesy-table-th-label" [class.aesy-table-th-sortable]="isColumnSortable(col)" (click)="changeSort(col)">
                 {{ col.label }}
               </span>

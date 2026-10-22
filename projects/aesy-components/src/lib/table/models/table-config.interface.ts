@@ -29,4 +29,6 @@ export interface TableSelectableConfig<T = Record<string, unknown>> {
   headerLabel?: string;
   key: keyof T & string;
   selectedValues?: unknown[];
+  /** Ancho CSS de la columna de casillas. Por defecto, `3rem`: ensánchalo si pones un `headerLabel` largo. */
+  width?: string;
 }

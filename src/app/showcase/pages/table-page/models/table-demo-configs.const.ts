@@ -86,6 +86,7 @@ export const TABLE_DEMO_CONFIGS = {
       key: 'name',
       subRowsKey: 'cities',
       togglePosition: 'after',
+      toggleWidth: '10rem',
       headerLabel: 'Ciudades',
       subTable: {
         columns: [
@@ -114,6 +115,15 @@ export const TABLE_DEMO_CONFIGS = {
     ],
     rowClass: (person: DemoPerson) => (person.age >= 40 ? 'row-senior' : []),
     tableName: 'docsCustomRows'
+  } satisfies TableConfig<DemoPerson>,
+  externalFilterPeople: {
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text', sortable: true },
+      { key: 'role', label: 'Rol', type: 'text', sortable: true },
+      { key: 'country', label: 'País', type: 'text', sortable: true }
+    ],
+    serverSide: false,
+    tableName: 'docsExternalFilters'
   } satisfies TableConfig<DemoPerson>,
   emptyPeople: {
     columns: [
@@ -148,7 +158,7 @@ export const TABLE_DEMO_CONFIGS = {
   serverProducts: {
     columns: [
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true, width: '80px' },
-      { key: 'title', label: 'Producto', type: 'text', sortable: true, filterable: true, width: '240px' },
+      { key: 'title', label: 'Producto', type: 'text', sortable: true, filterable: true, width: '320px' },
       { key: 'category', label: 'Categoría', type: 'text' },
       { key: 'price', label: 'Precio ($)', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
     ],

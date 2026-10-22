@@ -401,6 +401,7 @@ export interface TableSelectableConfig<T> {
   headerLabel?: string;           // texto de la cabecera de las casillas (por defecto, vacía)
   key: keyof T & string;
   selectedValues?: unknown[];
+  width?: string;                        // columna de casillas; por defecto 3rem
 }
 
 export interface TableExpandableConfig<T, S> {
@@ -409,6 +410,7 @@ export interface TableExpandableConfig<T, S> {
   subTablePagination?: PaginationMeta | null;
   subRowsKey?: keyof T & string;
   togglePosition?: 'before' | 'after';   // izquierda (por defecto) o derecha
+  toggleWidth?: string;                  // ancho de la columna del botón; por defecto 3rem
   toggleIconSvg?: string;                // por defecto, el chevron del acordeón
   headerLabel?: string;
   expandedValues?: unknown[];

@@ -32,6 +32,24 @@
   }
 }
 
+.external-filters {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.demo-subtitle {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.demo-hint {
+  color: var(--showcase-text-subtle);
+  display: block;
+  font-size: 13px;
+}
+
 /* rowClass añade la clase dentro de la vista de la tabla: de ahí el ::ng-deep */
 .custom-rows-table {
   ::ng-deep .aesy-table-row.row-senior {

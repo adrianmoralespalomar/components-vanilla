@@ -22,6 +22,8 @@ export interface TableExpandableConfig<T = Record<string, unknown>, S = any> {
   toggleIconSvg?: string;
   /** Texto de la cabecera de la columna del botón de desplegar. Por defecto, vacía. */
   headerLabel?: string;
+  /** Ancho CSS de la columna del botón. Por defecto, `3rem`: ensánchalo si pintas un botón propio con `aesyTableExpander`. */
+  toggleWidth?: string;
   /** Valores de `key` de las filas desplegadas al empezar. No emiten `rowExpandedChange`. */
   expandedValues?: unknown[];
   /** Al desplegar una fila se pliegan las demás. */

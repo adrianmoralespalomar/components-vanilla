@@ -258,11 +258,11 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
 
   protected get columns(): TableColumn<T>[] {
     const { selectable, expandable } = this.config();
-    const expanderColumn: TableColumn<T> | null = expandable ? { key: this.expandableKey, label: expandable.headerLabel ?? '', type: 'custom', width: '3rem' } : null;
+    const expanderColumn: TableColumn<T> | null = expandable ? { key: this.expandableKey, label: expandable.headerLabel ?? '', type: 'custom', width: expandable.toggleWidth ?? '3rem' } : null;
     const isExpanderBefore = expandable?.togglePosition !== 'after';
     const leadingColumns: TableColumn<T>[] = [];
     if (expanderColumn && isExpanderBefore) leadingColumns.push(expanderColumn);
-    if (selectable) leadingColumns.push({ key: this.selectableKey, label: selectable.headerLabel ?? '', type: 'custom' });
+    if (selectable) leadingColumns.push({ key: this.selectableKey, label: selectable.headerLabel ?? '', type: 'custom', width: selectable.width ?? '3rem' });
     return [...leadingColumns, ...this.orderedColumns(), ...(expanderColumn && !isExpanderBefore ? [expanderColumn] : [])];
   }
 
