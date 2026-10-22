@@ -51,9 +51,8 @@ protected readonly selectedCities = signal<City[]>([]);`,
   [paginationMetaConfig]="CITIES_PAGINATION"
   (selectionChange)="selectedCities.set($event)" />`
   },
-  customData: {
-    html: `<!-- 1. Celdas personalizadas: aesyTableCell con la key de la columna -->
-<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG">
+  customCells: {
+    html: `<aesy-table [data]="people()" [config]="PEOPLE_TABLE_CONFIG">
   <!-- aesyTableCellRows solo sirve para que person llegue tipado como Person -->
   <ng-template aesyTableCell="country" [aesyTableCellRows]="people()" let-person>
     <span class="country-badge">{{ person.country }}</span>
@@ -63,39 +62,79 @@ protected readonly selectedCities = signal<City[]>([]);`,
     <aesy-button type="tertiary" label="Ver" (buttonClick)="onViewPersonButtonClicked(person)" />
     <aesy-button type="danger" label="Quitar" (buttonClick)="onRemovePersonButtonClicked(person)" />
   </ng-template>
-</aesy-table>
-
-<!-- 2. Fila con maquetación libre, rowClass y clic -->
-<aesy-table [data]="people()" [config]="TEAM_TABLE_CONFIG" (rowClicked)="onPersonRowClicked($event)">
+</aesy-table>`,
+    ts: `protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: 'people',
+  columns: [
+    { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
+    // Columna de datos con plantilla: se sigue ordenando y filtrando por country
+    { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: COUNTRY_OPTIONS },
+    // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
+    { key: 'actions', label: 'Acciones', type: 'custom', width: '200px' }
+  ],
+  // Personalizar las celdas no quita nada: todo esto sigue funcionando
+  draggableColumns: true,
+  draggableRows: true,
+  selectable: { key: 'name' }
+};`
+  },
+  customRows: {
+    html: `<aesy-table [data]="people()" [config]="TEAM_TABLE_CONFIG" (rowClicked)="onPersonRowClicked($event)">
   <!-- Sustituye las celdas de las columnas de datos; let-columns y let-index también están disponibles -->
   <ng-template aesyTableRow [aesyTableRowRows]="people()" let-person>
     <strong>{{ person.name }}</strong> · {{ person.role }}
   </ng-template>
-</aesy-table>
-
-<!-- 3. Estado vacío -->
-<aesy-table [data]="[]" [config]="TEAM_TABLE_CONFIG">
-  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
 </aesy-table>`,
-    ts: `protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
-  tableName: people,
-  columns: [
-    { key: name, label: Nombre, type: text, sortable: true, filterable: true },
-    // Columna de datos con plantilla: se sigue ordenando y filtrando por country
-    { key: country, label: País, type: select, sortable: true, filterable: true, options: COUNTRY_OPTIONS },
-    // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
-    { key: actions, label: Acciones, type: custom, width: 200px }
-  ]
-};
-
-protected readonly TEAM_TABLE_CONFIG: TableConfig<Person> = {
-  tableName: team,
+    ts: `protected readonly TEAM_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: 'team',
   columns: [/* … */],
   clickableRows: true, // emite rowClicked con clic o Enter (no con clics en botones, enlaces o campos)
-  rowClass: person => (person.age >= 40 ? row-senior : []) // clases por fila según sus datos
+  rowClass: person => (person.age >= 40 ? 'row-senior' : []), // clases por fila según sus datos
+  draggableRows: true,
+  selectable: { key: 'name' }
 };`,
     css: `/* rowClass añade la clase dentro de la vista de la tabla: desde un componente hace falta ::ng-deep */
 .team-table ::ng-deep .aesy-table-row.row-senior { background: #fef3c7; }`
+  },
+  customEmpty: {
+    html: `<aesy-table [data]="[]" [config]="PEOPLE_TABLE_CONFIG">
+  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
+</aesy-table>`
+  },
+  customSubTables: {
+    html: `<aesy-table class="custom-subtable" [data]="COUNTRIES" [config]="COUNTRIES_TABLE_CONFIG">
+  <!-- aesyTableCellTable y aesyTableRowTable apuntan a la subtabla por su tableName (a cualquier nivel) -->
+  <ng-template aesyTableCell="population" aesyTableCellTable="cities" let-city>
+    <span class="population-badge">{{ city['population'] }} hab.</span>
+  </ng-template>
+</aesy-table>
+
+<aesy-table [data]="COUNTRIES" [config]="COUNTRIES_TABLE_CONFIG">
+  <ng-template aesyTableRow aesyTableRowTable="cities" let-city>
+    <strong>{{ city['name'] }}</strong> · {{ city['population'] }} hab.
+  </ng-template>
+</aesy-table>`,
+    ts: `protected readonly COUNTRIES_TABLE_CONFIG: TableConfig<Country, City> = {
+  tableName: 'countries',
+  columns: [{ key: 'name', label: 'País', type: 'text' }],
+  expandable: {
+    key: 'name',
+    subRowsKey: 'cities',
+    // La config de la subtabla admite lo mismo que cualquier tabla
+    subTable: {
+      tableName: 'cities',
+      columns: CITY_COLUMNS,
+      rowClass: city => (city.population >= 2000000 ? 'row-big-city' : [])
+    }
+  }
+};`,
+    css: `/* La subtabla es otra aesy-table dentro de la tabla: sus variables se cambian con ::ng-deep */
+.custom-subtable ::ng-deep aesy-table {
+  --aesy-table-header-background: #1e1b4b;
+  --aesy-table-header-text-color: #ffffff;
+  --aesy-table-body-odd-background: #f5f3ff;
+}
+.custom-subtable ::ng-deep .aesy-table-row.row-big-city { background: #fffbeb; }`
   },
   externalFilters: {
     html: `<!-- Los filtros los maqueta el padre; la tabla no tiene columnas filterable -->

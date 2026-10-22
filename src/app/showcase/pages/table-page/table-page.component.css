@@ -112,3 +112,59 @@
     width: 100%;
   }
 }
+
+.custom-subtable {
+  .population-badge {
+    background: #ede9fe;
+    border-radius: 999px;
+    color: #6d28d9;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.625rem;
+  }
+
+  .population-badge-big {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .sub-city-row {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+
+    strong {
+      flex: 0 0 8rem;
+    }
+
+    .sub-city-bar {
+      background: #ede9fe;
+      border-radius: 999px;
+      flex: 1;
+      height: 0.5rem;
+      overflow: hidden;
+
+      span {
+        background: #6d28d9;
+        display: block;
+        height: 100%;
+      }
+    }
+  }
+
+  /* La subtabla es otra aesy-table dentro de la vista de la tabla: de ahí el ::ng-deep */
+  ::ng-deep aesy-table {
+    --aesy-table-header-background: #1e1b4b;
+    --aesy-table-header-border-color: #1e1b4b;
+    --aesy-table-header-text-color: #ffffff;
+    --aesy-table-body-odd-background: #f5f3ff;
+    --aesy-table-body-hover-background: #ddd6fe;
+    --aesy-table-body-border-color: #ddd6fe;
+    --aesy-table-text-color: #1e1b4b;
+  }
+
+  ::ng-deep .aesy-table-row.row-big-city {
+    background: #fffbeb;
+  }
+}

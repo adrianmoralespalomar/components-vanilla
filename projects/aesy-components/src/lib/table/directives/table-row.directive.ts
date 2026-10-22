@@ -18,6 +18,11 @@ import { TableRowContext } from '../models/table-row-context.interface';
 export class TableRowDirective<T extends object = Row> {
   readonly templateRef = inject<TemplateRef<TableRowContext<T>>>(TemplateRef);
 
+  /**
+   * `tableName` de la subtabla donde se aplica la plantilla. Sin él, solo afecta a la tabla donde está declarada.
+   * Con él, a la tabla con ese `tableName` a cualquier nivel de anidación.
+   */
+  readonly tableName = input<string | undefined>(undefined, { alias: 'aesyTableRowTable' });
   /** Solo sirve para el tipado: Angular deduce de aquí el tipo de `row`. */
   readonly rows = input<readonly T[]>([], { alias: 'aesyTableRowRows' });
 

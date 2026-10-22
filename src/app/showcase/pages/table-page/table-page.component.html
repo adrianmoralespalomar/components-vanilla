@@ -18,9 +18,9 @@
     <app-value-preview label="selectionChange" [value]="selectedCities()" />
   </app-doc-section>
 
-  <app-doc-section sectionId="personalizar-datos" heading="Personalización de datos" description="Todo lo que se puede decidir sobre qué se pinta en las celdas y las filas, junto: celdas con contenido propio (aesyTableCell), filas con maquetación libre (aesyTableRow), clases y clic por fila (rowClass, clickableRows) y el mensaje del estado vacío (aesyTableEmpty). La cabecera, el orden, los filtros, la selección y el desplegado siguen funcionando en todos los casos." [snippet]="SNIPPETS.customData">
-    <h3 class="demo-subtitle">Celdas personalizadas</h3>
-    <span class="demo-hint">Un ng-template con aesyTableCell y la key de una columna pinta lo que quieras en sus celdas. En una columna de datos (aquí País) se sigue ordenando y filtrando por el valor; una columna type: 'custom' (Acciones) no necesita estar en la fila y no se ordena ni se filtra. Con aesyTableCellRows, row llega con el tipo de tus filas.</span>
+  <app-doc-section sectionId="personalizar-datos" heading="Personalización de datos" variant="plain" description="Todo lo que se puede decidir sobre qué se pinta en las celdas, las filas y las subtablas, junto: celdas con contenido propio (aesyTableCell), filas con maquetación libre (aesyTableRow), clases y clic por fila (rowClass, clickableRows), el mensaje del estado vacío (aesyTableEmpty) y todo eso mismo dentro de subtablas. Cada ejemplo tiene su código y en todos la cabecera, el orden, los filtros, la selección, el desplegado y el arrastre de filas y columnas siguen funcionando." />
+
+  <app-doc-section sectionId="personalizar-celdas" heading="Celdas personalizadas" description="Un ng-template con aesyTableCell y la key de una columna pinta lo que quieras en sus celdas. En una columna de datos (aquí País) se sigue ordenando y filtrando por el valor; una columna type: 'custom' (Acciones) no necesita estar en la fila y no se ordena ni se filtra. Con aesyTableCellRows, row llega con el tipo de tus filas. Esta tabla además permite seleccionar filas y mover columnas (arrastra una cabecera) y filas, para ver que personalizar no quita nada." [snippet]="SNIPPETS.customCells">
     <div class="demo-row">
       <aesy-button type="tertiary" label="Restaurar personas" [disabled]="customCellsPeople().length === PEOPLE.length" (buttonClick)="onRestoreCustomCellsPeopleButtonClicked()" />
     </div>
@@ -36,9 +36,9 @@
       </ng-template>
     </aesy-table>
     <app-value-preview label="Persona vista" [value]="viewedPerson()" />
+  </app-doc-section>
 
-    <h3 class="demo-subtitle">Fila con maquetación libre, clase por fila y clic</h3>
-    <span class="demo-hint">aesyTableRow sustituye las celdas de las columnas de datos. rowClass añade una clase según los datos (aquí, los mayores de 40) y clickableRows emite rowClicked al hacer clic o pulsar Enter en la fila.</span>
+  <app-doc-section sectionId="personalizar-filas" heading="Filas con maquetación libre" description="aesyTableRow sustituye las celdas de las columnas de datos por tu maquetación (las casillas siguen ahí). rowClass añade una clase según los datos (aquí, los mayores de 40) y clickableRows emite rowClicked al hacer clic o pulsar Enter en la fila. También se pueden seleccionar y mover filas." [snippet]="SNIPPETS.customRows">
     <aesy-table class="custom-rows-table" [data]="PEOPLE" [config]="CONFIGS.customRows" [paginationMetaConfig]="THEMED_PAGINATION" (rowClicked)="onCustomRowClicked($event)">
       <ng-template aesyTableRow [aesyTableRowRows]="PEOPLE" let-person>
         <div class="person-row">
@@ -52,11 +52,28 @@
       </ng-template>
     </aesy-table>
     <app-value-preview label="rowClicked" [value]="clickedPerson()" />
+  </app-doc-section>
 
-    <h3 class="demo-subtitle">Estado vacío</h3>
-    <span class="demo-hint">Sin filas, aesyTableEmpty sustituye el texto "No hay datos disponibles.".</span>
+  <app-doc-section sectionId="personalizar-vacio" heading="Estado vacío" description="Sin filas, aesyTableEmpty sustituye el texto «No hay datos disponibles.»." [snippet]="SNIPPETS.customEmpty">
     <aesy-table [data]="[]" [config]="CONFIGS.emptyPeople">
       <ng-template aesyTableEmpty>Aún no hay nadie en el equipo. Añade a la primera persona.</ng-template>
+    </aesy-table>
+  </app-doc-section>
+
+  <app-doc-section sectionId="personalizar-subtablas" heading="Subtablas personalizadas" description="Las plantillas se aplican a una subtabla indicando su tableName (aesyTableCellTable, aesyTableRowTable), a cualquier nivel. La config de la subtabla admite lo mismo que la de cualquier tabla (rowClass, selectable…) y su aspecto se cambia con las variables --aesy-table-* sobre su elemento. Primera tabla: celdas, clase por fila y cabecera propias. Segunda: filas libres." [snippet]="SNIPPETS.customSubTables">
+    <aesy-table class="custom-subtable" [data]="COUNTRIES" [config]="CONFIGS.customSubTableCells">
+      <ng-template aesyTableCell="population" aesyTableCellTable="docsCustomSubCells" let-city>
+        <span class="population-badge" [class.population-badge-big]="$any(city['population']) >= 2000000">{{ city['population'] }} hab.</span>
+      </ng-template>
+    </aesy-table>
+    <aesy-table class="custom-subtable" [data]="COUNTRIES" [config]="CONFIGS.customSubTableRows">
+      <ng-template aesyTableRow aesyTableRowTable="docsCustomSubRows" let-city>
+        <div class="sub-city-row">
+          <strong>{{ city['name'] }}</strong>
+          <span class="sub-city-bar"><span [style.width.%]="$any(city['population']) / 35000"></span></span>
+          <span>{{ city['population'] }} hab.</span>
+        </div>
+      </ng-template>
     </aesy-table>
   </app-doc-section>
 

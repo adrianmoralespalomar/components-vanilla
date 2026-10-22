@@ -45,6 +45,9 @@ export const TABLE_DEMO_CONFIGS = {
       { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: DEMO_COUNTRY_FILTER_OPTIONS },
       { key: 'actions', label: 'Acciones', type: 'custom', width: '200px' }
     ],
+    draggableColumns: true,
+    draggableRows: true,
+    selectable: { key: 'name' },
     serverSide: false,
     tableName: 'docsCustomCells'
   } satisfies TableConfig<DemoPerson>,
@@ -109,6 +112,8 @@ export const TABLE_DEMO_CONFIGS = {
   } satisfies TableConfig<DemoPerson>,
   customRows: {
     clickableRows: true,
+    draggableRows: true,
+    selectable: { key: 'name' },
     columns: [
       { key: 'name', label: 'Equipo', type: 'text', sortable: true, filterable: true },
       { key: 'age', label: 'Edad', type: 'number', sortable: true }
@@ -125,6 +130,37 @@ export const TABLE_DEMO_CONFIGS = {
     serverSide: false,
     tableName: 'docsExternalFilters'
   } satisfies TableConfig<DemoPerson>,
+  customSubTableCells: {
+    columns: [{ key: 'name', label: 'País', type: 'text', sortable: true }],
+    expandable: {
+      key: 'name',
+      subRowsKey: 'cities',
+      subTable: {
+        columns: [
+          { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
+        ],
+        rowClass: (city: DemoCity) => (city.population >= 2000000 ? 'row-big-city' : []),
+        tableName: 'docsCustomSubCells'
+      }
+    },
+    tableName: 'docsCustomSubTableCells'
+  } satisfies TableConfig<DemoCountry, DemoCity>,
+  customSubTableRows: {
+    columns: [{ key: 'name', label: 'País', type: 'text', sortable: true }],
+    expandable: {
+      key: 'name',
+      subRowsKey: 'cities',
+      subTable: {
+        columns: [
+          { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
+        ],
+        tableName: 'docsCustomSubRows'
+      }
+    },
+    tableName: 'docsCustomSubTableRows'
+  } satisfies TableConfig<DemoCountry, DemoCity>,
   emptyPeople: {
     columns: [
       { key: 'name', label: 'Nombre', type: 'text' },

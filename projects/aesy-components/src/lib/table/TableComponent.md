@@ -345,6 +345,7 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `[aesyTableCellTable]` | Opcional: `tableName` de la subtabla donde se aplica la plantilla de celda. |
 | `ng-template[aesyTableRow]` | Maquetación libre de cada fila en lugar de las celdas de datos (`TableRowDirective<T>`). Contexto: `TableRowContext<T>` (`$implicit`, `index`, `columns`). |
 | `[aesyTableRowRows]` | Opcional, solo para el tipado de `row`. |
+| `[aesyTableRowTable]` | Opcional: `tableName` de la subtabla donde se aplica la plantilla de fila. |
 | `ng-template[aesyTableEmpty]` | Contenido del estado vacío (`TableEmptyDirective`). |
 | `ng-template[aesyTableDetail]` | Panel libre bajo la fila desplegada (`TableDetailDirective<T>`). Contexto: `TableDetailContext<T>` (`$implicit`: la fila; `subRows`: sus filas hijas). |
 | `[aesyTableDetailRows]` | Opcional, solo para el tipado de `row`. |

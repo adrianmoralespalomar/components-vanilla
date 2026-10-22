@@ -89,7 +89,15 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   /** Plantillas `aesyTableCell` que le pasa la tabla padre (con `aesyTableCellTable`) cuando esta es una subtabla. */
   readonly inheritedCellTemplates = input<readonly TableCellDirective<Record<string, unknown>>[]>([]);
   protected readonly detailTemplate = contentChild(TableDetailDirective);
-  protected readonly rowTemplate = contentChild<TableRowDirective<T>>(TableRowDirective);
+  private readonly declaredRowTemplates = contentChildren<TableRowDirective<T>>(TableRowDirective);
+  /** Plantillas `aesyTableRow` que le pasa la tabla padre (con `aesyTableRowTable`) cuando esta es una subtabla. */
+  readonly inheritedRowTemplates = input<readonly TableRowDirective<Record<string, unknown>>[]>([]);
+  protected readonly rowTemplatesForSubTables = computed(() => [...this.inheritedRowTemplates(), ...this.declaredRowTemplates()] as unknown as readonly TableRowDirective<Record<string, unknown>>[]);
+  protected readonly rowTemplate = computed(() => {
+    const declaredHere = new Set<unknown>(this.declaredRowTemplates());
+    const tableName = this.config().tableName;
+    return this.rowTemplatesForSubTables().find(rowTemplate => (rowTemplate.tableName() ? rowTemplate.tableName() === tableName : declaredHere.has(rowTemplate))) as unknown as TableRowDirective<T> | undefined;
+  });
   protected readonly emptyTemplate = contentChild(TableEmptyDirective);
   /** Columna ficticia que ocupa el sitio de las columnas de datos cuando hay plantilla `aesyTableRow`. */
   protected readonly freeRowKey = '__row__';

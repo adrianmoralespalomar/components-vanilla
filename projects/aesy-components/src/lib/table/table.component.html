@@ -135,6 +135,7 @@
                     [paginationMetaConfig]="config().expandable?.subTablePagination ?? null"
                     [subRows]="subRows()"
                     [inheritedCellTemplates]="cellTemplatesForSubTables()"
+                    [inheritedRowTemplates]="rowTemplatesForSubTables()"
                     (rowExpandedChange)="onSubTableRowExpandedChanged($event, row)"
                     (subRowExpandedChange)="onSubTableSubRowExpandedChanged($event, row)"/>
                 } @else {

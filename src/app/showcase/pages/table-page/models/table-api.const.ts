@@ -45,6 +45,7 @@ export const TABLE_API: ComponentApi = {
         { name: 'ng-template[aesyTableExpander]', type: 'TableExpanderDirective<T>', description: 'Botón propio para desplegar filas. let-row recibe la fila, let-expanded="expanded" su estado y let-toggle="toggle" la función que la despliega o pliega.' },
         { name: 'ng-template[aesyTableRow]', type: 'TableRowDirective<T>', description: 'Maquetación libre de cada fila en lugar de las celdas de las columnas de datos (las de casilla y desplegar se mantienen). let-row recibe la fila, let-index="index" su posición y let-columns="columns" las columnas de datos. Las plantillas aesyTableCell no se aplican.' },
         { name: '[aesyTableRowRows]', type: 'T[] | undefined', description: 'Solo para el tipado: pasa las mismas filas que a la tabla.' },
+        { name: '[aesyTableRowTable]', type: 'string | undefined', description: 'tableName de la subtabla donde se aplica la plantilla de fila, a cualquier nivel. Sin él, solo afecta a la tabla donde está declarada.' },
         { name: 'ng-template[aesyTableEmpty]', type: 'TableEmptyDirective', description: 'Contenido que se muestra cuando no hay filas, en lugar de "No hay datos disponibles."' },
         { name: 'ng-template[aesyTableDetail]', type: 'TableDetailDirective<T>', description: 'Panel libre bajo la fila desplegada, en lugar de una subtabla. let-row recibe la fila y let-subRows="subRows" sus filas hijas.' }
       ]
