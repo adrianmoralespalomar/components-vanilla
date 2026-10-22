@@ -247,6 +247,15 @@
   width: 100%;
 }
 
+.aesy-table-row-clickable {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+}
+
 /* ========================================================= */
 /* EXPANDABLE (SUBTABLAS) */
 /* ========================================================= */
@@ -323,6 +332,13 @@
   overflow: hidden;
 
   white-space: nowrap;
+}
+
+.aesy-table-cell-free {
+  flex: 1 1 0;
+  height: auto;
+  min-width: 0;
+  white-space: normal;
 }
 
 .aesy-table-cell > span {

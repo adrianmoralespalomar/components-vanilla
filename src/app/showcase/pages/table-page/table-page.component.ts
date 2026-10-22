@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent, TableDetailDirective, TableExpanderDirective, TableRowExpandedChange } from 'aesy-components';
+import { ButtonComponent, PaginationMeta, RequestData, RowOrderChange, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, TableRowExpandedChange } from 'aesy-components';
 import { ComponentApi } from '../../models/component-api.interface';
 import { DEMO_PEOPLE } from '../../models/demo-people.const';
 import { DemoPerson } from '../../models/demo-person.interface';
@@ -26,7 +26,7 @@ import { TABLE_SNIPPETS } from './models/table-snippets.const';
 
 @Component({
   selector: 'app-table-page',
-  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, TableDetailDirective, TableExpanderDirective, ValuePreviewComponent],
+  imports: [ApiReferenceComponent, ButtonComponent, DocPageComponent, DocSectionComponent, TableCellDirective, TableComponent, TableDetailDirective, TableEmptyDirective, TableExpanderDirective, TableRowDirective, ValuePreviewComponent],
   templateUrl: './table-page.component.html',
   styleUrl: './table-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -69,6 +69,7 @@ export class TablePageComponent {
 
   protected readonly asyncPeople = signal<DemoPerson[]>([]);
   protected readonly customCellsPeople = signal<DemoPerson[]>(DEMO_PEOPLE);
+  protected readonly clickedPerson = signal<DemoPerson | null>(null);
   protected readonly isLoadingAsyncPeople = signal<boolean>(false);
   protected readonly lastRowExpandedChange = signal<TableRowExpandedChange<DemoPerson> | null>(null);
   /** Pedidos ya cargados, por nombre de persona (el `expandable.key` de la tabla). */
@@ -138,6 +139,10 @@ export class TablePageComponent {
 
   protected onProductsSelectionChanged(selectedProducts: DemoProduct[]): void {
     this.selectedProductTitles.set(selectedProducts.map(product => `${product.id} · ${product.title}`));
+  }
+
+  protected onCustomRowClicked(person: DemoPerson): void {
+    this.clickedPerson.set(person);
   }
 
   protected onDraggablePeopleRowOrderChanged(rowOrder: RowOrderChange<DemoPerson>): void {

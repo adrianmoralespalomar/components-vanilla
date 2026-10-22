@@ -16,6 +16,7 @@ Selector: `aesy-table`.
 - Columnas fijas a la izquierda (`fixed`) y cabecera fija (`isHeaderFixed`).
 - Columnas y filas reordenables arrastrando (CDK drag & drop).
 - Subtablas desplegables (`expandable`), con las filas hijas en la propia fila o cargadas al desplegar.
+- Filas con maquetación libre (`aesyTableRow`), clases por fila (`rowClass`), filas clicables (`clickableRows`) y mensaje propio para el estado vacío (`aesyTableEmpty`).
 - Persistencia de filtros en la URL (`persistFilters`).
 - Paginación configurable (u omitible): textos, iconos, primera/última página y filas por página.
 - Celdas con contenido propio (botones, enlaces, etiquetas…) con `aesyTableCell`, y columnas `custom` sin dato propio (acciones).
@@ -170,6 +171,26 @@ El resto de columnas siguen comprobando que su `key` existe en `T`: una errata c
 
 ---
 
+# Filas, clic y estado vacío
+
+Todo es opcional: sin estas opciones la tabla se comporta igual que antes.
+
+```html
+<aesy-table [data]="people()" [config]="config" (rowClicked)="onPersonRowClicked($event)">
+  <ng-template aesyTableRow [aesyTableRowRows]="people()" let-person let-index="index">
+    <strong>{{ person.name }}</strong> · {{ person.role }}
+  </ng-template>
+  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
+</aesy-table>
+```
+
+- **`aesyTableRow`** sustituye las celdas de las columnas de datos por una maquetación libre que ocupa el ancho que dejan las columnas de casilla y de desplegar (la tabla las sigue pintando). La cabecera, el orden, los filtros, la selección, el desplegado y el arrastre de filas siguen funcionando. Las plantillas `aesyTableCell` no se aplican en ese modo y las columnas fijas no tienen efecto en el cuerpo. Contexto: `TableRowContext<T>` (`$implicit`: la fila; `index`: su posición; `columns`: las columnas de datos).
+- **`rowClass`** (en la config) devuelve las clases de cada fila según sus datos. Se aplican a `.aesy-table-row`, dentro de la vista de la tabla: para estilarlas desde un componente hace falta `::ng-deep` o un estilo global.
+- **`clickableRows`** (en la config) hace que la fila emita `rowClicked` al hacer clic o pulsar Enter, con cursor de puntero. Los clics en botones, enlaces y campos no cuentan.
+- **`aesyTableEmpty`** sustituye el texto "No hay datos disponibles.".
+
+---
+
 # Subtablas (filas desplegables)
 
 `expandable` añade a la izquierda un botón que despliega una subtabla bajo cada fila. `TableConfig<T, S>`: `S` es el tipo de las filas de la subtabla.
@@ -311,6 +332,7 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `currentPageChange` | `number` | Nueva página actual. |
 | `rowsPerPageChange` | `number` | Nuevo número de filas por página. |
 | `rowOrderChange` | `RowOrderChange<T>` | Una fila se ha arrastrado a otra posición. |
+| `rowClicked` | `T` | Clic (o Enter) en una fila. Solo con `clickableRows`. |
 | `rowExpandedChange` | `TableRowExpandedChange<T>` | Una fila se ha desplegado o plegado (`{ row, expanded }`). |
 | `subRowExpandedChange` | `TableSubRowExpandedChange` | Lo mismo en una subtabla, a cualquier nivel. |
 
@@ -321,6 +343,9 @@ Con `persistFilters: true` los filtros se guardan en los query params con el pre
 | `ng-template[aesyTableCell]` | Plantilla de las celdas de la columna con esa `key` (`TableCellDirective<T>`). Contexto: `TableCellContext<T>` (`$implicit`: la fila; `column`: la columna). |
 | `[aesyTableCellRows]` | Opcional, solo para el tipado: las mismas filas que `data`. |
 | `[aesyTableCellTable]` | Opcional: `tableName` de la subtabla donde se aplica la plantilla de celda. |
+| `ng-template[aesyTableRow]` | Maquetación libre de cada fila en lugar de las celdas de datos (`TableRowDirective<T>`). Contexto: `TableRowContext<T>` (`$implicit`, `index`, `columns`). |
+| `[aesyTableRowRows]` | Opcional, solo para el tipado de `row`. |
+| `ng-template[aesyTableEmpty]` | Contenido del estado vacío (`TableEmptyDirective`). |
 | `ng-template[aesyTableDetail]` | Panel libre bajo la fila desplegada (`TableDetailDirective<T>`). Contexto: `TableDetailContext<T>` (`$implicit`: la fila; `subRows`: sus filas hijas). |
 | `[aesyTableDetailRows]` | Opcional, solo para el tipado de `row`. |
 | `ng-template[aesyTableExpander]` | Botón propio para desplegar filas (`TableExpanderDirective<T>`). Contexto: `TableExpanderContext<T>` (`$implicit`: la fila; `expanded`; `toggle`). |
@@ -338,6 +363,8 @@ export interface TableConfig<T, S = Record<string, unknown>> {
   isHeaderFixed?: boolean;
   draggableColumns?: boolean;
   draggableRows?: boolean;
+  clickableRows?: boolean;
+  rowClass?: (row: T) => string | string[];
   selectable?: TableSelectableConfig<T>;
   sortByKey?: string;
   sortDirection?: 'asc' | 'desc' | '';

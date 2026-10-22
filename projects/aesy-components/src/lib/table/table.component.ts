@@ -11,8 +11,11 @@ import { SelectComponent } from '../form-controls/select/select.component';
 import { AESY_ICON_SLIDERS } from '../icon/models/icon-paths/aesy-icon-sliders.const';
 import { TableCellDirective } from './directives/table-cell.directive';
 import { TableDetailDirective } from './directives/table-detail.directive';
+import { TableEmptyDirective } from './directives/table-empty.directive';
 import { TableExpanderDirective } from './directives/table-expander.directive';
+import { TableRowDirective } from './directives/table-row.directive';
 import { TableExpanderContext } from './models/table-expander-context.interface';
+import { TableRowContext } from './models/table-row-context.interface';
 import { AESY_ICON_CHEVRON_DOWN } from '../icon/models/icon-paths/aesy-icon-chevron-down.const';
 import { RequestData } from './models/request-data.interface';
 import { RowOrderChange } from './models/row-order-change.interface';
@@ -59,6 +62,8 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   readonly currentPageChange = output<number>();
   readonly rowsPerPageChange = output<number>();
   readonly rowOrderChange = output<RowOrderChange<T>>();
+  /** Se ha hecho clic (o Enter) en una fila. Solo con `config.clickableRows`. */
+  readonly rowClicked = output<T>();
 
   protected readonly DRAG_ICON_PATH: string = AESY_ICON_SLIDERS;
 
@@ -84,6 +89,10 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
   /** Plantillas `aesyTableCell` que le pasa la tabla padre (con `aesyTableCellTable`) cuando esta es una subtabla. */
   readonly inheritedCellTemplates = input<readonly TableCellDirective<Record<string, unknown>>[]>([]);
   protected readonly detailTemplate = contentChild(TableDetailDirective);
+  protected readonly rowTemplate = contentChild<TableRowDirective<T>>(TableRowDirective);
+  protected readonly emptyTemplate = contentChild(TableEmptyDirective);
+  /** Columna ficticia que ocupa el sitio de las columnas de datos cuando hay plantilla `aesyTableRow`. */
+  protected readonly freeRowKey = '__row__';
   /** Todas las plantillas de celda visibles desde aquí: las heredadas y las declaradas en esta tabla. */
   protected readonly cellTemplatesForSubTables = computed(() => [...this.inheritedCellTemplates(), ...this.cellTemplates()] as unknown as readonly TableCellDirective<Record<string, unknown>>[]);
   protected readonly cellTemplatesByColumnKey = computed(() => {
@@ -274,8 +283,31 @@ export class TableComponent<T extends object = Row> implements AfterViewInit {
     if (dragKey && from !== -1 && to !== -1 && from !== to) {
       moveItemInArray(cols, from, to);
     }
-    return cols;
+    if (!this.rowTemplate()) return cols;
+    const specialKeys = [this.expandableKey, this.selectableKey];
+    const firstDataColumnIndex = cols.findIndex(col => !specialKeys.includes(col.key));
+    const freeRowColumn: TableColumn<T> = { key: this.freeRowKey, label: '', type: 'custom' };
+    const specialCols = cols.filter(col => specialKeys.includes(col.key));
+    return [...specialCols.slice(0, firstDataColumnIndex), freeRowColumn, ...specialCols.slice(firstDataColumnIndex)];
   });
+
+  protected getRowContext(row: T, index: number): TableRowContext<T> {
+    return { $implicit: row, index, columns: this.orderedColumns() };
+  }
+
+  protected getRowClasses(row: T): string | string[] {
+    return this.config().rowClass?.(row) ?? [];
+  }
+
+  protected onRowClicked(event: MouseEvent, row: T): void {
+    if (!this.config().clickableRows) return;
+    const isInteractiveTarget = (event.target as Element).closest('button, a, input, select, textarea, label, [role="button"], aesy-checkbox, aesy-select, aesy-input-text');
+    if (!isInteractiveTarget) this.rowClicked.emit(row);
+  }
+
+  protected onRowEnterPressed(event: Event, row: T): void {
+    if (this.config().clickableRows && event.target === event.currentTarget) this.rowClicked.emit(row);
+  }
 
   readonly displayedData = computed((): T[] => {
     return this.config().serverSide ? this.data() : (this.tableForNoServerSide()?.filteredData ?? []);

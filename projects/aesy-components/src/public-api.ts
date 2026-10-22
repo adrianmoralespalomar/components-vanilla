@@ -93,7 +93,10 @@ export * from './lib/sidebar/sidebar.component';
 
 export * from './lib/table/directives/table-cell.directive';
 export * from './lib/table/directives/table-detail.directive';
+export * from './lib/table/directives/table-empty.directive';
 export * from './lib/table/directives/table-expander.directive';
+export * from './lib/table/directives/table-row.directive';
+export * from './lib/table/models/table-row-context.interface';
 export * from './lib/table/models/table-expander-context.interface';
 export * from './lib/table/models/table-expander-position.type';
 export * from './lib/table/models/table-detail-context.interface';

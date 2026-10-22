@@ -13,6 +13,7 @@ export const TABLE_API: ComponentApi = {
     { name: 'currentPageChange', type: 'number', description: 'Nueva página actual.' },
     { name: 'rowsPerPageChange', type: 'number', description: 'Nuevo número de filas por página.' },
     { name: 'rowOrderChange', type: '{ previousIndex: number; currentIndex: number; row: T }', description: 'Una fila se ha arrastrado a otra posición; reordena tus datos con estos índices.' },
+    { name: 'rowClicked', type: 'T', description: 'Clic (o Enter) en una fila. Solo con clickableRows; los clics en botones, enlaces y campos no cuentan.' },
     { name: 'rowExpandedChange', type: '{ row: T; expanded: boolean }', description: 'Una fila se ha desplegado o plegado. Al desplegar es donde llamas a tu endpoint y devuelves las filas hijas en subRows.' },
     { name: 'subRowExpandedChange', type: '{ row: object; expanded: boolean; parentRows: object[] }', description: 'Lo mismo para una fila de una subtabla (a cualquier nivel). parentRows son sus ancestras, de la fila de esta tabla hacia abajo.' }
   ],
@@ -29,6 +30,8 @@ export const TABLE_API: ComponentApi = {
         { name: 'draggableRows', type: 'boolean | undefined', description: 'Permite reordenar filas arrastrándolas (emite rowOrderChange).' },
         { name: 'selectable', type: 'TableSelectableConfig<T> | undefined', description: 'Activa la selección de filas con casillas.' },
         { name: 'expandable', type: 'TableExpandableConfig<T, S> | undefined', description: 'Activa filas desplegables con una subtabla (S es el tipo de sus filas).' },
+        { name: 'clickableRows', type: 'boolean | undefined', description: 'Las filas emiten rowClicked con clic o Enter y muestran cursor de puntero.' },
+        { name: 'rowClass', type: '((row: T) => string | string[]) | undefined', description: 'Clases CSS de cada fila según sus datos. Se aplican a .aesy-table-row: para estilarlas desde un componente hace falta ::ng-deep o un estilo global.' },
         { name: 'sortByKey', type: 'string | undefined', description: 'Columna ordenada inicialmente.' },
         { name: 'sortDirection', type: "'asc' | 'desc' | '' | undefined", description: 'Dirección de la ordenación inicial.' }
       ]
@@ -40,6 +43,9 @@ export const TABLE_API: ComponentApi = {
         { name: '[aesyTableCellRows]', type: 'T[] | undefined', description: 'Solo para el tipado: pasa las mismas filas que a la tabla y row llega con su tipo. Sin él, row es Record<string, unknown>.' },
         { name: '[aesyTableCellTable]', type: 'string | undefined', description: 'tableName de la subtabla donde se aplica la plantilla de celda, a cualquier nivel. Sin él, solo afecta a la tabla donde está declarada.' },
         { name: 'ng-template[aesyTableExpander]', type: 'TableExpanderDirective<T>', description: 'Botón propio para desplegar filas. let-row recibe la fila, let-expanded="expanded" su estado y let-toggle="toggle" la función que la despliega o pliega.' },
+        { name: 'ng-template[aesyTableRow]', type: 'TableRowDirective<T>', description: 'Maquetación libre de cada fila en lugar de las celdas de las columnas de datos (las de casilla y desplegar se mantienen). let-row recibe la fila, let-index="index" su posición y let-columns="columns" las columnas de datos. Las plantillas aesyTableCell no se aplican.' },
+        { name: '[aesyTableRowRows]', type: 'T[] | undefined', description: 'Solo para el tipado: pasa las mismas filas que a la tabla.' },
+        { name: 'ng-template[aesyTableEmpty]', type: 'TableEmptyDirective', description: 'Contenido que se muestra cuando no hay filas, en lugar de "No hay datos disponibles."' },
         { name: 'ng-template[aesyTableDetail]', type: 'TableDetailDirective<T>', description: 'Panel libre bajo la fila desplegada, en lugar de una subtabla. let-row recibe la fila y let-subRows="subRows" sus filas hijas.' }
       ]
     },

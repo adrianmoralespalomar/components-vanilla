@@ -73,14 +73,20 @@
 
     <div class="aesy-table-tbody" cdkDropList cdkDropListOrientation="vertical" [cdkDropListDisabled]="!config().draggableRows" (cdkDropListDropped)="dropRow($event)">
       @for (row of displayedData(); track $index) {
-        <div class="aesy-table-row" cdkDrag [class.aesy-table-row-odd]="$index % 2 === 0" [class.aesy-table-row-even]="$index % 2 !== 0">
-          <div class="aesy-table-row-cells">
+        <div class="aesy-table-row" cdkDrag [class]="getRowClasses(row)" [class.aesy-table-row-odd]="$index % 2 === 0" [class.aesy-table-row-even]="$index % 2 !== 0">
+          <div
+            class="aesy-table-row-cells"
+            [class.aesy-table-row-clickable]="config().clickableRows"
+            [attr.tabindex]="config().clickableRows ? 0 : null"
+            (click)="onRowClicked($event, row)"
+            (keydown.enter)="onRowEnterPressed($event, row)">
           <!-- AQUÍ SE USA bodyColumns() PARA REORDENAR EN TIEMPO REAL -->
           @for (col of bodyColumns(); track col.key) {
             <div
               #cellElement
               class="aesy-table-cell"
               [class.aesy-table-cell-auto-width]="!col.width"
+              [class.aesy-table-cell-free]="col.key === freeRowKey"
               [class.aesy-table-cell-fixed]="col.fixed"
               [class.aesy-table-text-align-left]="col.alignCell === 'left'"
               [class.aesy-table-text-align-center]="col.alignCell === 'center'"
@@ -101,6 +107,8 @@
                     <svg class="aesy-table-expander-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path [attr.d]="expanderIconSvg()" /></svg>
                   </button>
                 }
+              } @else if (col.key === freeRowKey) {
+                <ng-container [ngTemplateOutlet]="rowTemplate()!.templateRef" [ngTemplateOutletContext]="getRowContext(row, $index)" />
               } @else if (col.key === selectableKey) {
                 <aesy-checkbox [value]="isSelected(row)" (valueChange)="toggleRowSelection(row, $event)" />
               } @else if (cellTemplatesByColumnKey().has(col.key)) {
@@ -136,7 +144,13 @@
           <ng-template cdkDragPlaceholder><div class="aesy-table-row aesy-table-row-placeholder"></div></ng-template>
         </div>
       } @empty {
-        <div class="aesy-table-empty"><span>No hay datos disponibles.</span></div>
+        <div class="aesy-table-empty">
+          @if (emptyTemplate(); as empty) {
+            <ng-container [ngTemplateOutlet]="empty.templateRef" />
+          } @else {
+            <span>No hay datos disponibles.</span>
+          }
+        </div>
       }
     </div>
   </div>

@@ -75,6 +75,25 @@
     </aesy-table>
   </app-doc-section>
 
+  <app-doc-section sectionId="filas-personalizadas" heading="Filas, clic y estado vacío" description="aesyTableRow sustituye las celdas de las columnas de datos por una maquetación libre (la cabecera, el orden, los filtros y las columnas de casilla o de desplegar siguen igual). rowClass añade clases según los datos, clickableRows emite rowClicked al hacer clic o pulsar Enter en una fila, y aesyTableEmpty cambia el mensaje cuando no hay filas." [snippet]="SNIPPETS.customRows">
+    <aesy-table class="custom-rows-table" [data]="PEOPLE" [config]="CONFIGS.customRows" [paginationMetaConfig]="THEMED_PAGINATION" (rowClicked)="onCustomRowClicked($event)">
+      <ng-template aesyTableRow [aesyTableRowRows]="PEOPLE" let-person>
+        <div class="person-row">
+          <span class="person-avatar">{{ person.name[0] }}</span>
+          <div class="person-info">
+            <strong>{{ person.name }}</strong>
+            <span>{{ person.role }} · {{ person.country }}</span>
+          </div>
+          <span class="person-age">{{ person.age }} años</span>
+        </div>
+      </ng-template>
+    </aesy-table>
+    <app-value-preview label="rowClicked" [value]="clickedPerson()" />
+    <aesy-table [data]="[]" [config]="CONFIGS.emptyPeople">
+      <ng-template aesyTableEmpty>Aún no hay nadie en el equipo. Añade a la primera persona.</ng-template>
+    </aesy-table>
+  </app-doc-section>
+
   <app-doc-section sectionId="arrastrar" heading="Columnas y filas reordenables" description="draggableColumns permite mover columnas arrastrando la cabecera y draggableRows mueve filas. En local la tabla reordena sola (si no hay filtro ni orden activos) y avisa con rowOrderChange." [snippet]="SNIPPETS.draggable">
     <aesy-table [data]="PEOPLE" [config]="CONFIGS.draggablePeople" [paginationMetaConfig]="DRAGGABLE_PAGINATION" (rowOrderChange)="onDraggablePeopleRowOrderChanged($event)" />
     <app-value-preview label="rowOrderChange" [value]="lastRowOrderChange()" />

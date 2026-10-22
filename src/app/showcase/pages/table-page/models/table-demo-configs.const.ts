@@ -106,6 +106,22 @@ export const TABLE_DEMO_CONFIGS = {
     ],
     tableName: 'docsThemedPeople'
   } satisfies TableConfig<DemoPerson>,
+  customRows: {
+    clickableRows: true,
+    columns: [
+      { key: 'name', label: 'Equipo', type: 'text', sortable: true, filterable: true },
+      { key: 'age', label: 'Edad', type: 'number', sortable: true }
+    ],
+    rowClass: (person: DemoPerson) => (person.age >= 40 ? 'row-senior' : []),
+    tableName: 'docsCustomRows'
+  } satisfies TableConfig<DemoPerson>,
+  emptyPeople: {
+    columns: [
+      { key: 'name', label: 'Nombre', type: 'text' },
+      { key: 'role', label: 'Rol', type: 'text' }
+    ],
+    tableName: 'docsEmptyPeople'
+  } satisfies TableConfig<DemoPerson>,
   expandableDetail: {
     columns: [{ key: 'name', label: 'País (panel libre)', type: 'text' }],
     expandable: { key: 'name' },

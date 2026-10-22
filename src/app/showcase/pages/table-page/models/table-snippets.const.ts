@@ -146,6 +146,26 @@ aesy-table {
 /* Las etiquetas y botones están en tu plantilla: se estilan con tu CSS */
 .themed-table .role-badge { background: #ede9fe; border-radius: 999px; color: #6d28d9; padding: 0.125rem 0.625rem; }`
   },
+  customRows: {
+    html: `<aesy-table [data]="PEOPLE" [config]="TEAM_TABLE_CONFIG" (rowClicked)="onPersonRowClicked($event)">
+  <!-- Sustituye las celdas de las columnas de datos; let-columns y let-index también están disponibles -->
+  <ng-template aesyTableRow [aesyTableRowRows]="PEOPLE" let-person>
+    <strong>{{ person.name }}</strong> · {{ person.role }}
+  </ng-template>
+</aesy-table>
+
+<aesy-table [data]="[]" [config]="TEAM_TABLE_CONFIG">
+  <ng-template aesyTableEmpty>Aún no hay nadie en el equipo.</ng-template>
+</aesy-table>`,
+    ts: `const TEAM_TABLE_CONFIG: TableConfig<Person> = {
+  tableName: 'team',
+  columns: [/* … */],
+  clickableRows: true, // emite rowClicked con clic o Enter (no con clics en botones, enlaces o campos)
+  rowClass: person => (person.age >= 40 ? 'row-senior' : []) // clases por fila según sus datos
+};`,
+    css: `/* rowClass añade la clase dentro de la vista de la tabla: desde un componente hace falta ::ng-deep */
+.team-table ::ng-deep .aesy-table-row.row-senior { background: #fef3c7; }`
+  },
   draggable: {
     ts: `// En local la tabla ya reordena sus filas; rowOrderChange sirve para guardar el nuevo orden.
 // Con serverSide: true eres tú quien reordena los datos:
