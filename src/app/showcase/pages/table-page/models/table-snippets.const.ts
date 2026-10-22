@@ -10,7 +10,7 @@ export const TABLE_SNIPPETS = {
   columns: [
     { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true, fixed: true, width: '180px' },
     { key: 'country', label: 'País', type: 'select', filterable: true, options: COUNTRY_OPTIONS },
-    { key: 'age', label: 'Edad', type: 'number', sortable: true, alignCell: 'right' }
+    { key: 'age', label: 'Edad', type: 'number', sortable: true }
   ]
 };
 // En local la tabla pagina por su cuenta: esto fija el estado inicial
@@ -84,7 +84,7 @@ protected readonly selectedCities = signal<City[]>([]);`,
     // Columna de datos con plantilla: se sigue ordenando y filtrando por country
     { key: country, label: País, type: select, sortable: true, filterable: true, options: COUNTRY_OPTIONS },
     // Columna custom: su key no tiene que estar en Person y no se ordena ni filtra
-    { key: actions, label: Acciones, type: custom, width: 200px, alignCell: right, alignHeader: right }
+    { key: actions, label: Acciones, type: custom, width: 200px }
   ]
 };
 
@@ -257,7 +257,7 @@ protected onProductsTableDataRequested(requestData: RequestData): void {
   columns: [
     { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
     { key: 'country', label: 'País', type: 'text', sortable: true },
-    { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right' }
+    { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
   ]
 };`,
     html: `<!-- Sin [paginationMetaConfig]: se muestran todas las filas -->

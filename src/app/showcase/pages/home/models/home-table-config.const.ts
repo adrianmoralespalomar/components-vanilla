@@ -7,7 +7,7 @@ export const HOME_TABLE_CONFIG: TableConfig<DemoPerson> = {
     { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
     { key: 'role', label: 'Rol', type: 'text', sortable: true },
     { key: 'country', label: 'País', type: 'select', filterable: true, options: DEMO_COUNTRY_FILTER_OPTIONS },
-    { key: 'age', label: 'Edad', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+    { key: 'age', label: 'Edad', type: 'number', sortable: true }
   ],
   tableName: 'homePeople',
   serverSide: false

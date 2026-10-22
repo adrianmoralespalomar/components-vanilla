@@ -55,7 +55,7 @@ protected readonly PEOPLE_TABLE_CONFIG: TableConfig<Person> = {
   columns: [
     { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true, fixed: true, width: '180px' },
     { key: 'country', label: 'País', type: 'select', filterable: true, options: COUNTRY_OPTIONS },
-    { key: 'age', label: 'Edad', type: 'number', sortable: true, alignCell: 'right' }
+    { key: 'age', label: 'Edad', type: 'number', sortable: true }
   ]
 };
 

@@ -25,7 +25,7 @@ export const TABLE_DEMO_CONFIGS = {
     columns: [
       { key: 'name', label: 'Ciudad', type: 'text', sortable: true, filterable: true },
       { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: DEMO_COUNTRY_FILTER_OPTIONS },
-      { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+      { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
     ],
     selectable: { key: 'name', selectedValues: DEMO_CITIES.filter(city => city.country === 'España').map(city => city.name) },
     serverSide: false,
@@ -43,7 +43,7 @@ export const TABLE_DEMO_CONFIGS = {
       { key: 'name', label: 'Nombre', type: 'text', sortable: true, filterable: true },
       { key: 'role', label: 'Rol', type: 'text', sortable: true },
       { key: 'country', label: 'País', type: 'select', sortable: true, filterable: true, options: DEMO_COUNTRY_FILTER_OPTIONS },
-      { key: 'actions', label: 'Acciones', type: 'custom', width: '200px', alignCell: 'right', alignHeader: 'right' }
+      { key: 'actions', label: 'Acciones', type: 'custom', width: '200px' }
     ],
     serverSide: false,
     tableName: 'docsCustomCells'
@@ -56,7 +56,7 @@ export const TABLE_DEMO_CONFIGS = {
       subTable: {
         columns: [
           { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
-          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
         ],
         tableName: 'docsExpandableCities'
       }
@@ -73,7 +73,7 @@ export const TABLE_DEMO_CONFIGS = {
       subTable: {
         columns: [
           { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
-          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
         ],
         tableName: 'docsExpandableCitiesPlus'
       }
@@ -91,7 +91,7 @@ export const TABLE_DEMO_CONFIGS = {
       subTable: {
         columns: [
           { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
-          { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+          { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
         ],
         tableName: 'docsExpandableCitiesButton'
       }
@@ -102,8 +102,8 @@ export const TABLE_DEMO_CONFIGS = {
     columns: [
       { key: 'name', label: 'Nombre', type: 'text', sortable: true },
       { key: 'role', label: 'Rol', type: 'text', sortable: true },
-      { key: 'age', label: 'Edad', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' },
-      { key: 'actions', label: 'Acciones', type: 'custom', width: '220px', alignCell: 'right', alignHeader: 'right' }
+      { key: 'age', label: 'Edad', type: 'number', sortable: true },
+      { key: 'actions', label: 'Acciones', type: 'custom', width: '220px' }
     ],
     tableName: 'docsThemedPeople'
   } satisfies TableConfig<DemoPerson>,
@@ -148,7 +148,7 @@ export const TABLE_DEMO_CONFIGS = {
       subTable: {
         columns: [
           { key: 'product', label: 'Producto', type: 'text', sortable: true },
-          { key: 'amount', label: 'Importe (€)', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+          { key: 'amount', label: 'Importe (€)', type: 'number', sortable: true }
         ],
         tableName: 'docsExpandableOrders'
       }
@@ -160,7 +160,7 @@ export const TABLE_DEMO_CONFIGS = {
       { key: 'id', label: 'ID', type: 'number', sortable: true, fixed: true, width: '80px' },
       { key: 'title', label: 'Producto', type: 'text', sortable: true, filterable: true, width: '320px' },
       { key: 'category', label: 'Categoría', type: 'text' },
-      { key: 'price', label: 'Precio ($)', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+      { key: 'price', label: 'Precio ($)', type: 'number', sortable: true }
     ],
     selectable: { key: 'id' },
     serverSide: true,
@@ -170,7 +170,7 @@ export const TABLE_DEMO_CONFIGS = {
     columns: [
       { key: 'name', label: 'Ciudad', type: 'text', sortable: true },
       { key: 'country', label: 'País', type: 'text', sortable: true },
-      { key: 'population', label: 'Habitantes', type: 'number', sortable: true, alignCell: 'right', alignHeader: 'right' }
+      { key: 'population', label: 'Habitantes', type: 'number', sortable: true }
     ],
     serverSide: false,
     tableName: 'docsCitiesWithoutPagination'

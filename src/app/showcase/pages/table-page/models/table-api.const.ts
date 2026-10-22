@@ -60,8 +60,8 @@ export const TABLE_API: ComponentApi = {
         { name: 'filterable', type: 'boolean | undefined', description: 'Muestra un filtro bajo la cabecera.' },
         { name: 'fixed', type: 'boolean | undefined', description: 'Fija la columna a la izquierda al hacer scroll horizontal.' },
         { name: 'width', type: 'string | undefined', description: 'Ancho CSS de la columna (px, %, rem…).' },
-        { name: 'alignHeader', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de la cabecera. Por defecto, a la izquierda; en columnas numéricas suele convenir right junto con alignCell.' },
-        { name: 'alignCell', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de las celdas.' }
+        { name: 'alignHeader', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de la cabecera. Por defecto, a la izquierda; úsala junto con alignCell para que cabecera y celdas coincidan.' },
+        { name: 'alignCell', type: "'left' | 'center' | 'right' | undefined", description: 'Alineación de las celdas. Por defecto, a la izquierda también en las columnas numéricas.' }
       ]
     },
     {
